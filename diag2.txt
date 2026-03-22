@@ -1,0 +1,15 @@
+﻿---
+
+Name                           Value                                           
+----                           -----                                           
+COLORTERM                      truecolor                                       
+TERM_PROGRAM                   vscode                                          
+TERM_PROGRAM_VERSION           1.112.0                                         
+VSCODE_GIT_ASKPASS_EXTRA_ARGS                                                  
+VSCODE_GIT_ASKPASS_MAIN        c:\Users\user\AppData\Roaming\Code\User\globa...
+VSCODE_GIT_ASKPASS_NODE        D:\Microsoft VS Code\Code.exe                   
+VSCODE_GIT_IPC_HANDLE          \\.\pipe\vscode-git-4f6621d8ae-sock             
+VSCODE_INJECTION               1                                               
+VSCODE_PYTHON_AUTOACTIVATE_... 1                                               
+
+

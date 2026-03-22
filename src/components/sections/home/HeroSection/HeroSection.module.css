@@ -1,0 +1,288 @@
+/* ============================================
+   HeroSection — "Shattered Glass Big Bang"
+   ============================================ */
+
+/* --- Section --- */
+
+.section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+  perspective: 1200px;
+}
+
+/* --- Label --- */
+
+.label {
+  font-family: var(--font-code, monospace);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--tx-3);
+  border-left: 2px solid var(--blue);
+  padding-left: 12px;
+  margin-bottom: 24px;
+}
+
+/* --- Heading --- */
+
+.heading {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  max-width: 900px;
+  perspective: 1200px;
+}
+
+/* --- Word wrapper --- */
+
+.word {
+  display: inline-block;
+  perspective: 800px;
+}
+
+/* --- Individual character (glass shard) --- */
+
+.char {
+  display: inline-block;
+  position: relative;
+  transform-style: preserve-3d;
+  will-change: transform, opacity, filter;
+}
+
+/* Glass shard surface — sits behind the character */
+.shard {
+  position: absolute;
+  inset: -4px -3px;
+  border-radius: 3px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.015)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(6px) saturate(1.2);
+  -webkit-backdrop-filter: blur(6px) saturate(1.2);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  overflow: visible;
+  transition: opacity 0.3s ease;
+  transform-origin: center bottom;
+  will-change: transform, opacity;
+}
+
+/* Edge highlight — glass refraction edge light */
+.shard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    105deg,
+    rgba(79, 110, 247, 0.1) 0%,
+    transparent 35%,
+    transparent 65%,
+    rgba(139, 92, 246, 0.06) 100%
+  );
+  pointer-events: none;
+}
+
+/* --- Crack patterns --- */
+
+.crack {
+  position: absolute;
+  inset: -2px;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  overflow: visible;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='rgba(255,255,255,0.4)' stroke-linecap='round'%3E%3Cpath d='M40 40 L12 8' stroke-width='0.7'/%3E%3Cpath d='M40 40 L65 5' stroke-width='0.5'/%3E%3Cpath d='M40 40 L78 35' stroke-width='0.6'/%3E%3Cpath d='M40 40 L70 68' stroke-width='0.5'/%3E%3Cpath d='M40 40 L15 72' stroke-width='0.7'/%3E%3Cpath d='M40 40 L5 45' stroke-width='0.5'/%3E%3Cpath d='M40 40 L25 12' stroke-width='0.4'/%3E%3Cpath d='M40 40 L58 18' stroke-width='0.4'/%3E%3Cpath d='M12 8 L8 2' stroke-width='0.3'/%3E%3Cpath d='M12 8 L18 3' stroke-width='0.3'/%3E%3Cpath d='M65 5 L72 10' stroke-width='0.3'/%3E%3Cpath d='M78 35 L76 25' stroke-width='0.3'/%3E%3Cpath d='M70 68 L75 75' stroke-width='0.3'/%3E%3Cpath d='M70 68 L62 78' stroke-width='0.3'/%3E%3Cpath d='M15 72 L8 78' stroke-width='0.3'/%3E%3Cpath d='M15 72 L22 76' stroke-width='0.3'/%3E%3Cpath d='M5 45 L2 55' stroke-width='0.3'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  mix-blend-mode: overlay;
+}
+
+/* Dust particles during evaporation */
+.char[data-evaporate="true"]::before,
+.char[data-evaporate="true"]::after {
+  content: "";
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(200, 220, 255, 0.5);
+  pointer-events: none;
+  z-index: 2;
+  animation: dustFloat 1.5s ease-out forwards;
+}
+
+.char[data-evaporate="true"]::before {
+  top: 20%;
+  left: 30%;
+  animation-delay: 0s;
+}
+
+.char[data-evaporate="true"]::after {
+  top: 60%;
+  left: 70%;
+  animation-delay: 0.2s;
+}
+
+@keyframes dustFloat {
+  0% {
+    opacity: 0.7;
+    transform: translateY(0) scale(1);
+  }
+  60% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) translateX(10px) scale(0.2);
+  }
+}
+
+/* "Dimensions" accent chars — gradient text from start */
+.charAccent {
+  background: linear-gradient(135deg, var(--grad-from), var(--grad-to));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.charAccent .crack {
+  filter: hue-rotate(-10deg) brightness(1.2);
+}
+
+/* Active state: glass visible during animation */
+.char[data-glass="true"] .shard,
+.char[data-glass="true"] .crack {
+  opacity: 1;
+}
+
+/* --- "Dimensions" accent wrapper --- */
+
+.accent {
+  display: inline-block;
+  perspective: 800px;
+}
+
+.accentInner {
+  display: inline;
+}
+
+.accentInner[data-ignited="true"] {
+  background: linear-gradient(135deg, var(--grad-from), var(--grad-to));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* --- Subtitle --- */
+
+.subtitle {
+  font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+  color: var(--tx-2);
+  max-width: 520px;
+  margin-top: 20px;
+  line-height: 1.7;
+}
+
+/* --- CTA Buttons --- */
+
+.ctaGroup {
+  display: flex;
+  gap: 16px;
+  margin-top: 36px;
+  flex-wrap: wrap;
+  justify-content: center;
+  perspective: 800px;
+}
+
+.ctaPrimary {
+  padding: 14px 32px;
+  border-radius: 50px;
+  color: #fff;
+  font-family: var(--font-heading, sans-serif);
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: transform 0.3s var(--ease);
+}
+
+.ctaPrimary:hover {
+  transform: scale(1.04);
+}
+
+.ctaSecondary {
+  padding: 14px 32px;
+  border-radius: 50px;
+  border: 1px solid var(--brd-3);
+  color: var(--tx-2);
+  font-family: var(--font-heading, sans-serif);
+  font-weight: 500;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: border-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+
+.ctaSecondary:hover {
+  border-color: var(--blue);
+  color: var(--tx);
+}
+
+/* --- Light flash --- */
+
+.flash {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  height: 600px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(79, 110, 247, 0.25) 0%,
+    rgba(139, 92, 246, 0.1) 30%,
+    transparent 70%
+  );
+  pointer-events: none;
+  opacity: 0;
+  z-index: 0;
+}
+
+/* --- Mobile --- */
+
+@media (max-width: 768px) {
+  .section {
+    perspective: 600px;
+  }
+
+  .heading {
+    perspective: 600px;
+  }
+
+  .shard {
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+
+  .flash {
+    width: 300px;
+    height: 300px;
+  }
+}

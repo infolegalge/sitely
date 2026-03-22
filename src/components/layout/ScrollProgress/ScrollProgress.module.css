@@ -1,0 +1,10 @@
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  z-index: 10001;
+  background: linear-gradient(90deg, var(--blue), var(--violet));
+  box-shadow: 0 0 10px var(--blue-g);
+  pointer-events: none;
+}
