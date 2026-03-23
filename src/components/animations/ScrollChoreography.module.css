@@ -1,0 +1,147 @@
+/* ═══════════════════════════════════════════
+   ScrollChoreography v2 — "Cinematic Sections"
+
+   Conflict-free scroll-driven system:
+   1. Hero parallax exit (children only)
+   2. Background atmosphere hue shifts
+   3. Inter-section glow dividers (React-rendered)
+   4. Floating parallax particles
+   
+   DOES NOT animate section opacity/transform
+   to avoid conflicts with internal component
+   animations (data-rv, ServicesPreview ScrollTrigger,
+   Testimonials ScrollTrigger, FeaturedWork spin).
+   ═══════════════════════════════════════════ */
+
+/* ─── Wrapper ─── */
+
+.wrapper {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+/* ─── Background Atmosphere Layer ─── */
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.35;
+  will-change: opacity;
+}
+
+.atmosphereInner {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 0%,
+    var(--atmo-color, rgba(79, 110, 247, 0.06)) 0%,
+    transparent 70%
+  );
+  transition: background 1.4s ease;
+}
+
+/* ─── Inter-Section Glow Dividers ─── */
+
+.divider {
+  position: relative;
+  height: 1px;
+  z-index: 2;
+  overflow: visible;
+}
+
+.dividerLine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--blue) 15%,
+    var(--violet) 50%,
+    var(--cyan) 85%,
+    transparent 100%
+  );
+  transform: scaleX(0);
+  transform-origin: left;
+  will-change: transform;
+}
+
+.dividerGlow {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(79, 110, 247, 0.08) 15%,
+    rgba(139, 92, 246, 0.1) 50%,
+    rgba(6, 214, 160, 0.08) 85%,
+    transparent 100%
+  );
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* ─── Floating Parallax Particles ─── */
+
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.particleRing {
+  border: 1px solid rgba(79, 110, 247, 0.08);
+  background: transparent;
+}
+
+.particleDot {
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.particleLine {
+  width: 40px !important;
+  height: 1px !important;
+  border-radius: 0 !important;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(6, 214, 160, 0.12),
+    transparent
+  );
+}
+
+/* ═══════════════════════════════════════════
+   Reduced motion
+   ═══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .atmosphere,
+  .particles {
+    display: none;
+  }
+
+  .dividerLine,
+  .dividerGlow {
+    transform: scaleX(1);
+    opacity: 0.3;
+  }
+}

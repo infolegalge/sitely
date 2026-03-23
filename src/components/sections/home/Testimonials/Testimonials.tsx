@@ -176,7 +176,7 @@ export default function Testimonials() {
               scrollTrigger: {
                 trigger: section.querySelector(`.${s.orbs}`),
                 start: "top 85%",
-                toggleActions: "play none none none",
+                toggleActions: "play none none reverse",
               },
             },
           );
@@ -198,7 +198,7 @@ export default function Testimonials() {
               scrollTrigger: {
                 trigger: section.querySelector(`.${s.bento}`),
                 start: "top 88%",
-                toggleActions: "play none none none",
+                toggleActions: "play none none reverse",
               },
             },
           );

@@ -9,7 +9,6 @@ import s from "./FeaturedWork.module.css";
 const CARD_COUNT = FEATURED_PROJECTS.length;
 const ANGLE_STEP = 360 / CARD_COUNT;
 
-/** Orbit radius — tighter so 3 cards visible */
 function getRadius() {
   if (typeof window === "undefined") return 280;
   const w = window.innerWidth;
@@ -26,30 +25,48 @@ function pad(n: number) {
   return String(n).padStart(2, "0");
 }
 
-/** Apply depth-based brightness fading per card */
+/** Depth-based brightness: front=1.0, sides=~0.6, back=~0.28 */
 function applyDepthFade(
   cards: (HTMLAnchorElement | null)[],
-  angle: number,
+  ringAngle: number,
 ) {
   for (let j = 0; j < cards.length; j++) {
     const card = cards[j];
     if (!card) continue;
-    const worldAngle = ((angle + j * ANGLE_STEP) % 360 + 360) % 360;
-    const facing = Math.cos((worldAngle * Math.PI) / 180);
+    const world = ((ringAngle + j * ANGLE_STEP) % 360 + 360) % 360;
+    const facing = Math.cos((world * Math.PI) / 180);
     const t = (facing + 1) / 2;
-    const brightness = 0.3 + 0.7 * t;
+    const brightness = 0.28 + 0.72 * t;
     card.style.filter = `brightness(${brightness.toFixed(3)})`;
   }
 }
 
+function updateRing(
+  ring: HTMLDivElement | null,
+  cards: (HTMLAnchorElement | null)[],
+  angle: number,
+  setActive: (i: number) => void,
+) {
+  if (!ring) return;
+  ring.style.transform = `translate(-50%, -50%) rotateY(${angle}deg)`;
+  applyDepthFade(cards, angle);
+  const raw = (-angle % 360 + 360) % 360;
+  const closest = Math.round(raw / ANGLE_STEP) % CARD_COUNT;
+  setActive(closest);
+}
+
 export default function FeaturedWork() {
   const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const cardEls = useRef<(HTMLAnchorElement | null)[]>([]);
   const tweenRef = useRef<ReturnType<typeof import("gsap").gsap.to> | null>(null);
   const angleRef = useRef({ value: 0 });
   const [activeIdx, setActiveIdx] = useState(0);
-  const isPaused = useRef(false);
+  const hasEnteredRef = useRef(false);
+  const entranceDoneRef = useRef(false);
+  const isDraggingRef = useRef(false);
+  const isHoveringRef = useRef(false);
 
   /* data-rv reveal */
   useEffect(() => {
@@ -72,92 +89,91 @@ export default function FeaturedWork() {
     return () => observer.disconnect();
   }, []);
 
-  /* Helper: restart infinite tween from current angle */
-  const startInfiniteSpin = useCallback(() => {
+  /* Start continuous slow spin (counterclockwise) */
+  const startIdleSpin = useCallback(() => {
     import("gsap").then(({ gsap }) => {
       tweenRef.current?.kill();
-      const t = gsap.to(angleRef.current, {
+      tweenRef.current = gsap.to(angleRef.current, {
         value: "-=" + 360,
-        duration: 26,
+        duration: 28,
         ease: "none",
         repeat: -1,
-        onUpdate: () => {
-          const ring = ringRef.current;
-          if (!ring) return;
-          ring.style.transform = `translate(-50%, -50%) rotateY(${angleRef.current.value}deg)`;
-          applyDepthFade(cardEls.current, angleRef.current.value);
-          const raw = (-angleRef.current.value % 360 + 360) % 360;
-          const closest = Math.round(raw / ANGLE_STEP) % CARD_COUNT;
-          setActiveIdx(closest);
-        },
+        onUpdate: () =>
+          updateRing(ringRef.current, cardEls.current, angleRef.current.value, setActiveIdx),
       });
-      tweenRef.current = t;
-      if (isPaused.current) t.timeScale(0.12);
     });
   }, []);
 
-  /* Place cards in orbit + start GSAP */
+  /* Place cards + scroll entrance */
   useEffect(() => {
-    async function init() {
-      const { gsap } = await import("gsap");
+    const ring = ringRef.current;
+    const stage = stageRef.current;
+    if (!ring || !stage) return;
 
-      const ring = ringRef.current;
-      if (!ring) return;
+    const radius = getRadius();
+    cardEls.current.forEach((card, i) => {
+      if (!card) return;
+      card.style.transform = `rotateY(${i * ANGLE_STEP}deg) translateZ(${radius}px)`;
+    });
+    angleRef.current.value = 0;
+    applyDepthFade(cardEls.current, 0);
 
-      const radius = getRadius();
-      cardEls.current.forEach((card, i) => {
-        if (!card) return;
-        card.style.transform = `rotateY(${i * ANGLE_STEP}deg) translateZ(${radius}px)`;
-      });
+    /* Scroll entrance: fast spin → slow-motion deceleration */
+    const entranceObs = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting || hasEnteredRef.current) return;
+        hasEnteredRef.current = true;
+        entranceObs.disconnect();
 
-      angleRef.current.value = 0;
-      applyDepthFade(cardEls.current, 0);
-
-      tweenRef.current = gsap.to(angleRef.current, {
-        value: -360,
-        duration: 26,
-        ease: "none",
-        repeat: -1,
-        onUpdate: () => {
-          if (!ring) return;
-          ring.style.transform = `translate(-50%, -50%) rotateY(${angleRef.current.value}deg)`;
-          applyDepthFade(cardEls.current, angleRef.current.value);
-          const raw = (-angleRef.current.value % 360 + 360) % 360;
-          const closest = Math.round(raw / ANGLE_STEP) % CARD_COUNT;
-          setActiveIdx(closest);
-        },
-      });
-    }
-
-    init();
+        import("gsap").then(({ gsap }) => {
+          /* Fast entrance: 540° in 2s, power3.out = dramatic decel */
+          tweenRef.current = gsap.to(angleRef.current, {
+            value: -540,
+            duration: 2.4,
+            ease: "power3.out",
+            onUpdate: () =>
+              updateRing(ringRef.current, cardEls.current, angleRef.current.value, setActiveIdx),
+            onComplete: () => {
+              entranceDoneRef.current = true;
+              startIdleSpin();
+            },
+          });
+        });
+      },
+      { threshold: 0.2 },
+    );
+    entranceObs.observe(stage);
 
     function onResize() {
-      const radius = getRadius();
+      const r = getRadius();
       cardEls.current.forEach((card, i) => {
         if (!card) return;
-        card.style.transform = `rotateY(${i * ANGLE_STEP}deg) translateZ(${radius}px)`;
+        card.style.transform = `rotateY(${i * ANGLE_STEP}deg) translateZ(${r}px)`;
       });
     }
 
     window.addEventListener("resize", onResize);
     return () => {
       tweenRef.current?.kill();
+      entranceObs.disconnect();
       window.removeEventListener("resize", onResize);
     };
-  }, []);
+  }, [startIdleSpin]);
 
-  /* Pause/resume on hover */
+  /* Hover pause/resume (only after entrance, not during drag) */
   const handleStageEnter = useCallback(() => {
-    isPaused.current = true;
-    tweenRef.current?.timeScale(0.12);
+    isHoveringRef.current = true;
+    if (!entranceDoneRef.current || isDraggingRef.current) return;
+    tweenRef.current?.timeScale(0.15);
   }, []);
 
   const handleStageLeave = useCallback(() => {
-    isPaused.current = false;
+    isHoveringRef.current = false;
+    if (!entranceDoneRef.current) return;
     tweenRef.current?.timeScale(1);
   }, []);
 
-  /* Navigate to specific card */
+  /* Navigate to card + restart idle after */
   const goToCard = useCallback((idx: number) => {
     const targetAngle = -(idx * ANGLE_STEP);
     const current = angleRef.current.value % 360;
@@ -169,56 +185,134 @@ export default function FeaturedWork() {
     tweenRef.current?.kill();
 
     import("gsap").then(({ gsap }) => {
-      gsap.to(angleRef.current, {
+      tweenRef.current = gsap.to(angleRef.current, {
         value: newVal,
         duration: 0.9,
         ease: "power2.inOut",
         onUpdate: () => {
-          const ring = ringRef.current;
-          if (!ring) return;
-          ring.style.transform = `translate(-50%, -50%) rotateY(${angleRef.current.value}deg)`;
-          applyDepthFade(cardEls.current, angleRef.current.value);
-          setActiveIdx(idx);
+          updateRing(ringRef.current, cardEls.current, angleRef.current.value, setActiveIdx);
         },
-        onComplete: () => startInfiniteSpin(),
+        onComplete: () => {
+          isDraggingRef.current = false;
+          startIdleSpin();
+          if (isHoveringRef.current) {
+            tweenRef.current?.timeScale(0.15);
+          }
+        },
       });
     });
-  }, [startInfiniteSpin]);
+  }, [startIdleSpin]);
 
-  /* Touch/drag */
-  const dragData = useRef({ startX: 0, startAngle: 0, dragging: false });
+  /* ── Drag with EMA velocity + momentum fling ── */
+  const dragRef = useRef({
+    active: false,
+    startX: 0,
+    startAngle: 0,
+    prevX: 0,
+    prevTime: 0,
+    velocity: 0,
+    hasMoved: false,
+  });
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
-    dragData.current = {
+    /* Kill ALL running animations immediately */
+    tweenRef.current?.kill();
+    tweenRef.current = null;
+    isDraggingRef.current = true;
+
+    const now = performance.now();
+    dragRef.current = {
+      active: true,
       startX: e.clientX,
       startAngle: angleRef.current.value,
-      dragging: true,
+      prevX: e.clientX,
+      prevTime: now,
+      velocity: 0,
+      hasMoved: false,
     };
-    tweenRef.current?.pause();
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    /* Capture on the stage so we get events even outside cards */
+    stageRef.current?.setPointerCapture(e.pointerId);
   }, []);
 
   const onPointerMove = useCallback((e: React.PointerEvent) => {
-    if (!dragData.current.dragging) return;
-    const deltaX = e.clientX - dragData.current.startX;
-    angleRef.current.value = dragData.current.startAngle + deltaX * 0.35;
-    const ring = ringRef.current;
-    if (ring) {
-      ring.style.transform = `translate(-50%, -50%) rotateY(${angleRef.current.value}deg)`;
+    const d = dragRef.current;
+    if (!d.active) return;
+    const now = performance.now();
+    const dx = e.clientX - d.prevX;
+    const dt = now - d.prevTime;
+    const totalDx = e.clientX - d.startX;
+
+    /* Mark as real drag once past threshold */
+    if (Math.abs(totalDx) > 4) d.hasMoved = true;
+
+    /* EMA velocity (degrees per ms) — ignore stale frames */
+    if (dt > 0 && dt < 100) {
+      const instantVel = (dx * 0.45) / dt;
+      d.velocity = d.velocity * 0.6 + instantVel * 0.4;
     }
-    applyDepthFade(cardEls.current, angleRef.current.value);
-    const raw = (-angleRef.current.value % 360 + 360) % 360;
-    const closest = Math.round(raw / ANGLE_STEP) % CARD_COUNT;
-    setActiveIdx(closest);
+    d.prevX = e.clientX;
+    d.prevTime = now;
+
+    angleRef.current.value = d.startAngle + totalDx * 0.45;
+    updateRing(ringRef.current, cardEls.current, angleRef.current.value, setActiveIdx);
   }, []);
 
   const onPointerUp = useCallback(() => {
-    if (!dragData.current.dragging) return;
-    dragData.current.dragging = false;
-    const raw = (-angleRef.current.value % 360 + 360) % 360;
-    const nearest = Math.round(raw / ANGLE_STEP) % CARD_COUNT;
-    goToCard(nearest);
-  }, [goToCard]);
+    const d = dragRef.current;
+    if (!d.active) return;
+    d.active = false;
+
+    /* If user paused before releasing, velocity is stale */
+    const now = performance.now();
+    if (now - d.prevTime > 80) d.velocity = 0;
+
+    const vel = d.velocity;
+    const abv = Math.abs(vel);
+
+    /* Common: snap to angle, then resume idle + apply hover if needed */
+    const snapAndResume = (finalAngle: number, dur: number, ease: string) => {
+      import("gsap").then(({ gsap }) => {
+        tweenRef.current = gsap.to(angleRef.current, {
+          value: finalAngle,
+          duration: dur,
+          ease,
+          onUpdate: () =>
+            updateRing(ringRef.current, cardEls.current, angleRef.current.value, setActiveIdx),
+          onComplete: () => {
+            isDraggingRef.current = false;
+            startIdleSpin();
+            if (isHoveringRef.current) {
+              tweenRef.current?.timeScale(0.15);
+            }
+          },
+        });
+      });
+    };
+
+    /* Fast fling: add momentum then snap */
+    if (abv > 0.08) {
+      const flingDeg = vel * 500;
+      const targetAngle = angleRef.current.value + flingDeg;
+      const raw = (-targetAngle % 360 + 360) % 360;
+      const nearest = Math.round(raw / ANGLE_STEP) % CARD_COUNT;
+      const snapAngle = -(nearest * ANGLE_STEP);
+      const current = targetAngle % 360;
+      let diff = snapAngle - current;
+      while (diff > 180) diff -= 360;
+      while (diff < -180) diff += 360;
+      snapAndResume(targetAngle + diff, Math.min(2.0, 0.5 + abv * 3), "power3.out");
+    } else {
+      /* Slow release: snap to nearest card */
+      const raw = (-angleRef.current.value % 360 + 360) % 360;
+      const nearest = Math.round(raw / ANGLE_STEP) % CARD_COUNT;
+      const snapAngle = -(nearest * ANGLE_STEP);
+      const current = angleRef.current.value % 360;
+      let diff = snapAngle - current;
+      while (diff > 180) diff -= 360;
+      while (diff < -180) diff += 360;
+      snapAndResume(angleRef.current.value + diff, 0.7, "power2.out");
+    }
+  }, [startIdleSpin]);
 
   return (
     <section id="work" ref={sectionRef} className={s.section}>
@@ -240,6 +334,7 @@ export default function FeaturedWork() {
 
       {/* 3D Carousel Stage */}
       <div
+        ref={stageRef}
         className={s.stage}
         onMouseEnter={handleStageEnter}
         onMouseLeave={handleStageLeave}
@@ -247,7 +342,7 @@ export default function FeaturedWork() {
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
-        style={{ touchAction: "pan-y" }}
+        onDragStart={(e) => e.preventDefault()}
       >
         <div className={s.ring} ref={ringRef}>
           {FEATURED_PROJECTS.map((project, i) => (
@@ -258,21 +353,27 @@ export default function FeaturedWork() {
               ref={(el) => {
                 cardEls.current[i] = el;
               }}
+              draggable={false}
               onClick={(e) => {
+                if (dragRef.current.hasMoved) {
+                  e.preventDefault();
+                  dragRef.current.hasMoved = false;
+                  return;
+                }
                 if (activeIdx !== i) {
                   e.preventDefault();
                   goToCard(i);
                 }
               }}
             >
-              {/* 3D box edges — beveled for curvature */}
+              {/* 3D box edges — true 90° with rim lighting */}
               <div className={s.edgeLeft} aria-hidden="true" />
               <div className={s.edgeRight} aria-hidden="true" />
               <div className={s.edgeTop} aria-hidden="true" />
               <div className={s.edgeBottom} aria-hidden="true" />
               <div className={s.cardBack} aria-hidden="true" />
 
-              {/* Front face with curvature shadow + specular */}
+              {/* Front face — curvature shadow + specular */}
               <div className={s.cardFront}>
                 <div className={s.prismBorder} aria-hidden="true" />
                 <div className={s.thumbnailWrap}>
@@ -286,6 +387,7 @@ export default function FeaturedWork() {
                       fill
                       sizes="(max-width: 767px) 80vw, 460px"
                       className={s.thumbnail}
+                      draggable={false}
                       placeholder={project.blurDataURL ? "blur" : "empty"}
                       blurDataURL={project.blurDataURL}
                     />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import HyperspaceEffect from "../objects/HyperspaceEffect";
@@ -34,6 +34,18 @@ export default function GalaxyScene({ isMobile = false }: { isMobile?: boolean }
   const sFov = useRef(90);
   const dPos = useRef(new THREE.Vector3());
   const dTgt = useRef(new THREE.Vector3());
+  const scrollRef = useRef(0);
+
+  /* ─── Scroll listener for post-journey orbit ─── */
+  useEffect(() => {
+    const onScroll = () => {
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      scrollRef.current = docH > 0 ? window.scrollY / docH : 0;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useFrame((state, delta) => {
     if (startRef.current < 0) startRef.current = state.clock.elapsedTime;
@@ -116,20 +128,79 @@ export default function GalaxyScene({ isMobile = false }: { isMobile?: boolean }
       starsOpacity.current = ss(0.85, 1.0, q);
 
     } else {
-      /* ── Inside core — camera stops completely ── */
+      /* ══════════════════════════════════════════════════════════
+         CINEMATIC KEYFRAME CAMERA PATH
+
+         6 handcrafted compositions — one per page section.
+         Each keyframe defines a unique angle, distance, height,
+         and screen-framing of the Sitely planet.
+
+         Camera orbits ~330° total with varied compositions:
+         KF0: Hero        — planet LEFT,   wide establishing
+         KF1: Transition  — planet CENTER, sweeping mid-orbit
+         KF2: FeaturedWork— planet TOP,    dramatic low upshot
+         KF3: Services    — planet RIGHT,  elegant profile
+         KF4: Process     — planet BELOW,  elevated bird's eye
+         KF5: Testimonials— planet CENTER, intimate close-up
+         ══════════════════════════════════════════════════════════ */
       gal.position.set(0, 0, 0);
       gal.scale.setScalar(1.0);
 
-      // Fixed position at journey end (angle=4π, radius=endOrbit)
-      const finalR = isMobile ? 30 : 40;
-      const finalH = isMobile ? 12 : 15;
+      const scrollP = scrollRef.current;
+      const mob = isMobile;
+
+      /* ─── Keyframe definitions ─── */
+      /* angleDeg, radius, height, lookX, lookY, fov */
+      const KF: [number, number, number, number, number, number][] = mob
+        ? [
+            /*  angle   r    h   lookX lookY  fov  */
+            [    0,    28,  10,   20,   -4,   58 ],  // KF0 Hero — planet left
+            [   50,    26,  14,    6,   -1,   55 ],  // KF1 sweep center-left
+            [  110,    24,   2,    0,    7,   60 ],  // KF2 low upshot
+            [  180,    30,  12,  -14,   -3,   54 ],  // KF3 planet right
+            [  250,    22,  22,    3,   -8,   58 ],  // KF4 bird's eye
+            [  330,    18,   6,    1,    1,   50 ],  // KF5 intimate
+          ]
+        : [
+            [    0,    40,  15,   32,   -6,   48 ],  // KF0 Hero — intro end
+            [   50,    38,  22,   10,   -2,   46 ],  // KF1 sweep center-left
+            [  110,    35,   3,    0,   10,   52 ],  // KF2 dramatic low upshot
+            [  185,    42,  18,  -20,   -4,   45 ],  // KF3 elegant profile right
+            [  255,    32,  30,    5,  -12,   50 ],  // KF4 elevated bird's eye
+            [  335,    28,  10,    2,    1,   42 ],  // KF5 intimate close-up
+          ];
+
+      const N = KF.length - 1; // 5 segments
+
+      /* Find which two keyframes we're between */
+      const raw = scrollP * N;
+      const idx = Math.min(Math.floor(raw), N - 1);
+      const frac = raw - idx;
+
+      /* Smoothstep for buttery easing between keyframes */
+      const sf = frac * frac * (3 - 2 * frac);
+
+      const a = KF[idx];
+      const b = KF[idx + 1];
+
+      /* Interpolate all 6 channels */
+      const angleDeg = mix(a[0], b[0], sf);
+      const radius   = mix(a[1], b[1], sf);
+      const height   = mix(a[2], b[2], sf);
+      const lookX    = mix(a[3], b[3], sf);
+      const lookY    = mix(a[4], b[4], sf);
+      targetFov      = mix(a[5], b[5], sf);
+
+      const angleRad = (angleDeg * Math.PI) / 180;
+
       dPos.current.set(
-        Math.sin(Math.PI * 4.0) * finalR,
-        finalH,
-        Math.cos(Math.PI * 4.0) * finalR,
+        Math.sin(angleRad) * radius,
+        height,
+        Math.cos(angleRad) * radius,
       );
-      dTgt.current.set(isMobile ? 20 : 32, isMobile ? -4 : -6, 0);
-      targetFov = isMobile ? 58 : 48;
+
+      dTgt.current.set(lookX, lookY, 0);
+
       galaxyBrightness.current = 0;
       starsOpacity.current = 1;
     }

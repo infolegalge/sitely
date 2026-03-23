@@ -137,7 +137,7 @@ export default function ServicesPreview() {
                 trigger: card!,
                 start: "top 88%",
                 end: "top 50%",
-                toggleActions: "play none none none",
+                toggleActions: "play none none reverse",
               },
               delay: i * 0.08,
             },
@@ -146,7 +146,7 @@ export default function ServicesPreview() {
 
         /* Parallax depth on scroll for each card */
         cards.forEach((card, i) => {
-          const depth = i % 3 === 1 ? -15 : i % 3 === 2 ? 10 : -8;
+          const depth = i % 3 === 1 ? -6 : i % 3 === 2 ? 4 : -3;
           gsap.to(card, {
             y: depth,
             ease: "none",
@@ -154,7 +154,7 @@ export default function ServicesPreview() {
               trigger: section,
               start: "top bottom",
               end: "bottom top",
-              scrub: 1.2,
+              scrub: 2.5,
             },
           });
         });
