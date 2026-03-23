@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="ka" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dream Dental & Aesthetic Group | თბილისი</title>
+<meta name="description" content="Dream Dental & Aesthetic Group — პრემიუმ სტომატოლოგიური კლინიკა თბილისის გულში.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   V5 "SERENITY" — Calming 3D + Georgian Ornaments
+   Completely new design language
+   ───────────────────────────────────────────── */
+
+/* ── WARM DARK THEME ── */
+[data-theme="dark"]{
+    --bg:     #0c0a09;
+    --bg-2:   #141110;
+    --bg-3:   #1c1816;
+    --surf:   rgba(22,18,16,0.72);
+    --surf-h: rgba(28,24,22,0.88);
+    --glass:  rgba(12,10,9,0.88);
+    --brd:    rgba(255,245,235,0.06);
+    --brd-2:  rgba(255,245,235,0.12);
+    --brd-3:  rgba(255,245,235,0.20);
+    --tx:     #f5f0eb;
+    --tx-2:   #a89e95;
+    --tx-3:   #655c55;
+    --red:    #c53030;
+    --red-l:  #e53e3e;
+    --red-g:  rgba(197,48,48,0.25);
+    --red-s:  rgba(197,48,48,0.07);
+    --gold:   #d69e2e;
+    --gold-g: rgba(214,158,46,0.18);
+    --gold-s: rgba(214,158,46,0.07);
+    --crm:    #f5e6d3;
+    --crm-s:  rgba(245,230,211,0.06);
+    --shd:    0 20px 60px rgba(0,0,0,0.4);
+    --shd-r:  0 12px 40px rgba(197,48,48,0.14);
+    --fog:    #0c0a09;
+    --noise:  0.03;
+}
+
+/* ── WARM LIGHT THEME ── */
+[data-theme="light"]{
+    --bg:     #faf6f1;
+    --bg-2:   #f0ebe5;
+    --bg-3:   #e6dfd8;
+    --surf:   rgba(255,252,248,0.82);
+    --surf-h: rgba(255,255,255,0.96);
+    --glass:  rgba(250,246,241,0.92);
+    --brd:    rgba(28,18,10,0.05);
+    --brd-2:  rgba(28,18,10,0.10);
+    --brd-3:  rgba(28,18,10,0.17);
+    --tx:     #1a1210;
+    --tx-2:   #7a6e65;
+    --tx-3:   #b0a598;
+    --red:    #b91c1c;
+    --red-l:  #dc2626;
+    --red-g:  rgba(185,28,28,0.12);
+    --red-s:  rgba(185,28,28,0.04);
+    --gold:   #92730a;
+    --gold-g: rgba(146,115,10,0.10);
+    --gold-s: rgba(146,115,10,0.05);
+    --crm:    #8a7560;
+    --crm-s:  rgba(138,117,96,0.06);
+    --shd:    0 20px 60px rgba(0,0,0,0.05);
+    --shd-r:  0 12px 40px rgba(185,28,28,0.06);
+    --fog:    #faf6f1;
+    --noise:  0.018;
+}
+
+:root{
+    --fh:'Cormorant Garamond','Noto Sans Georgian',serif;
+    --fb:'Inter','Noto Sans Georgian',sans-serif;
+    --mw:1280px;
+    --ease:cubic-bezier(0.22,1,0.36,1);
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;font-size:16px}
+body{font-family:var(--fb);background:var(--bg);color:var(--tx);overflow-x:hidden;line-height:1.7;transition:background 0.7s,color 0.5s}
+::selection{background:var(--red);color:#fff}
+img{max-width:100%;display:block}a{text-decoration:none;color:inherit}button{font-family:inherit;cursor:pointer;border:none;background:none}
+.c{max-width:var(--mw);margin:0 auto;padding:0 clamp(20px,5vw,56px)}
+
+/* ── NOISE ── */
+body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:var(--noise);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-repeat:repeat}
+
+/* ── CUSTOM SCROLLBAR ── */
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--tx-3);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--red)}
+
+/* ── SCROLL PROGRESS ── */
+.progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--red),var(--gold));z-index:10001;transition:none;width:0}
+
+/* ── 3D CANVAS ── */
+#c3d{position:fixed;inset:0;z-index:0;pointer-events:none}
+.page{position:relative;z-index:1}
+
+/* ── CURSOR ── */
+.cur-ring{position:fixed;width:36px;height:36px;border:1px solid var(--red);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:width 0.4s var(--ease),height 0.4s var(--ease),border-color 0.3s,opacity 0.3s;opacity:0.5}
+.cur-dot{position:fixed;width:5px;height:5px;background:var(--red);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%)}
+.cur-ring.act{width:56px;height:56px;border-color:var(--gold);opacity:0.7}
+@media(pointer:coarse){.cur-ring,.cur-dot{display:none}}
+
+/* ═══════════════════════════════
+   REVEAL — Clip-path based
+   ═══════════════════════════════ */
+.rv{opacity:0;transform:translateY(24px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+.rv.vis{opacity:1;transform:translateY(0)}
+.rv-clip{clip-path:inset(100% 0 0 0);transition:clip-path 0.9s var(--ease)}
+.rv-clip.vis{clip-path:inset(0 0 0 0)}
+.rv-mask{clip-path:inset(0 100% 0 0);transition:clip-path 1s var(--ease)}
+.rv-mask.vis{clip-path:inset(0 0 0 0)}
+[data-d="1"]{transition-delay:0.1s}[data-d="2"]{transition-delay:0.2s}[data-d="3"]{transition-delay:0.3s}[data-d="4"]{transition-delay:0.4s}[data-d="5"]{transition-delay:0.5s}[data-d="6"]{transition-delay:0.6s}
+
+/* ═══════════════════════════════
+   ORNAMENT SVG
+   ═══════════════════════════════ */
+.orn{display:flex;justify-content:center;padding:32px 0;color:var(--tx-3);opacity:0.5}
+.orn svg{max-width:400px;width:100%}
+
+/* ═══════════════════════════════
+   SIDE NAV DOTS
+   ═══════════════════════════════ */
+.side-nav{position:fixed;right:24px;top:50%;transform:translateY(-50%);z-index:900;display:none;flex-direction:column;gap:14px}
+.side-dot{width:8px;height:8px;border-radius:50%;background:var(--tx-3);border:none;padding:0;transition:all 0.4s var(--ease);position:relative}
+.side-dot::after{content:attr(data-label);position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:0.65rem;color:var(--tx-3);white-space:nowrap;opacity:0;transition:opacity 0.3s;pointer-events:none}
+.side-dot:hover::after{opacity:1}
+.side-dot.on{background:var(--red);transform:scale(1.5)}
+@media(min-width:1100px){.side-nav{display:flex}}
+
+/* ═══════════════════════════════
+   NAV — Minimal floating
+   ═══════════════════════════════ */
+.nav{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:1000;width:min(94vw,var(--mw));transition:all 0.4s var(--ease)}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--glass);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);border:1px solid var(--brd);border-radius:60px;transition:all 0.4s var(--ease)}
+.nav.scrolled .nav-bar{box-shadow:var(--shd)}
+
+.nav-logo{display:flex;align-items:center;gap:10px}
+.nav-diamond{width:32px;height:32px;display:flex;align-items:center;justify-content:center;position:relative}
+.nav-diamond::before{content:'';position:absolute;width:20px;height:20px;background:var(--red);border-radius:4px;transform:rotate(45deg);opacity:0.8;transition:transform 0.4s var(--ease)}
+.nav-logo:hover .nav-diamond::before{transform:rotate(45deg) scale(1.15)}
+.nav-diamond svg{width:14px;height:14px;stroke:white;fill:none;stroke-width:2;position:relative;z-index:1}
+.nav-name{font-family:var(--fh);font-size:1rem;font-weight:500;letter-spacing:0.02em}
+
+.nav-mid{display:none;list-style:none;gap:6px;align-items:center}
+.nav-mid a{font-size:0.72rem;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--tx-2);padding:6px 14px;border-radius:40px;transition:all 0.3s}
+.nav-mid a:hover{color:var(--tx);background:var(--red-s)}
+
+.nav-r{display:flex;align-items:center;gap:6px}
+.nav-tel{display:none;align-items:center;gap:6px;font-size:0.75rem;color:var(--tx-2);padding:7px 16px;border-radius:40px;border:1px solid var(--brd);transition:all 0.3s}
+.nav-tel:hover{border-color:var(--brd-3);color:var(--tx)}
+.nav-tel svg{width:13px;height:13px;color:var(--red)}
+.t-btn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--tx-2);border:1px solid var(--brd);transition:all 0.3s}
+.t-btn:hover{color:var(--tx);border-color:var(--brd-3)}
+.t-btn svg{width:15px;height:15px}
+[data-theme="dark"] .t-sun{display:block}[data-theme="dark"] .t-moon{display:none}
+[data-theme="light"] .t-sun{display:none}[data-theme="light"] .t-moon{display:block}
+.nav-book{display:none;padding:8px 22px;background:var(--red);color:#fff;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:40px;transition:all 0.3s;border:none}
+.nav-book:hover{background:var(--red-l);transform:translateY(-1px)}
+.bur{display:flex;width:36px;height:36px;align-items:center;justify-content:center;flex-direction:column;gap:5px;border:1px solid var(--brd);border-radius:50%;transition:all 0.3s;padding:8px}
+.bur span{width:14px;height:1px;background:var(--tx);border-radius:1px;transition:all 0.3s}
+.bur.on span:first-child{transform:rotate(45deg) translate(2px,2px)}.bur.on span:nth-child(2){opacity:0}.bur.on span:last-child{transform:rotate(-45deg) translate(2px,-2px)}
+@media(min-width:1060px){.nav-mid{display:flex}.nav-tel{display:flex}.nav-book{display:inline-flex}.bur{display:none}}
+
+/* mobile menu */
+.m-ov{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:998;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.m-ov.on{opacity:1;pointer-events:all}
+.m-pan{position:fixed;top:0;right:-100%;width:min(360px,90vw);height:100dvh;background:var(--bg-2);z-index:999;padding:96px 32px 32px;transition:right 0.4s var(--ease);overflow-y:auto;border-left:1px solid var(--brd)}
+.m-pan.on{right:0}
+.m-pan a{display:block;padding:14px 0;border-bottom:1px solid var(--brd);font-size:0.92rem;color:var(--tx-2);transition:color 0.3s}
+.m-pan a:hover{color:var(--red)}
+.m-pan .m-btns{margin-top:24px;display:flex;flex-direction:column;gap:10px}
+.m-cta{padding:14px;background:var(--red);color:#fff;border-radius:12px;font-weight:700;text-align:center;font-size:0.88rem}
+.m-tel{padding:14px;background:var(--surf);border:1px solid var(--brd);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-weight:500}
+
+/* ═══════════════════════════════
+   HERO — Ornamental Frame
+   ═══════════════════════════════ */
+.hero{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;text-align:center;padding:100px 20px 60px}
+
+/* Decorative corner brackets */
+.hero-frame{position:absolute;inset:clamp(16px,4vw,48px);pointer-events:none}
+.hero-frame .corner{position:absolute;width:clamp(28px,5vw,56px);height:clamp(28px,5vw,56px)}
+.hero-frame .corner::before,.hero-frame .corner::after{content:'';position:absolute;background:var(--red);opacity:0.2;transition:opacity 0.5s}
+.hero-frame .corner::before{width:100%;height:1px}
+.hero-frame .corner::after{width:1px;height:100%}
+.hero-frame .tl{top:0;left:0}.hero-frame .tl::before{top:0;left:0}.hero-frame .tl::after{top:0;left:0}
+.hero-frame .tr{top:0;right:0}.hero-frame .tr::before{top:0;right:0}.hero-frame .tr::after{top:0;right:0}
+.hero-frame .bl{bottom:0;left:0}.hero-frame .bl::before{bottom:0;left:0}.hero-frame .bl::after{bottom:0;left:0}
+.hero-frame .br{bottom:0;right:0}.hero-frame .br::before{bottom:0;right:0}.hero-frame .br::after{bottom:0;right:0}
+
+.hero-eyebrow{display:inline-flex;align-items:center;gap:9px;padding:6px 18px 6px 12px;border:1px solid var(--brd-2);border-radius:40px;font-size:0.7rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx-2);margin-bottom:32px;backdrop-filter:blur(12px)}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 2.5s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--red-g)}50%{box-shadow:0 0 0 7px transparent}}
+
+.hero-title{font-family:var(--fh);font-size:clamp(3rem,8vw,6.2rem);font-weight:300;line-height:1.05;margin-bottom:28px;letter-spacing:-0.01em}
+.hero-title em{font-style:italic;font-weight:400;color:var(--red)}
+.hero-title .ln{display:block;opacity:0;transform:translateY(30px);animation:rise 0.9s var(--ease) forwards}
+.hero-title .ln:nth-child(2){animation-delay:0.15s}
+.hero-title .ln:nth-child(3){animation-delay:0.3s}
+@keyframes rise{to{opacity:1;transform:translateY(0)}}
+
+.hero-sub{font-size:clamp(0.88rem,1.4vw,1.05rem);color:var(--tx-2);max-width:520px;margin:0 auto 44px;line-height:1.9}
+.hero-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:60px}
+
+.btn-warm{display:inline-flex;align-items:center;gap:8px;padding:15px 36px;background:var(--red);color:#fff;border-radius:50px;font-weight:600;font-size:0.88rem;transition:all 0.35s var(--ease);position:relative;overflow:hidden;border:none}
+.btn-warm::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);opacity:0;transition:opacity 0.3s}
+.btn-warm:hover::before{opacity:1}
+.btn-warm:hover{transform:translateY(-2px);box-shadow:0 12px 36px var(--red-g)}
+.btn-warm svg{width:16px;height:16px}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;padding:15px 36px;background:transparent;color:var(--tx);border:1px solid var(--brd-3);border-radius:50px;font-weight:500;font-size:0.88rem;transition:all 0.35s var(--ease)}
+.btn-ghost:hover{border-color:var(--red);color:var(--red)}
+.btn-ghost svg{width:16px;height:16px}
+
+.hero-metrics{display:flex;gap:clamp(20px,4vw,48px);justify-content:center;flex-wrap:wrap}
+.hm{text-align:center}
+.hm-val{font-family:var(--fh);font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:300;color:var(--red);display:block}
+.hm-lbl{font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--tx-3);margin-top:2px}
+
+/* ═══════════════════════════════
+   MARQUEE
+   ═══════════════════════════════ */
+.mrq{overflow:hidden;padding:16px 0;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);background:var(--bg-2)}
+.mrq-track{display:flex;gap:0;animation:mrq 35s linear infinite;width:max-content}
+.mrq-item{display:flex;align-items:center;gap:24px;padding:0 24px;font-family:var(--fh);font-size:clamp(0.85rem,1.3vw,1rem);font-weight:400;letter-spacing:1px;color:var(--tx-2);white-space:nowrap}
+.mrq-gem{width:5px;height:5px;border-radius:1px;background:var(--red);transform:rotate(45deg);opacity:0.4}
+@keyframes mrq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ═══════════════════════════════
+   SECTION COMMON
+   ═══════════════════════════════ */
+section{padding:clamp(80px,12vw,140px) 0}
+.s-head{text-align:center;margin-bottom:clamp(40px,8vw,72px)}
+.s-tag{display:inline-flex;align-items:center;gap:10px;font-size:0.68rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+.s-tag::before,.s-tag::after{content:'';width:20px;height:1px;background:var(--red);opacity:0.4}
+.s-title{font-family:var(--fh);font-size:clamp(2rem,5vw,3.5rem);font-weight:300;line-height:1.12;margin-bottom:14px}
+.s-title em{font-style:italic;font-weight:400}
+.s-sub{font-size:clamp(0.88rem,1.3vw,1rem);color:var(--tx-2);max-width:500px;margin:0 auto;line-height:1.85}
+
+/* ═══════════════════════════════
+   SERVICES — Staggered 2-col
+   ═══════════════════════════════ */
+#svc{background:var(--bg-2);border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);transition:background 0.7s}
+.svc-grid{display:grid;grid-template-columns:1fr;gap:16px}
+.svc-c{position:relative;background:var(--surf);border:1px solid var(--brd);border-radius:20px;padding:clamp(28px,4vw,40px);backdrop-filter:blur(8px);overflow:hidden;transition:all 0.4s var(--ease)}
+.svc-c:hover{border-color:var(--brd-2);transform:translateY(-6px);box-shadow:var(--shd)}
+.svc-c::before{content:'';position:absolute;top:-1px;left:20%;right:20%;height:1.5px;background:linear-gradient(90deg,transparent,var(--red),transparent);opacity:0;transition:opacity 0.4s}
+.svc-c:hover::before{opacity:0.6}
+.svc-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.svc-num{font-family:var(--fh);font-size:3.2rem;font-weight:300;color:var(--brd);line-height:1;letter-spacing:-0.02em;transition:color 0.4s}
+.svc-c:hover .svc-num{color:var(--red-s)}
+.svc-ico{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.svc-ico svg{width:22px;height:22px}
+.svc-ico.a{background:var(--red-s);color:var(--red)}.svc-ico.b{background:var(--gold-s);color:var(--gold)}.svc-ico.c{background:var(--crm-s);color:var(--crm)}
+.svc-c h3{font-family:var(--fh);font-size:clamp(1.1rem,2vw,1.3rem);font-weight:500;margin-bottom:8px}
+.svc-c p{font-size:0.84rem;color:var(--tx-2);line-height:1.75}
+.svc-pill{display:inline-block;margin-top:14px;font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);padding:4px 14px;background:var(--red-s);border-radius:40px}
+@media(min-width:640px){.svc-grid{grid-template-columns:repeat(2,1fr)}.svc-c:nth-child(even){transform:translateY(32px)}.svc-c:nth-child(even):hover{transform:translateY(26px)}}
+@media(min-width:1024px){.svc-grid{grid-template-columns:repeat(3,1fr);gap:18px}.svc-c:nth-child(even){transform:translateY(40px)}.svc-c:nth-child(even):hover{transform:translateY(34px)}}
+
+/* ═══════════════════════════════
+   ABOUT — Asymmetric
+   ═══════════════════════════════ */
+.abt-grid{display:grid;grid-template-columns:1fr;gap:48px;align-items:center}
+.abt-txt p{font-size:clamp(0.9rem,1.3vw,0.98rem);color:var(--tx-2);line-height:1.9;margin-bottom:16px}
+.abt-txt strong{color:var(--tx);font-weight:600}
+
+.feat-row{display:grid;grid-template-columns:1fr;gap:10px;margin-top:24px}
+.feat-item{display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--surf);border:1px solid var(--brd);border-radius:14px;transition:all 0.3s var(--ease)}
+.feat-item:hover{border-color:var(--red);transform:translateX(6px)}
+.fi-ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fi-ico svg{width:17px;height:17px}
+.fi-ico.a{background:var(--red-s);color:var(--red)}.fi-ico.b{background:var(--gold-s);color:var(--gold)}.fi-ico.c{background:var(--crm-s);color:var(--crm)}
+.feat-item span{font-size:0.86rem;font-weight:500}
+
+.stat-col{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stat-box{background:var(--surf);border:1px solid var(--brd);border-radius:20px;padding:clamp(24px,4vw,32px);text-align:center;overflow:hidden;position:relative;transition:all 0.3s var(--ease)}
+.stat-box::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent);opacity:0;transition:opacity 0.3s}
+.stat-box:hover::after{opacity:0.6}
+.stat-box:hover{transform:translateY(-4px);box-shadow:var(--shd)}
+.stat-val{font-family:var(--fh);font-size:clamp(2rem,4vw,2.6rem);font-weight:300;color:var(--red);line-height:1}
+.stat-lbl{font-size:0.72rem;color:var(--tx-3);margin-top:6px;letter-spacing:0.5px}
+@media(min-width:768px){.feat-row{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:940px){.abt-grid{grid-template-columns:1.1fr 0.9fr;gap:64px}}
+
+/* ═══════════════════════════════
+   PROCESS — Vertical Timeline
+   ═══════════════════════════════ */
+#proc{background:var(--bg-2);border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);transition:background 0.7s}
+.tl{position:relative;max-width:720px;margin:0 auto}
+.tl::before{content:'';position:absolute;left:20px;top:0;bottom:0;width:1px;background:var(--brd-2)}
+.tl-step{position:relative;padding-left:56px;padding-bottom:clamp(32px,5vw,48px)}
+.tl-step:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:12px;top:4px;width:18px;height:18px;border-radius:50%;border:2px solid var(--brd-2);background:var(--bg);display:flex;align-items:center;justify-content:center;transition:all 0.4s var(--ease)}
+.tl-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:var(--tx-3);transition:background 0.4s}
+.tl-step:hover .tl-dot{border-color:var(--red)}.tl-step:hover .tl-dot::after{background:var(--red)}
+.tl-step h4{font-family:var(--fh);font-size:clamp(1.1rem,2vw,1.3rem);font-weight:500;margin-bottom:6px}
+.tl-step p{font-size:0.84rem;color:var(--tx-2);line-height:1.7}
+.tl-num{font-family:var(--fh);font-size:0.7rem;color:var(--tx-3);letter-spacing:2px;margin-bottom:4px}
+@media(min-width:768px){.tl::before{left:50%;transform:translateX(-50%)}.tl-step{padding-left:0;width:46%;padding-bottom:clamp(40px,6vw,60px)}.tl-step:nth-child(odd){margin-left:54%;text-align:left}.tl-step:nth-child(even){margin-right:54%;text-align:right;padding-right:0}.tl-dot{left:auto}.tl-step:nth-child(odd) .tl-dot{left:-36px}.tl-step:nth-child(even) .tl-dot{right:-36px;left:auto}}
+
+/* ═══════════════════════════════
+   REVIEWS — Carousel
+   ═══════════════════════════════ */
+.rev-wrap{max-width:700px;margin:0 auto;position:relative}
+.rev-card{display:none;text-align:center;padding:clamp(32px,5vw,48px);background:var(--surf);border:1px solid var(--brd);border-radius:24px;backdrop-filter:blur(8px)}
+.rev-card.on{display:block;animation:fadeUp 0.5s var(--ease)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.rev-stars{color:var(--gold);font-size:1.3rem;letter-spacing:4px;margin-bottom:16px}
+.rev-text{font-family:var(--fh);font-size:clamp(1rem,1.8vw,1.2rem);font-weight:400;font-style:italic;line-height:1.7;color:var(--tx-2);margin-bottom:20px}
+.rev-av{width:48px;height:48px;border-radius:50%;background:var(--red-s);color:var(--red);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.75rem;margin:0 auto 8px}
+.rev-author{font-weight:600;font-size:0.92rem}
+.rev-when{font-size:0.72rem;color:var(--tx-3)}
+.rev-reply-box{margin-top:16px;padding:14px 18px;background:var(--red-s);border-left:2px solid var(--red);border-radius:0 12px 12px 0;text-align:left}
+.rev-reply-box small{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--red);display:block;margin-bottom:3px}
+.rev-reply-box p{font-size:0.82rem;color:var(--tx-2);line-height:1.5}
+.rev-nav{display:flex;justify-content:center;gap:10px;margin-top:24px}
+.rev-btn{width:42px;height:42px;border-radius:50%;border:1px solid var(--brd-2);background:var(--surf);color:var(--tx-2);display:flex;align-items:center;justify-content:center;transition:all 0.3s}
+.rev-btn:hover{border-color:var(--red);color:var(--red)}
+.rev-btn svg{width:16px;height:16px}
+.rev-score{text-align:center;margin-bottom:32px}
+.rev-score-v{font-family:var(--fh);font-size:2rem;font-weight:300}
+.rev-score-s{color:var(--gold);font-size:1.3rem;letter-spacing:3px}
+.rev-score-cnt{font-size:0.78rem;color:var(--tx-3)}
+
+/* ═══════════════════════════════
+   GALLERY — Masonry
+   ═══════════════════════════════ */
+#gal{background:var(--bg-2);transition:background 0.7s;border-top:1px solid var(--brd)}
+.gal-grid{display:grid;gap:10px;grid-template-columns:repeat(2,1fr);grid-auto-rows:150px}
+.gal-i{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--brd);transition:all 0.4s var(--ease);cursor:pointer}
+.gal-i img{width:100%;height:100%;object-fit:cover;transition:transform 0.7s var(--ease),filter 0.5s}
+.gal-i:hover img{transform:scale(1.06);filter:brightness(0.85)}
+.gal-i::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(12,10,9,0.6));opacity:0;transition:opacity 0.3s}
+.gal-i:hover::after{opacity:1}
+.gal-i:hover{border-color:var(--red);box-shadow:var(--shd-r);z-index:2}
+.gal-lbl{position:absolute;bottom:14px;left:16px;z-index:3;font-size:0.74rem;font-weight:600;color:#fff;opacity:0;transform:translateY(6px);transition:all 0.3s 0.05s;text-shadow:0 1px 6px rgba(0,0,0,0.5)}
+.gal-i:hover .gal-lbl{opacity:1;transform:translateY(0)}
+.gal-i:nth-child(1){grid-column:span 2;grid-row:span 2}
+.gal-i:nth-child(5){grid-row:span 2}
+@media(min-width:640px){.gal-grid{grid-template-columns:repeat(3,1fr);grid-auto-rows:180px}}
+@media(min-width:1024px){.gal-grid{grid-template-columns:repeat(4,1fr);grid-auto-rows:200px;gap:12px}.gal-i:nth-child(1){grid-column:span 2;grid-row:span 2}.gal-i:nth-child(5){grid-row:span 2}.gal-i:nth-child(7){grid-column:span 2}}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.lb.on{opacity:1;pointer-events:all}
+.lb img{max-width:90vw;max-height:85vh;border-radius:16px;transform:scale(0.92);transition:transform 0.3s var(--ease)}
+.lb.on img{transform:scale(1)}
+.lb-x{position:absolute;top:20px;right:20px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;transition:background 0.3s}
+.lb-x:hover{background:rgba(255,255,255,0.12)}
+
+/* ═══════════════════════════════
+   HOURS / CONTACT
+   ═══════════════════════════════ */
+.hm-grid{display:grid;grid-template-columns:1fr;gap:20px}
+.hm-card{background:var(--surf);border:1px solid var(--brd);border-radius:20px;padding:clamp(24px,4vw,36px);backdrop-filter:blur(8px)}
+.hm-card-title{font-family:var(--fh);font-size:1.2rem;font-weight:500;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.hm-card-title svg{width:20px;height:20px;color:var(--red)}
+.hm-r{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--brd);font-size:0.84rem}
+.hm-r:last-child{border-bottom:none}
+.hm-d{color:var(--tx-2)}.hm-t{font-weight:600}
+.hm-r.today{background:var(--red-s);margin:0 -14px;padding:11px 14px;border-radius:8px}
+.hm-r.today .hm-d,.hm-r.today .hm-t{color:var(--red);font-weight:600}
+.map-fr{border-radius:20px;overflow:hidden;border:1px solid var(--brd);aspect-ratio:16/10}
+.map-fr iframe{width:100%;height:100%;border:none}
+[data-theme="dark"] .map-fr iframe{filter:invert(0.9) hue-rotate(180deg) saturate(0.25) brightness(0.65)}
+.ci-row{display:grid;grid-template-columns:1fr;gap:10px;margin-top:18px}
+.ci{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--surf);border:1px solid var(--brd);border-radius:14px;transition:all 0.3s var(--ease)}
+.ci:hover{border-color:var(--red)}
+.ci-ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ci-ic svg{width:18px;height:18px}
+.ci-ic.a{background:var(--red-s);color:var(--red)}.ci-ic.b{background:var(--gold-s);color:var(--gold)}.ci-ic.c{background:var(--crm-s);color:var(--crm)}
+.ci small{font-size:0.68rem;color:var(--tx-3);display:block}
+.ci strong{font-size:0.84rem}
+@media(min-width:768px){.hm-grid{grid-template-columns:1fr 1fr}.ci-row{grid-template-columns:repeat(2,1fr)}}
+
+/* ═══════════════════════════════
+   FAQ
+   ═══════════════════════════════ */
+.faq-list{max-width:740px;margin:0 auto}
+.faq-item{border:1px solid var(--brd);border-radius:14px;margin-bottom:10px;overflow:hidden;transition:border-color 0.3s}
+.faq-item:hover,.faq-item.on{border-color:var(--brd-2)}
+.faq-q{width:100%;padding:18px 22px;background:var(--surf);color:var(--tx);font-size:0.9rem;font-weight:600;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:14px;transition:background 0.3s;border:none;font-family:inherit}
+.faq-q:hover{background:var(--surf-h)}
+.faq-plus{width:26px;height:26px;border-radius:50%;background:var(--red-s);color:var(--red);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all 0.3s}
+.faq-item.on .faq-plus{transform:rotate(45deg);background:var(--red);color:#fff}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s var(--ease)}
+.faq-a-in{padding:0 22px 20px;font-size:0.84rem;color:var(--tx-2);line-height:1.8}
+
+/* ═══════════════════════════════
+   CTA — Ornamental
+   ═══════════════════════════════ */
+.cta-sec{padding:clamp(80px,12vw,140px) 0}
+.cta-box{position:relative;padding:clamp(48px,8vw,88px) clamp(24px,5vw,48px);text-align:center;border:1px solid var(--brd);border-radius:28px;overflow:hidden;background:var(--bg-2)}
+.cta-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 20%,var(--red-g),transparent 55%),radial-gradient(ellipse at 70% 80%,var(--gold-g),transparent 55%)}
+.cta-in{position:relative;z-index:1}
+
+.btn-gold{display:inline-flex;align-items:center;gap:9px;padding:16px 42px;background:linear-gradient(135deg,var(--gold),#dfc070);color:#0b0b0b;border-radius:50px;font-weight:800;font-size:0.92rem;border:none;transition:all 0.35s var(--ease);box-shadow:0 6px 28px var(--gold-g)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 14px 44px var(--gold-g)}
+.btn-gold svg{width:16px;height:16px}
+
+/* ═══════════════════════════════
+   FOOTER
+   ═══════════════════════════════ */
+.footer{padding:56px 0 24px;border-top:1px solid var(--brd)}
+.ft-grid{display:grid;grid-template-columns:1fr;gap:28px;margin-bottom:40px}
+.ft-brand{max-width:280px}
+.ft-brand p{font-size:0.82rem;color:var(--tx-2);margin-top:14px;line-height:1.65}
+.ft-col h4{font-size:0.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--tx-3);margin-bottom:14px}
+.ft-col a{display:block;font-size:0.82rem;color:var(--tx-2);padding:3px 0;transition:all 0.3s}
+.ft-col a:hover{color:var(--red);padding-left:4px}
+.ft-bot{display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:24px;border-top:1px solid var(--brd);font-size:0.7rem;color:var(--tx-3)}
+@media(min-width:768px){.ft-grid{grid-template-columns:2fr 1fr 1fr 1fr}.ft-bot{flex-direction:row;justify-content:space-between}}
+
+/* Scroll Top */
+.up{position:fixed;bottom:24px;right:24px;width:42px;height:42px;border-radius:50%;background:var(--red);border:none;color:#fff;z-index:900;opacity:0;transform:translateY(12px);transition:all 0.3s;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px var(--red-g)}
+.up.vis{opacity:1;transform:translateY(0)}.up:hover{transform:translateY(-3px)}
+.up svg{width:18px;height:18px}
+
+/* Preloader */
+.pre{position:fixed;inset:0;z-index:99999;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;transition:opacity 0.6s,visibility 0.6s}
+.pre.off{opacity:0;visibility:hidden}
+.pre-orb{width:40px;height:40px;position:relative}
+.pre-orb::before{content:'';position:absolute;inset:0;border:2px solid var(--brd);border-top-color:var(--red);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pre-t{font-family:var(--fh);font-size:1rem;letter-spacing:2px;color:var(--tx-3);font-weight:300}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}.rv,.rv-clip,.rv-mask{opacity:1;transform:none;clip-path:none}}
+</style>
+</head>
+<body>
+
+<div class="pre" id="pre"><div class="pre-orb"></div><div class="pre-t">Dream Dental</div></div>
+<div class="progress" id="prog"></div>
+<div class="cur-ring" id="cRing"></div>
+<div class="cur-dot" id="cDot"></div>
+<canvas id="c3d"></canvas>
+
+<!-- Side Nav -->
+<nav class="side-nav" id="sideNav">
+    <button class="side-dot on" data-s="hero" data-label="მთავარი"></button>
+    <button class="side-dot" data-s="svc" data-label="სერვისები"></button>
+    <button class="side-dot" data-s="abt" data-label="ჩვენ შესახებ"></button>
+    <button class="side-dot" data-s="proc" data-label="პროცესი"></button>
+    <button class="side-dot" data-s="rev" data-label="შეფასებები"></button>
+    <button class="side-dot" data-s="gal" data-label="გალერეა"></button>
+    <button class="side-dot" data-s="hrs" data-label="კონტაქტი"></button>
+</nav>
+
+<div class="page">
+
+<!-- ═══ NAV ═══ -->
+<header class="nav" id="nav">
+  <div class="nav-bar">
+    <a href="#" class="nav-logo">
+        <div class="nav-diamond"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-1.5 0-3 1.5-3.5 3.5-.4 2 0 4 .7 6 .4 1 1 2 1.7 2.8.3.4.7.7 1.1.7s.8-.3 1.1-.7c.7-.8 1.3-1.8 1.7-2.8.7-2 1.1-4 .7-6C15 6.5 13.5 5 12 5z"/></svg></div>
+        <span class="nav-name">Dream Dental</span>
+    </a>
+    <ul class="nav-mid">
+        <li><a href="#svc">სერვისები</a></li>
+        <li><a href="#abt">ჩვენ შესახებ</a></li>
+        <li><a href="#proc">პროცესი</a></li>
+        <li><a href="#rev">შეფასებები</a></li>
+        <li><a href="#gal">გალერეა</a></li>
+        <li><a href="#hrs">კონტაქტი</a></li>
+    </ul>
+    <div class="nav-r">
+        <a href="tel:+995579501010" class="nav-tel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>579 50 10 10</a>
+        <button class="t-btn" id="tBtn" aria-label="თემა">
+            <svg class="t-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="t-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="tel:+995579501010" class="nav-book">დაჯავშნეთ</a>
+        <button class="bur" id="bur"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+<div class="m-ov" id="mOv"></div>
+<div class="m-pan" id="mPan">
+    <a href="#svc">სერვისები</a><a href="#abt">ჩვენ შესახებ</a><a href="#proc">პროცესი</a><a href="#rev">შეფასებები</a><a href="#gal">გალერეა</a><a href="#hrs">კონტაქტი</a><a href="#faq">FAQ</a>
+    <div class="m-btns">
+        <a href="tel:+995579501010" class="m-tel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;color:var(--red)"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> 579 50 10 10</a>
+        <a href="tel:+995579501010" class="m-cta">დაჯავშნეთ ვიზიტი</a>
+    </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="hero">
+    <div class="hero-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+    </div>
+    <div>
+        <div class="hero-eyebrow rv"><span class="pulse"></span> თბილისი &middot; ყოველდღე 10–22</div>
+        <h1 class="hero-title">
+            <span class="ln">თქვენი ოცნების</span>
+            <span class="ln"><em>ღიმილი</em> იწყება</span>
+            <span class="ln">სწორედ აქ</span>
+        </h1>
+        <p class="hero-sub rv" data-d="2">პრემიუმ სტომატოლოგიური და ესთეტიკური მომსახურება. პროფესიონალიზმი, სიმშვიდე და ზრუნვა ყველა ვიზიტზე.</p>
+        <div class="hero-btns rv" data-d="3">
+            <a href="tel:+995579501010" class="btn-warm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>დაჯავშნეთ ვიზიტი</a>
+            <a href="#svc" class="btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>გაიგეთ მეტი</a>
+        </div>
+        <div class="hero-metrics rv" data-d="4">
+            <div class="hm"><span class="hm-val" data-cnt="4.7">0</span><span class="hm-lbl">რეიტინგი</span></div>
+            <div class="hm"><span class="hm-val" data-cnt="47" data-sfx="+">0</span><span class="hm-lbl">შეფასება</span></div>
+            <div class="hm"><span class="hm-val">7/7</span><span class="hm-lbl">სამუშაო დღე</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ ORNAMENT ═══ -->
+<div class="orn rv">
+    <svg viewBox="0 0 800 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0" y1="25" x2="310" y2="25" stroke="currentColor" stroke-width="0.5" opacity="0.25"/>
+        <line x1="490" y1="25" x2="800" y2="25" stroke="currentColor" stroke-width="0.5" opacity="0.25"/>
+        <g transform="translate(400,25)">
+            <path d="M0,-10 L7,0 L0,10 L-7,0 Z" fill="currentColor" opacity="0.18"/>
+            <circle r="4" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.3"/>
+            <path d="M-7,0 C-18,-14 -38,-10 -50,-6 C-62,-2 -75,0 -90,0" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.2"/>
+            <path d="M7,0 C18,-14 38,-10 50,-6 C62,-2 75,0 90,0" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.2"/>
+            <circle cx="-36" cy="-10" r="2" fill="currentColor" opacity="0.12"/>
+            <circle cx="36" cy="-10" r="2" fill="currentColor" opacity="0.12"/>
+            <circle cx="-70" cy="-2" r="1.5" fill="currentColor" opacity="0.10"/>
+            <circle cx="70" cy="-2" r="1.5" fill="currentColor" opacity="0.10"/>
+        </g>
+    </svg>
+</div>
+
+<!-- ═══ MARQUEE ═══ -->
+<div class="mrq">
+    <div class="mrq-track">
+        <span class="mrq-item"><span class="mrq-gem"></span>Smile Design</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>იმპლანტაცია</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>ესთეტიკა</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>ორთოდონტია</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>ბლიჩინგი</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>ვინირები</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>პროფილაქტიკა</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>კონტურინგი</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>Smile Design</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>იმპლანტაცია</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>ესთეტიკა</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>ორთოდონტია</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>ბლიჩინგი</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>ვინირები</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>პროფილაქტიკა</span>
+        <span class="mrq-item"><span class="mrq-gem"></span>კონტურინგი</span>
+    </div>
+</div>
+
+<!-- ═══ SERVICES ═══ -->
+<section id="svc">
+    <div class="c">
+        <div class="s-head rv">
+            <span class="s-tag">სერვისები</span>
+            <h2 class="s-title">სრული სტომატოლოგიური<br><em>მომსახურება</em></h2>
+            <p class="s-sub">ერთ სივრცეში — ყველაფერი რაც თქვენი ღიმილის ჯანმრთელობასა და სილამაზეს სჭირდება.</p>
+        </div>
+        <div class="svc-grid">
+            <div class="svc-c rv"><div class="svc-head"><div class="svc-ico a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M11 3l-3 6h8l-3-6"/><path d="M2 9h20"/></svg></div><span class="svc-num">01</span></div><h3>ესთეტიკური სტომატოლოგია</h3><p>ვინირები, ბლიჩინგი და Smile Design — სრულყოფილი ღიმილის შექმნა.</p><span class="svc-pill">პოპულარული</span></div>
+
+            <div class="svc-c rv" data-d="1"><div class="svc-head"><div class="svc-ico b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4M4.22 4.22l2.83 2.83m9.9 9.9l2.83 2.83M1 12h4m14 0h4M4.22 19.78l2.83-2.83m9.9-9.9l2.83-2.83"/></svg></div><span class="svc-num">02</span></div><h3>დენტალური იმპლანტაცია</h3><p>წამყვანი მწარმოებლის იმპლანტები — უსაფრთხო, გრძელვადიანი.</p><span class="svc-pill">პრემიუმ</span></div>
+
+            <div class="svc-c rv" data-d="2"><div class="svc-head"><div class="svc-ico c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><span class="svc-num">03</span></div><h3>ორთოდონტია</h3><p>ბრეკეტ-სისტემები და გამჭვირვალე ალაინერებით კბილების რიგის კორექცია.</p><span class="svc-pill">ალაინერები</span></div>
+
+            <div class="svc-c rv" data-d="1"><div class="svc-head"><div class="svc-ico b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div><span class="svc-num">04</span></div><h3>ენდოდონტია</h3><p>ფესვის არხების მკურნალობა მიკროსკოპის ქვეშ, მაქსიმალური სიზუსტით.</p><span class="svc-pill">მიკროსკოპი</span></div>
+
+            <div class="svc-c rv" data-d="2"><div class="svc-head"><div class="svc-ico a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><span class="svc-num">05</span></div><h3>პროფილაქტიკა</h3><p>პროფესიონალური ჰიგიენა, სკეილინგი და პერიოდული შემოწმება.</p><span class="svc-pill">ჰიგიენა</span></div>
+
+            <div class="svc-c rv" data-d="3"><div class="svc-head"><div class="svc-ico c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><span class="svc-num">06</span></div><h3>კოსმეტიკური პროცედურები</h3><p>ბოტოქსი, ფილერები, სახის კონტურინგი — სრული ესთეტიკა.</p><span class="svc-pill">ესთეტიკა</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ ORNAMENT ═══ -->
+<div class="orn rv">
+    <svg viewBox="0 0 800 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0" y1="25" x2="310" y2="25" stroke="currentColor" stroke-width="0.5" opacity="0.25"/>
+        <line x1="490" y1="25" x2="800" y2="25" stroke="currentColor" stroke-width="0.5" opacity="0.25"/>
+        <g transform="translate(400,25)">
+            <circle r="6" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.2"/>
+            <circle r="2" fill="currentColor" opacity="0.15"/>
+            <path d="M-6,0 Q-15,-10 -30,-7 Q-50,-4 -70,0 Q-50,4 -30,7 Q-15,10 -6,0" fill="none" stroke="currentColor" stroke-width="0.4" opacity="0.15"/>
+            <path d="M6,0 Q15,-10 30,-7 Q50,-4 70,0 Q50,4 30,7 Q15,10 6,0" fill="none" stroke="currentColor" stroke-width="0.4" opacity="0.15"/>
+        </g>
+    </svg>
+</div>
+
+<!-- ═══ ABOUT ═══ -->
+<section id="abt">
+    <div class="c">
+        <div class="abt-grid">
+            <div class="abt-txt">
+                <span class="s-tag rv">ჩვენ შესახებ</span>
+                <h2 class="s-title rv" data-d="1">რატომ <em>Dream Dental?</em></h2>
+                <p class="rv" data-d="2"><strong>Dream Dental & Aesthetic Group</strong> — ნიკოლოზ ბარათაშვილის ქუჩაზე მდებარე პრემიუმ კლინიკა, სადაც თანამედროვე ტექნოლოგიები და ადამიანური სითბო ერთმანეთს ხვდება.</p>
+                <p class="rv" data-d="2">ყველა პაციენტისთვის — ინდივიდუალური მკურნალობის გეგმა, კომფორტული გარემო და გამორჩეული შედეგი.</p>
+                <div class="feat-row rv" data-d="3">
+                    <div class="feat-item"><div class="fi-ico a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span>თანამედროვე აღჭურვილობა</span></div>
+                    <div class="feat-item"><div class="fi-ico b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span>კვალიფიციური გუნდი</span></div>
+                    <div class="feat-item"><div class="fi-ico c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><span>NFC & ბარათით გადახდა</span></div>
+                    <div class="feat-item"><div class="fi-ico a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><span>7 დღე კვირაში, 10–22</span></div>
+                </div>
+            </div>
+            <div class="stat-col rv" data-d="2">
+                <div class="stat-box"><div class="stat-val" data-cnt="4.7">0</div><div class="stat-lbl">Google რეიტინგი</div></div>
+                <div class="stat-box"><div class="stat-val" data-cnt="47" data-sfx="+">0</div><div class="stat-lbl">კმაყოფილი პაციენტი</div></div>
+                <div class="stat-box"><div class="stat-val" data-cnt="12" data-sfx="+">0</div><div class="stat-lbl">საათი ყოველდღე</div></div>
+                <div class="stat-box"><div class="stat-val" data-cnt="100" data-sfx="%">0</div><div class="stat-lbl">5★ რეკომენდაცია</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ PROCESS ═══ -->
+<section id="proc">
+    <div class="c">
+        <div class="s-head rv">
+            <span class="s-tag">პროცესი</span>
+            <h2 class="s-title">თქვენი <em>გამოცდილება</em></h2>
+            <p class="s-sub">პირველი ზარიდან ოცნების ღიმილამდე — მარტივი და კომფორტული.</p>
+        </div>
+        <div class="tl">
+            <div class="tl-step rv"><div class="tl-dot"></div><div class="tl-num">ნაბიჯი 01</div><h4>ჩაწერა</h4><p>დარეკეთ 579 50 10 10 — ადმინისტრატორი დაგეხმარებათ ვიზიტის დაგეგმვაში.</p></div>
+            <div class="tl-step rv" data-d="1"><div class="tl-dot"></div><div class="tl-num">ნაბიჯი 02</div><h4>კონსულტაცია</h4><p>ექიმი შეისწავლის თქვენს სიტუაციას, ჩატარდება გამოკვლევა და შედგება გეგმა.</p></div>
+            <div class="tl-step rv" data-d="2"><div class="tl-dot"></div><div class="tl-num">ნაბიჯი 03</div><h4>მკურნალობა</h4><p>თანამედროვე აღჭურვილობა, მაღალი ხარისხი და კომფორტი პროცედურის დროს.</p></div>
+            <div class="tl-step rv" data-d="3"><div class="tl-dot"></div><div class="tl-num">ნაბიჯი 04</div><h4>შედეგი</h4><p>თქვენი ოცნების ღიმილი მზადაა. რეგულარული შემოწმება — ხანგრძლივი ეფექტი.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ ORNAMENT ═══ -->
+<div class="orn rv">
+    <svg viewBox="0 0 800 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <line x1="0" y1="25" x2="340" y2="25" stroke="currentColor" stroke-width="0.5" opacity="0.25"/>
+        <line x1="460" y1="25" x2="800" y2="25" stroke="currentColor" stroke-width="0.5" opacity="0.25"/>
+        <g transform="translate(400,25)">
+            <path d="M-8,0 L0,-8 L8,0 L0,8 Z" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.25"/>
+            <circle r="2.5" fill="currentColor" opacity="0.15"/>
+            <circle cx="-50" cy="0" r="1.2" fill="currentColor" opacity="0.10"/>
+            <circle cx="50" cy="0" r="1.2" fill="currentColor" opacity="0.10"/>
+        </g>
+    </svg>
+</div>
+
+<!-- ═══ REVIEWS ═══ -->
+<section id="rev">
+    <div class="c">
+        <div class="s-head rv">
+            <span class="s-tag">შეფასებები</span>
+            <h2 class="s-title">რას ამბობენ <em>პაციენტები</em></h2>
+        </div>
+        <div class="rev-score rv">
+            <div class="rev-score-s">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <div class="rev-score-v">4.7 / 5.0</div>
+            <div class="rev-score-cnt">47 შეფასების საფუძველზე</div>
+        </div>
+        <div class="rev-wrap rv" data-d="1">
+            <div class="rev-card on" data-idx="0">
+                <div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <div class="rev-text">„ძალიან დიდი მადლობა Dream Dental & Aesthetic-ის პროფესიონალთა გუნდს. უდიდესი რეკომენდაცია ჩემგან. მადლობა ადმინისტრატორ ნათიას და ბაჩო ექიმს, რომლის პროფესიონალიზმი და საოცარი გულისხმიერი დამოკიდებულება ყველა პაციენტს სასიამოვნოდ გააოცებს."</div>
+                <div class="rev-av">TG</div>
+                <div class="rev-author">Tamar Gervais</div>
+                <div class="rev-when">4 თვის წინ</div>
+                <div class="rev-reply-box"><small>კლინიკის პასუხი</small><p>მადლობა მთელი გუნდის სახელით</p></div>
+            </div>
+            <div class="rev-card" data-idx="1">
+                <div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <div class="rev-text">„დღეს ვიყავი Dream Dental & Aesthetic Group-ში კბილების გაწმენდასთან დაკავშირებით და მინდა გითხრათ, რომ ძალიან კმაყოფილი დავრჩი. პროფესიონალი და ყურადღებიანი გუნდი, სუფთა გარემო და მშვიდი ატმოსფერო."</div>
+                <div class="rev-av">LP</div>
+                <div class="rev-author">Luka Phanchulidze</div>
+                <div class="rev-when">ერთი თვის წინ</div>
+                <div class="rev-reply-box"><small>კლინიკის პასუხი</small><p>დიდი მადლობა, მოკითხავთ</p></div>
+            </div>
+            <div class="rev-card" data-idx="2">
+                <div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <div class="rev-text">„ძალიან კმაყოფილი ვარ კლინიკის მომსახურეობით, სტაფით და სისუფთავით. მადლობა კვალიფიციურ ექიმებს და ადმინისტრატორებს ანანოს და ნინის. ვუწევ რეკომენდაციას დრიმ დენტალ გრუფს!"</div>
+                <div class="rev-av">V4</div>
+                <div class="rev-author">v4mP</div>
+                <div class="rev-when">3 კვირის წინ</div>
+                <div class="rev-reply-box"><small>კლინიკის პასუხი</small><p>მადლობა შეფასებისთვის</p></div>
+            </div>
+            <div class="rev-nav">
+                <button class="rev-btn" id="revPrev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+                <button class="rev-btn" id="revNext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ GALLERY ═══ -->
+<section id="gal">
+    <div class="c">
+        <div class="s-head rv">
+            <span class="s-tag">გალერეა</span>
+            <h2 class="s-title">კლინიკის <em>სივრცე</em></h2>
+            <p class="s-sub">თანამედროვე, კომფორტული და სუფთა გარემო.</p>
+        </div>
+        <div class="gal-grid">
+            <div class="gal-i rv" onclick="openLB(this)"><img src="https://lh3.googleusercontent.com/p/AF1QipMnwRDro-R4PuKB2F2XWysspf_4O7pjaLNLoNFP=w800-h600-k-no" alt="მთავარი" loading="lazy"><span class="gal-lbl">მთავარი</span></div>
+            <div class="gal-i rv" data-d="1" onclick="openLB(this)"><img src="https://lh3.googleusercontent.com/p/AF1QipMsjaG0ccTXVbC-JbFbBokm7YoY9MW5d6nNZ18x=w800-h600-k-no" alt="ინტერიერი" loading="lazy"><span class="gal-lbl">ინტერიერი</span></div>
+            <div class="gal-i rv" data-d="2" onclick="openLB(this)"><img src="https://lh3.googleusercontent.com/p/AF1QipMC6WjiwuPDEpxdQq6PkDNgJp1spiS72NpZV4m3=w800-h600-k-no" alt="აღჭურვილობა" loading="lazy"><span class="gal-lbl">აღჭურვილობა</span></div>
+            <div class="gal-i rv" data-d="1" onclick="openLB(this)"><img src="https://lh3.googleusercontent.com/gps-cs-s/AHVAwepcI6pdTUByHLjZSd2Gp_sNrFXn-e6N5I4vV0uk6AZOgRiT9MRcGfWn2CILTxggOWFAE1Yj-y5_RcrfobyVDbQheQxLrGit1VNrtOPtHkrnje2O0AuSto0L8P-Xo8ZEQNt0garZ=w800-h600-k-no" alt="გარემო" loading="lazy"><span class="gal-lbl">გარემო</span></div>
+            <div class="gal-i rv" data-d="2" onclick="openLB(this)"><img src="https://lh3.googleusercontent.com/gps-cs-s/AHVAweqWgEHtrYtaipf3SoFZitgYFKteiHwg4GjOl6QlHzNGx0kTmVhjgVde6hqKxgA7jZt0tMiMc80zqnzsQxVYuGTpB92ZLs1L4AIn8buCPLOHtxq5VDwO8Fv5kTx_UtZlb9w1LRIMTQ=w800-h600-k-no" alt="პროცესი" loading="lazy"><span class="gal-lbl">პროცესი</span></div>
+            <div class="gal-i rv" data-d="3" onclick="openLB(this)"><img src="https://lh3.googleusercontent.com/p/AF1QipMgMr0pTv0GLCayTye41bDRCGV9_H9LXn0Mm1Vh=w800-h600-k-no" alt="ოფისი" loading="lazy"><span class="gal-lbl">ოფისი</span></div>
+            <div class="gal-i rv" data-d="2" onclick="openLB(this)"><img src="https://lh3.googleusercontent.com/gps-cs-s/AHVAwerifr_x6erf9KwyeKUC-aU9pN6NUHZIWjNIvrlr_r7wMc712GS6GHxmUHAbzr4axXYiI52Z3MAqcgb76QaaKfTD2jEM0Ijh_mguN861zikZP31Y0mynXPwq-4_0-B0StRvIcxGUHa2onMlA=w800-h600-k-no" alt="ტექნოლოგიები" loading="lazy"><span class="gal-lbl">ტექნოლოგიები</span></div>
+            <div class="gal-i rv" data-d="3" onclick="openLB(this)"><img src="https://lh3.googleusercontent.com/p/AF1QipPB0JJKBbBmcmzgbWD1nv_Od97UqfuPi0Moh2Nr=w800-h600-k-no" alt="მომსახურება" loading="lazy"><span class="gal-lbl">მომსახურება</span></div>
+        </div>
+    </div>
+</section>
+<div class="lb" id="lb"><button class="lb-x" onclick="closeLB()">&times;</button><img id="lbImg" src="" alt=""></div>
+
+<!-- ═══ HOURS & CONTACT ═══ -->
+<section id="hrs">
+    <div class="c">
+        <div class="s-head rv">
+            <span class="s-tag">კონტაქტი</span>
+            <h2 class="s-title">სად <em>გველოდებით</em></h2>
+            <p class="s-sub">თბილისის ცენტრი, ბარათაშვილის ქუჩა.</p>
+        </div>
+        <div class="hm-grid">
+            <div>
+                <div class="hm-card rv">
+                    <div class="hm-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>სამუშაო საათები</div>
+                    <div id="hrsTable">
+                        <div class="hm-r" data-day="1"><span class="hm-d">ორშაბათი</span><span class="hm-t">10:00 – 22:00</span></div>
+                        <div class="hm-r" data-day="2"><span class="hm-d">სამშაბათი</span><span class="hm-t">10:00 – 22:00</span></div>
+                        <div class="hm-r" data-day="3"><span class="hm-d">ოთხშაბათი</span><span class="hm-t">10:00 – 22:00</span></div>
+                        <div class="hm-r" data-day="4"><span class="hm-d">ხუთშაბათი</span><span class="hm-t">10:00 – 22:00</span></div>
+                        <div class="hm-r" data-day="5"><span class="hm-d">პარასკევი</span><span class="hm-t">10:00 – 22:00</span></div>
+                        <div class="hm-r" data-day="6"><span class="hm-d">შაბათი</span><span class="hm-t">10:00 – 22:00</span></div>
+                        <div class="hm-r" data-day="0"><span class="hm-d">კვირა</span><span class="hm-t">10:00 – 22:00</span></div>
+                    </div>
+                </div>
+                <div class="ci-row">
+                    <a href="tel:+995579501010" class="ci rv"><div class="ci-ic a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><div><small>ტელეფონი</small><strong>579 50 10 10</strong></div></a>
+                    <a href="https://www.google.com/maps/place/Dream+Dental+%26+Aesthetic+Group/" target="_blank" rel="noopener noreferrer" class="ci rv" data-d="1"><div class="ci-ic b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><small>მისამართი</small><strong>ბარათაშვილის 6-8-10, თბილისი</strong></div></a>
+                    <a href="https://www.google.com/maps/place/Dream+Dental+%26+Aesthetic+Group/" target="_blank" rel="noopener noreferrer" class="ci rv" data-d="2"><div class="ci-ic c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></div><div><small>Google Maps</small><strong>მიმართულება &rarr;</strong></div></a>
+                    <div class="ci rv" data-d="3"><div class="ci-ic a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><small>გადახდა</small><strong>NFC, Visa, MasterCard</strong></div></div>
+                </div>
+            </div>
+            <div class="rv" data-d="2">
+                <div class="map-fr"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2978.1!2d44.8059267!3d41.6968658!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40440ce459de1c6f%3A0xb61cf141bfeefbe!2sDream%20Dental%20%26%20Aesthetic%20Group!5e0!3m2!1ska!2sge!4v1710000000000" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Dream Dental"></iframe></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FAQ ═══ -->
+<section id="faq">
+    <div class="c">
+        <div class="s-head rv">
+            <span class="s-tag">FAQ</span>
+            <h2 class="s-title">ხშირად დასმული <em>კითხვები</em></h2>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item rv"><button class="faq-q" onclick="tFaq(this)">რა სერვისებს გთავაზობთ?<span class="faq-plus">+</span></button><div class="faq-a"><div class="faq-a-in">ესთეტიკური სტომატოლოგია (ვინირები, ბლიჩინგი, Smile Design), იმპლანტაცია, ორთოდონტია, ენდოდონტია, პროფილაქტიკა და კოსმეტიკური პროცედურები.</div></div></div>
+            <div class="faq-item rv" data-d="1"><button class="faq-q" onclick="tFaq(this)">როგორია სამუშაო გრაფიკი?<span class="faq-plus">+</span></button><div class="faq-a"><div class="faq-a-in">ყოველდღე, კვირის 7 დღე, 10:00-დან 22:00-მდე.</div></div></div>
+            <div class="faq-item rv" data-d="1"><button class="faq-q" onclick="tFaq(this)">რა გადახდის მეთოდებს იღებთ?<span class="faq-plus">+</span></button><div class="faq-a"><div class="faq-a-in">ნაღდი ანგარიშსწორება, Visa, MasterCard, NFC (Apple Pay, Google Pay).</div></div></div>
+            <div class="faq-item rv" data-d="2"><button class="faq-q" onclick="tFaq(this)">საჭიროა წინასწარი ჩაწერა?<span class="faq-plus">+</span></button><div class="faq-a"><div class="faq-a-in">რეკომენდებულია. დარეკეთ 579 50 10 10 ან ეწვიეთ კლინიკას.</div></div></div>
+            <div class="faq-item rv" data-d="2"><button class="faq-q" onclick="tFaq(this)">რამდენი ხანი გრძელდება პირველი ვიზიტი?<span class="faq-plus">+</span></button><div class="faq-a"><div class="faq-a-in">კონსულტაცია + გამოკვლევა — 30-60 წუთი.</div></div></div>
+            <div class="faq-item rv" data-d="3"><button class="faq-q" onclick="tFaq(this)">მუშაობთ საბავშვო სტომატოლოგიაზე?<span class="faq-plus">+</span></button><div class="faq-a"><div class="faq-a-in">დიახ, ვემსახურებით ყველა ასაკის პაციენტს.</div></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-sec">
+    <div class="c">
+        <div class="cta-box rv-clip">
+            <div class="cta-in">
+                <span class="s-tag">მზად ხართ?</span>
+                <h2 class="s-title" style="margin-bottom:14px">დაჯავშნეთ <em>ვიზიტი</em> დღეს</h2>
+                <p class="s-sub" style="margin:0 auto 36px">პირველი ნაბიჯი ოცნების ღიმილისკენ.</p>
+                <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center">
+                    <a href="tel:+995579501010" class="btn-gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>579 50 10 10</a>
+                    <a href="https://www.google.com/maps/place/Dream+Dental+%26+Aesthetic+Group/" target="_blank" rel="noopener noreferrer" class="btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>მიმართულება</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+    <div class="c">
+        <div class="ft-grid">
+            <div class="ft-brand">
+                <a href="#" class="nav-logo"><div class="nav-diamond"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-1.5 0-3 1.5-3.5 3.5-.4 2 0 4 .7 6 .4 1 1 2 1.7 2.8.3.4.7.7 1.1.7s.8-.3 1.1-.7c.7-.8 1.3-1.8 1.7-2.8.7-2 1.1-4 .7-6C15 6.5 13.5 5 12 5z"/></svg></div><span class="nav-name">Dream Dental</span></a>
+                <p>პრემიუმ სტომატოლოგიური და ესთეტიკური მომსახურება თბილისის გულში.</p>
+            </div>
+            <div class="ft-col"><h4>სერვისები</h4><a href="#svc">ესთეტიკური</a><a href="#svc">იმპლანტაცია</a><a href="#svc">ორთოდონტია</a><a href="#svc">პროფილაქტიკა</a></div>
+            <div class="ft-col"><h4>კლინიკა</h4><a href="#abt">ჩვენ შესახებ</a><a href="#rev">შეფასებები</a><a href="#gal">გალერეა</a><a href="#faq">FAQ</a></div>
+            <div class="ft-col"><h4>კონტაქტი</h4><a href="tel:+995579501010">579 50 10 10</a><a href="#hrs">10:00 – 22:00</a><a href="https://www.google.com/maps/place/Dream+Dental+%26+Aesthetic+Group/" target="_blank" rel="noopener noreferrer">ბარათაშვილის 6-8-10</a></div>
+        </div>
+        <div class="ft-bot"><span>&copy; 2026 Dream Dental & Aesthetic Group</span></div>
+    </div>
+</footer>
+
+<button class="up" id="upBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg></button>
+
+</div><!-- /page -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ═══ PRELOADER ═══ */
+window.addEventListener('load',function(){setTimeout(function(){document.getElementById('pre').classList.add('off')},500)});
+
+/* ═══ THEME ═══ */
+var H=document.documentElement,sv=localStorage.getItem('dd5-theme');
+if(sv)H.setAttribute('data-theme',sv);
+document.getElementById('tBtn').addEventListener('click',function(){
+    var n=H.getAttribute('data-theme')==='dark'?'light':'dark';
+    H.setAttribute('data-theme',n);localStorage.setItem('dd5-theme',n);
+    updateScene(n);
+});
+
+/* ═══ SCROLL PROGRESS ═══ */
+var prog=document.getElementById('prog');
+function updateProg(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    prog.style.width=h>0?((window.scrollY/h)*100)+'%':'0%';
+}
+
+/* ═══ CURSOR ═══ */
+var ring=document.getElementById('cRing'),dot=document.getElementById('cDot');
+var rx=0,ry=0,dx=0,dy=0,mx=0,my=0;
+if(window.matchMedia('(pointer:fine)').matches){
+    document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY});
+    (function cLoop(){
+        rx+=(mx-rx)*0.09;ry+=(my-ry)*0.09;
+        dx+=(mx-dx)*0.25;dy+=(my-dy)*0.25;
+        ring.style.left=rx+'px';ring.style.top=ry+'px';
+        dot.style.left=dx+'px';dot.style.top=dy+'px';
+        requestAnimationFrame(cLoop);
+    })();
+    document.querySelectorAll('a,button,[data-cur]').forEach(function(el){
+        el.addEventListener('mouseenter',function(){ring.classList.add('act')});
+        el.addEventListener('mouseleave',function(){ring.classList.remove('act')});
+    });
+}
+
+/* ═══ NAV ═══ */
+var nav=document.getElementById('nav'),bur=document.getElementById('bur'),mPan=document.getElementById('mPan'),mOv=document.getElementById('mOv');
+var upBtn=document.getElementById('upBtn');
+window.addEventListener('scroll',function(){
+    nav.classList.toggle('scrolled',window.scrollY>60);
+    upBtn.classList.toggle('vis',window.scrollY>500);
+    updateProg();
+    updateSideDots();
+});
+function togMob(){bur.classList.toggle('on');mPan.classList.toggle('on');mOv.classList.toggle('on');document.body.style.overflow=mPan.classList.contains('on')?'hidden':''}
+bur.addEventListener('click',togMob);mOv.addEventListener('click',togMob);
+document.querySelectorAll('.m-pan a').forEach(function(a){a.addEventListener('click',function(){if(mPan.classList.contains('on'))togMob()})});
+
+/* ═══ SIDE NAV ═══ */
+var sideDots=document.querySelectorAll('.side-dot');
+var sections=['hero','svc','abt','proc','rev','gal','hrs'];
+function updateSideDots(){
+    var cur='hero';
+    for(var i=0;i<sections.length;i++){
+        var el=document.getElementById(sections[i]);
+        if(el&&el.getBoundingClientRect().top<window.innerHeight*0.4)cur=sections[i];
+    }
+    sideDots.forEach(function(d){d.classList.toggle('on',d.getAttribute('data-s')===cur)});
+}
+sideDots.forEach(function(d){
+    d.addEventListener('click',function(){
+        var t=document.getElementById(d.getAttribute('data-s'));
+        if(t)window.scrollTo({top:t.getBoundingClientRect().top+window.pageYOffset-70,behavior:'smooth'});
+    });
+});
+
+/* ═══ THREE.JS — CALMING 3D SCENE ═══ */
+var canvas=document.getElementById('c3d'),sceneMats={};
+function updateScene(theme){
+    var dk=theme==='dark';
+    if(sceneMats.icoM)sceneMats.icoM.opacity=dk?0.12:0.08;
+    if(sceneMats.tkM)sceneMats.tkM.opacity=dk?0.10:0.06;
+    if(sceneMats.sphM)sceneMats.sphM.opacity=dk?0.06:0.04;
+    if(sceneMats.fog)sceneMats.fog.color.set(dk?0x0c0a09:0xfaf6f1);
+    if(sceneMats.ren)sceneMats.ren.setClearColor(dk?0x0c0a09:0xfaf6f1,1);
+}
+
+if(canvas&&typeof THREE!=='undefined'){
+    var isMob=window.innerWidth<768;
+    var W=window.innerWidth,Ht=window.innerHeight;
+    var scene=new THREE.Scene();
+    scene.fog=new THREE.FogExp2(0x0c0a09,0.012);
+    sceneMats.fog=scene.fog;
+
+    var cam=new THREE.PerspectiveCamera(55,W/Ht,0.1,600);
+    cam.position.set(0,0,isMob?42:34);
+
+    var ren=new THREE.WebGLRenderer({canvas:canvas,alpha:false,antialias:!isMob});
+    ren.setSize(W,Ht);ren.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    ren.setClearColor(0x0c0a09,1);
+    sceneMats.ren=ren;
+
+    /* Lights */
+    var ambL=new THREE.AmbientLight(0x331a10,0.4);scene.add(ambL);
+    var pt1=new THREE.PointLight(0xc53030,1.0,90);pt1.position.set(15,10,20);scene.add(pt1);
+    var pt2=new THREE.PointLight(0xd69e2e,0.5,90);pt2.position.set(-15,-8,18);scene.add(pt2);
+    var pt3=new THREE.PointLight(0xf5e6d3,0.3,70);pt3.position.set(0,15,-10);scene.add(pt3);
+
+    /* Morphing Icosahedron (main blob) */
+    var icoGeo=new THREE.IcosahedronGeometry(isMob?6:8,4);
+    var icoM=new THREE.MeshStandardMaterial({color:0xc53030,transparent:true,opacity:0.12,roughness:0.15,metalness:0.85,side:THREE.DoubleSide});
+    sceneMats.icoM=icoM;
+    var ico=new THREE.Mesh(icoGeo,icoM);scene.add(ico);
+    var icoOrig=icoGeo.attributes.position.array.slice();
+
+    /* Wireframe clone for depth */
+    var icoWire=new THREE.Mesh(icoGeo.clone(),new THREE.MeshBasicMaterial({color:0xc53030,wireframe:true,transparent:true,opacity:0.04}));
+    icoWire.scale.set(1.02,1.02,1.02);scene.add(icoWire);
+
+    /* Torus Knot */
+    var tkGeo=new THREE.TorusKnotGeometry(isMob?4:5.5,0.6,100,16,2,3);
+    var tkM=new THREE.MeshStandardMaterial({color:0xd69e2e,transparent:true,opacity:0.10,roughness:0.2,metalness:0.8,wireframe:true});
+    sceneMats.tkM=tkM;
+    var tk=new THREE.Mesh(tkGeo,tkM);tk.position.set(isMob?8:14,-3,isMob?-5:-8);scene.add(tk);
+
+    /* Sphere */
+    var sphGeo=new THREE.SphereGeometry(isMob?3:4,28,28);
+    var sphM=new THREE.MeshStandardMaterial({color:0xf5e6d3,transparent:true,opacity:0.06,roughness:0.3,metalness:0.7,wireframe:true});
+    sceneMats.sphM=sphM;
+    var sph=new THREE.Mesh(sphGeo,sphM);sph.position.set(isMob?-7:-12,5,isMob?-3:-6);scene.add(sph);
+
+    /* Small floating octahedrons */
+    var floaters=[];
+    var fN=isMob?6:14;
+    for(var fi=0;fi<fN;fi++){
+        var fGeo=new THREE.OctahedronGeometry(Math.random()*0.5+0.2,0);
+        var fMat=new THREE.MeshStandardMaterial({
+            color:[0xc53030,0xd69e2e,0xf5e6d3,0xffffff][fi%4],
+            transparent:true,opacity:0.08+Math.random()*0.06,
+            roughness:0.3,metalness:0.7
+        });
+        var fM=new THREE.Mesh(fGeo,fMat);
+        fM.position.set((Math.random()-0.5)*40,(Math.random()-0.5)*30,(Math.random()-0.5)*20);
+        fM.userData={speed:0.0003+Math.random()*0.001,axis:new THREE.Vector3(Math.random()-0.5,Math.random()-0.5,Math.random()-0.5).normalize(),oy:fM.position.y};
+        scene.add(fM);floaters.push(fM);
+    }
+
+    /* Animation vars */
+    var mxS=0,myS=0,sY=0;
+    document.addEventListener('mousemove',function(e){mxS=(e.clientX/W-0.5)*2;myS=(e.clientY/Ht-0.5)*2});
+    window.addEventListener('scroll',function(){sY=window.pageYOffset});
+
+    function animate(){
+        requestAnimationFrame(animate);
+        var t=performance.now()*0.001;
+
+        /* Morph icosahedron vertices */
+        var pos=ico.geometry.attributes.position;
+        for(var i=0;i<pos.count;i++){
+            var ox=icoOrig[i*3],oy=icoOrig[i*3+1],oz=icoOrig[i*3+2];
+            var len=Math.sqrt(ox*ox+oy*oy+oz*oz);
+            if(len===0)continue;
+            var nx=ox/len,ny=oy/len,nz=oz/len;
+            var disp=Math.sin(nx*2.5+t*0.7)*Math.sin(ny*2.5+t*0.55)*Math.sin(nz*2.5+t*0.4)*0.4;
+            pos.array[i*3]=ox+nx*disp;
+            pos.array[i*3+1]=oy+ny*disp;
+            pos.array[i*3+2]=oz+nz*disp;
+        }
+        pos.needsUpdate=true;
+        ico.geometry.computeVertexNormals();
+
+        /* Sync wireframe */
+        icoWire.geometry.attributes.position.array.set(pos.array);
+        icoWire.geometry.attributes.position.needsUpdate=true;
+
+        /* Rotations */
+        ico.rotation.y+=0.0008;ico.rotation.x+=0.0003;
+        icoWire.rotation.copy(ico.rotation);
+        tk.rotation.x+=0.001;tk.rotation.y+=0.0005;
+        sph.rotation.y-=0.0007;sph.rotation.z+=0.0004;
+
+        /* Float small shapes */
+        for(var fi=0;fi<floaters.length;fi++){
+            var f=floaters[fi];
+            f.rotation.x+=f.userData.speed*2;
+            f.rotation.y+=f.userData.speed*3;
+            f.position.y=f.userData.oy+Math.sin(t*0.5+fi)*0.8;
+        }
+
+        /* Orbit lights slowly */
+        pt1.position.x=Math.sin(t*0.2)*16;pt1.position.z=Math.cos(t*0.2)*20;
+        pt2.position.x=Math.cos(t*0.15)*15;pt2.position.z=Math.sin(t*0.15)*18;
+
+        /* Scroll-based camera shift */
+        var pH=Math.max(document.body.scrollHeight-Ht,1);
+        var sf=sY/pH;
+        cam.position.y=-sf*12;
+        cam.position.x=Math.sin(sf*Math.PI)*3;
+
+        /* Mouse influence */
+        ico.rotation.y+=(mxS*0.02-ico.rotation.y)*0.003;
+        ico.rotation.x+=(-myS*0.02-ico.rotation.x)*0.003;
+
+        ren.render(scene,cam);
+    }
+    animate();
+
+    window.addEventListener('resize',function(){
+        W=window.innerWidth;Ht=window.innerHeight;
+        cam.aspect=W/Ht;cam.updateProjectionMatrix();ren.setSize(W,Ht);
+    });
+
+    /* Apply current theme to scene */
+    updateScene(H.getAttribute('data-theme'));
+}
+
+/* ═══ REVEAL ═══ */
+var ro=new IntersectionObserver(function(entries){entries.forEach(function(en){if(en.isIntersecting)en.target.classList.add('vis')})},{threshold:0.06,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.rv,.rv-clip,.rv-mask').forEach(function(el){ro.observe(el)});
+
+/* ═══ COUNTERS ═══ */
+var co=new IntersectionObserver(function(entries){entries.forEach(function(en){
+    if(!en.isIntersecting||en.target.dataset.counted)return;
+    en.target.dataset.counted='1';
+    var end=parseFloat(en.target.dataset.cnt),sfx=en.target.dataset.sfx||'',isF=end%1!==0,st=null;
+    function step(ts){if(!st)st=ts;var p=Math.min((ts-st)/1800,1),e=1-Math.pow(1-p,4),v=end*e;en.target.textContent=(isF?v.toFixed(1):Math.floor(v))+sfx;if(p<1)requestAnimationFrame(step)}
+    requestAnimationFrame(step);
+})},{threshold:0.5});
+document.querySelectorAll('[data-cnt]').forEach(function(c){co.observe(c)});
+
+/* ═══ REVIEW CAROUSEL ═══ */
+var revCards=document.querySelectorAll('.rev-card'),revIdx=0;
+function showRev(i){
+    revCards.forEach(function(c){c.classList.remove('on')});
+    revIdx=((i%revCards.length)+revCards.length)%revCards.length;
+    revCards[revIdx].classList.add('on');
+}
+document.getElementById('revNext').addEventListener('click',function(){showRev(revIdx+1)});
+document.getElementById('revPrev').addEventListener('click',function(){showRev(revIdx-1)});
+
+/* Auto-advance reviews */
+setInterval(function(){showRev(revIdx+1)},7000);
+
+/* ═══ LIGHTBOX ═══ */
+window.openLB=function(el){
+    var img=el.querySelector('img');if(!img)return;
+    document.getElementById('lbImg').src=img.src;
+    document.getElementById('lb').classList.add('on');
+    document.body.style.overflow='hidden';
+};
+window.closeLB=function(){
+    document.getElementById('lb').classList.remove('on');
+    document.body.style.overflow='';
+};
+document.getElementById('lb').addEventListener('click',function(e){if(e.target===this)closeLB()});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLB()});
+
+/* ═══ FAQ ═══ */
+window.tFaq=function(btn){
+    var item=btn.parentElement,ans=item.querySelector('.faq-a'),on=item.classList.contains('on');
+    document.querySelectorAll('.faq-item').forEach(function(f){f.classList.remove('on');f.querySelector('.faq-a').style.maxHeight='0'});
+    if(!on){item.classList.add('on');ans.style.maxHeight=ans.scrollHeight+'px'}
+};
+
+/* ═══ TODAY HIGHLIGHT ═══ */
+var td=new Date().getDay();
+document.querySelectorAll('.hm-r').forEach(function(r){if(parseInt(r.dataset.day)===td)r.classList.add('today')});
+
+/* ═══ SMOOTH SCROLL ═══ */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){
+        var h=this.getAttribute('href');if(h==='#')return;
+        var el=document.querySelector(h);
+        if(el){e.preventDefault();window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-70,behavior:'smooth'})}
+    });
+});
+
+})();
+</script>
+</body>
+</html>

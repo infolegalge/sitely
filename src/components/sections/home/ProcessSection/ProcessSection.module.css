@@ -1,0 +1,635 @@
+/* ═══════════════════════════════════════════
+   ProcessSection — Homepage §4
+   "How We Work" — Vertical Timeline
+
+   Inspired by dream-dental roadmap but
+   rebuilt for Sitely's cosmic glass aesthetic.
+
+   Features:
+   ‣ Animated gradient center line (scroll-fill)
+   ‣ Glass card panels (transparent, blur)
+   ‣ Pulse dot at each step
+   ‣ Alternating zigzag on desktop
+   ‣ SVG icons per step
+   ‣ Staggered reveal animations
+
+   Breakpoints:
+     base    → 0-479    left-aligned stack
+     480px   → 480-767  wider cards
+     768px   → 768-1023 alternating zigzag
+     1024px  → 1024+    larger gaps, 3D tilt
+     1280px  → 1280+    wider
+     1440px  → 1440+    cap
+   ═══════════════════════════════════════════ */
+
+/* ─── Section ─── */
+
+.section {
+  position: relative;
+  z-index: 1;
+  padding: 48px 14px;
+  max-width: var(--mw);
+  margin: 0 auto;
+}
+
+/* ─── Header ─── */
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.label {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.labelLine {
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--blue);
+  opacity: 0.5;
+}
+
+.title {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(1.6rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--tx);
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.subtitle {
+  font-family: var(--font-body, sans-serif);
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  line-height: 1.7;
+  color: var(--tx-2);
+}
+
+/* ─── Timeline container ─── */
+
+.timeline {
+  position: relative;
+  max-width: 780px;
+  margin: 0 auto;
+  padding-left: 28px;
+}
+
+/* ─── Timeline track (vertical line) ─── */
+
+.track {
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* Animated gradient fill — driven by scroll */
+.trackFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(
+    to bottom,
+    var(--blue),
+    var(--violet),
+    var(--cyan)
+  );
+  border-radius: 2px;
+  transition: height 0.15s linear;
+}
+
+/* Glow at the bottom of the fill */
+.trackFill::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow:
+    0 0 12px var(--cyan),
+    0 0 24px rgba(6, 214, 160, 0.3);
+  opacity: 0.9;
+}
+
+/* ─── Step ─── */
+
+.step {
+  position: relative;
+  padding-bottom: 40px;
+  padding-left: 32px;
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+/* ─── Dot on the timeline ─── */
+
+.dot {
+  position: absolute;
+  left: -28px;
+  top: 6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 12, 22, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition:
+    border-color 0.5s var(--ease),
+    background 0.5s var(--ease),
+    box-shadow 0.5s var(--ease);
+}
+
+.dot::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.5s var(--ease);
+}
+
+/* Active dot — when scroll fill reaches it */
+.dotActive {
+  border-color: var(--blue);
+  background: rgba(12, 12, 22, 0.9);
+  box-shadow:
+    0 0 12px rgba(79, 110, 247, 0.3),
+    0 0 24px rgba(79, 110, 247, 0.1);
+}
+
+.dotActive::after {
+  background: var(--blue);
+}
+
+/* Pulse ring on active dot */
+.dotPulse {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--blue);
+  opacity: 0;
+  animation: dotPulse 2.5s ease-out infinite;
+}
+
+@keyframes dotPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+/* ─── Step card (glass panel) ─── */
+
+.card {
+  position: relative;
+  padding: 20px;
+  border-radius: 16px;
+  background: rgba(12, 12, 22, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition:
+    border-color 0.4s var(--ease),
+    box-shadow 0.4s var(--ease),
+    transform 0.4s var(--ease);
+}
+
+.card:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Glow line at top of card */
+.cardGlow {
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--blue),
+    var(--violet),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+}
+
+.card:hover .cardGlow {
+  opacity: 0.6;
+}
+
+/* ─── Step number ─── */
+
+.stepNum {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: #fff;
+  opacity: 0.04;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── Icon ─── */
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  flex-shrink: 0;
+  transition: transform 0.4s var(--ease-bounce);
+}
+
+.card:hover .iconWrap {
+  transform: translateY(-2px) scale(1.06);
+}
+
+.accentBlue {
+  background: var(--blue-s);
+  color: var(--blue);
+}
+
+.accentViolet {
+  background: var(--violet-s);
+  color: var(--violet);
+}
+
+.accentCyan {
+  background: var(--cyan-s);
+  color: var(--cyan);
+}
+
+.accentGold {
+  background: rgba(234, 179, 8, 0.08);
+  color: #eab308;
+}
+
+/* ─── Content ─── */
+
+.stepLabel {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+
+.stepTitle {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 8px;
+  line-height: 1.2;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.stepDesc {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.84rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 14px;
+}
+
+/* ─── Tags ─── */
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.tag {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 3px 8px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ═══════════════════════════════════════════
+   480px+ — Larger mobile
+   ═══════════════════════════════════════════ */
+
+@media (min-width: 480px) {
+  .section {
+    padding: 56px 16px;
+  }
+
+  .header {
+    margin-bottom: 48px;
+  }
+
+  .timeline {
+    padding-left: 34px;
+  }
+
+  .track {
+    left: 10px;
+  }
+
+  .dot {
+    left: -34px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .step {
+    padding-left: 36px;
+    padding-bottom: 48px;
+  }
+
+  .card {
+    padding: 24px;
+    border-radius: 18px;
+  }
+
+  .iconWrap {
+    width: 46px;
+    height: 46px;
+  }
+
+  .stepNum {
+    font-size: 2.8rem;
+  }
+
+  .tag {
+    font-size: 0.58rem;
+    padding: 3px 9px;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   768px+ — Tablet (Alternating zigzag)
+   ═══════════════════════════════════════════ */
+
+@media (min-width: 768px) {
+  .section {
+    padding: 72px 20px;
+  }
+
+  .header {
+    margin-bottom: 56px;
+  }
+
+  .timeline {
+    padding-left: 0;
+  }
+
+  /* Center the track */
+  .track {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Steps are 45% wide, alternating sides */
+  .step {
+    padding-left: 0;
+    padding-bottom: 56px;
+    width: 45%;
+  }
+
+  .step:nth-child(odd) {
+    margin-left: 55%;
+    text-align: left;
+  }
+
+  .step:nth-child(even) {
+    margin-left: 0;
+    text-align: right;
+  }
+
+  /* Dot centering */
+  .dot {
+    left: auto;
+  }
+
+  .step:nth-child(odd) .dot {
+    left: -42px;
+  }
+
+  .step:nth-child(even) .dot {
+    right: -42px;
+    left: auto;
+  }
+
+  /* Card glass upgrade */
+  .card {
+    background: rgba(12, 12, 22, 0.30);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 28px;
+  }
+
+  /* Even cards: flip number position */
+  .step:nth-child(even) .stepNum {
+    right: auto;
+    left: 16px;
+  }
+
+  /* Even cards: right-align content */
+  .step:nth-child(even) .iconWrap {
+    margin-left: auto;
+  }
+
+  .step:nth-child(even) .tags {
+    justify-content: flex-end;
+  }
+
+  .iconWrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+  }
+
+  .stepTitle {
+    font-size: 1.2rem;
+  }
+
+  .stepDesc {
+    font-size: 0.88rem;
+  }
+
+  .tag {
+    font-size: 0.6rem;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   1024px+ — Desktop (larger, 3D tilt)
+   ═══════════════════════════════════════════ */
+
+@media (min-width: 1024px) {
+  .section {
+    padding: clamp(80px, 8vh, 110px) 24px;
+  }
+
+  .header {
+    margin-bottom: clamp(48px, 5vh, 72px);
+  }
+
+  .step {
+    padding-bottom: clamp(48px, 5vh, 72px);
+  }
+
+  .card {
+    background: rgba(12, 12, 22, 0.25);
+    padding: 32px;
+    transform-style: preserve-3d;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 16px 48px rgba(79, 110, 247, 0.08),
+      0 6px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  .stepTitle {
+    font-size: clamp(1.15rem, 1.5vw, 1.35rem);
+  }
+
+  .stepDesc {
+    font-size: 0.9rem;
+    max-width: 38ch;
+  }
+
+  /* Right-align desc for even */
+  .step:nth-child(even) .stepDesc {
+    margin-left: auto;
+  }
+
+  .stepNum {
+    font-size: 3.4rem;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   1280px+ — Wide desktop
+   ═══════════════════════════════════════════ */
+
+@media (min-width: 1280px) {
+  .card {
+    padding: 36px;
+  }
+
+  .stepNum {
+    font-size: 3.8rem;
+  }
+
+  .tag {
+    font-size: 0.62rem;
+    padding: 4px 10px;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   1440px+ — Cap
+   ═══════════════════════════════════════════ */
+
+@media (min-width: 1440px) {
+  .section {
+    padding: 100px 0;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   380px max — Small mobile
+   ═══════════════════════════════════════════ */
+
+@media (max-width: 380px) {
+  .section {
+    padding: 40px 10px;
+  }
+
+  .header {
+    margin-bottom: 32px;
+  }
+
+  .timeline {
+    padding-left: 24px;
+  }
+
+  .track {
+    left: 6px;
+  }
+
+  .dot {
+    left: -24px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .step {
+    padding-left: 28px;
+    padding-bottom: 32px;
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .stepTitle {
+    font-size: 0.95rem;
+  }
+
+  .stepNum {
+    font-size: 2rem;
+  }
+
+  .tag {
+    font-size: 0.52rem;
+  }
+}

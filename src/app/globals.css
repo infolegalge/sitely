@@ -5,9 +5,8 @@
    SITELY — "DIMENSION" Design System
    ============================================ */
 
-/* --- Dark Theme (Default) --- */
-:root,
-[data-theme="dark"] {
+/* --- Dark Theme (Only) --- */
+:root {
   --bg: #06060b;
   --bg-2: #0a0a12;
   --bg-3: #10101c;
@@ -34,36 +33,6 @@
   --grad-to: #8b5cf6;
   --noise-opacity: 0.025;
   color-scheme: dark;
-}
-
-/* --- Light Theme --- */
-[data-theme="light"] {
-  --bg: #f5f5fa;
-  --bg-2: #ebebf2;
-  --bg-3: #e0e0ea;
-  --surf: rgba(255, 255, 255, 0.82);
-  --surf-h: rgba(245, 245, 250, 0.92);
-  --glass: rgba(245, 245, 250, 0.90);
-  --brd: rgba(10, 10, 30, 0.06);
-  --brd-2: rgba(10, 10, 30, 0.10);
-  --brd-3: rgba(10, 10, 30, 0.16);
-  --tx: #0a0a18;
-  --tx-2: #5a5a7a;
-  --tx-3: #8a8aa0;
-  --blue: #3b5ce4;
-  --blue-l: #4f6ef7;
-  --blue-g: rgba(59, 92, 228, 0.18);
-  --blue-s: rgba(59, 92, 228, 0.06);
-  --violet: #7c3aed;
-  --violet-g: rgba(124, 58, 237, 0.15);
-  --violet-s: rgba(124, 58, 237, 0.06);
-  --cyan: #059669;
-  --cyan-g: rgba(5, 150, 105, 0.15);
-  --cyan-s: rgba(5, 150, 105, 0.06);
-  --grad-from: #3b5ce4;
-  --grad-to: #7c3aed;
-  --noise-opacity: 0.015;
-  color-scheme: light;
 }
 
 /* --- Tailwind 4 Theme Integration --- */

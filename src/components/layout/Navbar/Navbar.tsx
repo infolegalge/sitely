@@ -4,12 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NAV_ITEMS } from "@/lib/constants";
-import { useTheme } from "@/hooks/useTheme";
 import s from "./Navbar.module.css";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -33,14 +31,6 @@ export default function Navbar() {
         </div>
 
         <div className={s["right-group"]}>
-          <button
-            onClick={toggleTheme}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`}
-            className={s["theme-toggle"]}
-          >
-            {theme === "dark" ? "☀" : "☾"}
-          </button>
-
           <Link
             href="/contact"
             className={`${s.cta} ${s["hidden-mobile"]}`}
@@ -67,7 +57,7 @@ export default function Navbar() {
             className={s["mobile-link"]}
             data-active={String(pathname === item.href)}
             data-open={String(mobileOpen)}
-            style={{ transitionDelay: `${i * 0.1}s` }}
+            style={{ '--i': i } as React.CSSProperties}
           >
             {item.label}
           </Link>

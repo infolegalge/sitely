@@ -862,24 +862,33 @@ function gitTex() {
    Main export — creates all textures at once
    ═══════════════════════════════════════════════════ */
 
-export function createLogoTextures(): Record<string, THREE.CanvasTexture> {
-  return {
-    html5: html5Tex(),
-    css3: css3Tex(),
-    js: jsTex(),
-    ts: tsTex(),
-    react: reactTex(),
-    vue: vueTex(),
-    angular: angularTex(),
-    svelte: svelteTex(),
-    nodejs: nodejsTex(),
-    nextjs: nextjsTex(),
-    python: pythonTex(),
-    tailwind: tailwindTex(),
-    sass: sassTex(),
-    php: phpTex(),
-    mongodb: mongoTex(),
-    docker: dockerTex(),
-    git: gitTex(),
-  };
+const TEX_FACTORIES: Record<string, () => THREE.CanvasTexture> = {
+  html5: html5Tex,
+  css3: css3Tex,
+  js: jsTex,
+  ts: tsTex,
+  react: reactTex,
+  vue: vueTex,
+  angular: angularTex,
+  svelte: svelteTex,
+  nodejs: nodejsTex,
+  nextjs: nextjsTex,
+  python: pythonTex,
+  tailwind: tailwindTex,
+  sass: sassTex,
+  php: phpTex,
+  mongodb: mongoTex,
+  docker: dockerTex,
+  git: gitTex,
+};
+
+export function createLogoTextures(
+  keys?: string[],
+): Record<string, THREE.CanvasTexture> {
+  const entries = keys
+    ? keys.filter((k) => k in TEX_FACTORIES)
+    : Object.keys(TEX_FACTORIES);
+  const result: Record<string, THREE.CanvasTexture> = {};
+  for (const k of entries) result[k] = TEX_FACTORIES[k]();
+  return result;
 }

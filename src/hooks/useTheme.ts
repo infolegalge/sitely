@@ -1,6 +1,4 @@
-import { useContext } from "react";
-import { ThemeContext } from "@/components/providers/ThemeProvider";
-
+/** Dark-only theme — no toggling. Kept for API compatibility. */
 export function useTheme() {
-  return useContext(ThemeContext);
+  return { theme: "dark" as const };
 }

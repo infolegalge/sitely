@@ -11,6 +11,7 @@ import CustomCursor from "@/components/layout/CustomCursor/CustomCursor";
 import Preloader from "@/components/layout/Preloader/Preloader";
 import ScrollToTop from "@/components/layout/ScrollToTop/ScrollToTop";
 import SoundToggle from "@/components/layout/SoundToggle/SoundToggle";
+import SideNav from "@/components/layout/SideNav/SideNav";
 import PageTransitionWrapper from "@/components/layout/PageTransitionWrapper/PageTransitionWrapper";
 import SceneCanvasLoader from "@/components/three/SceneCanvasLoader";
 
@@ -75,9 +76,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-theme="dark"
       className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}
-      suppressHydrationWarning
     >
       <body>
         <ThemeProvider>
@@ -89,6 +88,7 @@ export default function RootLayout({
               <ScrollProgress />
               <Navbar />
               <SoundToggle />
+              <SideNav />
               <Preloader />
               <a href="#main" className="skip-to-content">
                 Skip to content

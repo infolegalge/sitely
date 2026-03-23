@@ -105,16 +105,27 @@ export default function HeroSection() {
 
           const spread = isCharEl ? 1 : 0.55;
 
-          gsap.set(shard, {
-            x: seededRange(i, 1, -spreadX * spread, spreadX * spread),
-            y: seededRange(i, 2, -spreadY * spread, spreadY * spread),
-            z: seededRange(i, 3, -spreadZ * spread, spreadZ * spread),
-            rotationX: seededRange(i, 4, -180, 180),
-            rotationY: seededRange(i, 5, -180, 180),
-            rotationZ: seededRange(i, 6, -90, 90),
-            scale: seededRange(i, 7, 0.3, isCharEl ? 2.5 : 1.6),
-            opacity: 0,
-          });
+          if (isMobile) {
+            // Mobile: 2D-only scatter — no Z-axis, no rotationX/Y
+            gsap.set(shard, {
+              x: seededRange(i, 1, -spreadX * spread, spreadX * spread),
+              y: seededRange(i, 2, -spreadY * spread, spreadY * spread),
+              rotationZ: seededRange(i, 6, -60, 60),
+              scale: seededRange(i, 7, 0.5, isCharEl ? 1.8 : 1.3),
+              opacity: 0,
+            });
+          } else {
+            gsap.set(shard, {
+              x: seededRange(i, 1, -spreadX * spread, spreadX * spread),
+              y: seededRange(i, 2, -spreadY * spread, spreadY * spread),
+              z: seededRange(i, 3, -spreadZ * spread, spreadZ * spread),
+              rotationX: seededRange(i, 4, -180, 180),
+              rotationY: seededRange(i, 5, -180, 180),
+              rotationZ: seededRange(i, 6, -90, 90),
+              scale: seededRange(i, 7, 0.3, isCharEl ? 2.5 : 1.6),
+              opacity: 0,
+            });
+          }
         });
 
         // "Dimensions" gradient off initially
@@ -150,92 +161,120 @@ export default function HeroSection() {
           ease: "none",
         }, 0);
 
-        tl.to(allShards, {
-          x: 0,
-          y: 0,
-          z: 0,
-          rotationX: 0,
-          rotationY: 0,
-          rotationZ: 0,
-          scale: 1,
-          duration: 2.6,
-          stagger: { each: 0.012, from: "random" },
-          ease: "expo.out",
-        }, 0);
+        if (isMobile) {
+          // Mobile: 2D assembly — no Z-axis resets
+          tl.to(allShards, {
+            x: 0,
+            y: 0,
+            rotationZ: 0,
+            scale: 1,
+            duration: 2.2,
+            stagger: { each: 0.015, from: "random" },
+            ease: "expo.out",
+          }, 0);
+        } else {
+          tl.to(allShards, {
+            x: 0,
+            y: 0,
+            z: 0,
+            rotationX: 0,
+            rotationY: 0,
+            rotationZ: 0,
+            scale: 1,
+            duration: 2.6,
+            stagger: { each: 0.012, from: "random" },
+            ease: "expo.out",
+          }, 0);
+        }
 
-        // Phase 3: Cracks GROW
-        tl.add(() => {
-          allChars.forEach((char) => {
-            const crack = char.querySelector(`.${s.crack}`) as HTMLElement;
-            if (crack) {
-              gsap.to(crack, {
-                opacity: 1,
-                scale: 1.3,
-                duration: 1.0,
-                ease: "power2.in",
-              });
-            }
-          });
-        }, 3.0);
+        // Phase 3: Cracks GROW (desktop only — expensive per-element filter tweens)
+        if (!isMobile) {
+          tl.add(() => {
+            allChars.forEach((char) => {
+              const crack = char.querySelector(`.${s.crack}`) as HTMLElement;
+              if (crack) {
+                gsap.to(crack, {
+                  opacity: 1,
+                  scale: 1.3,
+                  duration: 1.0,
+                  ease: "power2.in",
+                });
+              }
+            });
+          }, 3.0);
+        }
 
-        // Phase 4: Shards + Cracks EVAPORATE (sublimation)
-        tl.add(() => {
-          allChars.forEach((char, i) => {
-            const shard = char.querySelector(`.${s.shard}`) as HTMLElement;
-            const crack = char.querySelector(`.${s.crack}`) as HTMLElement;
+        // Phase 4: Shards + Cracks EVAPORATE (desktop only — uses per-element filter:blur)
+        if (!isMobile) {
+          tl.add(() => {
+            allChars.forEach((char, i) => {
+              const shard = char.querySelector(`.${s.shard}`) as HTMLElement;
+              const crack = char.querySelector(`.${s.crack}`) as HTMLElement;
 
-            const stagger = seededRange(i, 99, 0, 0.5);
-            const driftX = seededRange(i, 13, -15, 15);
-            const riseY = seededRange(i, 10, -60, -160);
-            const twistZ = seededRange(i, 11, -30, 30);
+              const stagger = seededRange(i, 99, 0, 0.5);
+              const driftX = seededRange(i, 13, -15, 15);
+              const riseY = seededRange(i, 10, -60, -160);
+              const twistZ = seededRange(i, 11, -30, 30);
 
-            // Dust particle CSS animation
-            setTimeout(() => {
-              char.setAttribute("data-evaporate", "true");
-            }, stagger * 1000);
+              // Dust particle CSS animation
+              setTimeout(() => {
+                char.setAttribute("data-evaporate", "true");
+              }, stagger * 1000);
 
-            // Shard: rises + stretches + blurs + fades
-            if (shard) {
-              gsap.to(shard, {
-                y: riseY,
-                x: driftX,
-                rotationZ: twistZ,
-                scaleX: 0.6,
-                scaleY: 1.8,
-                opacity: 0,
-                filter: "blur(8px)",
-                duration: 1.4,
-                delay: stagger,
-                ease: "power1.in",
-              });
-            }
+              // Shard: rises + stretches + blurs + fades
+              if (shard) {
+                gsap.to(shard, {
+                  y: riseY,
+                  x: driftX,
+                  rotationZ: twistZ,
+                  scaleX: 0.6,
+                  scaleY: 1.8,
+                  opacity: 0,
+                  filter: "blur(8px)",
+                  duration: 1.4,
+                  delay: stagger,
+                  ease: "power1.in",
+                });
+              }
 
-            // Crack: shatters apart
-            if (crack) {
-              gsap.to(crack, {
-                y: riseY * 0.6,
-                x: -driftX,
-                scaleX: 1.5,
-                scaleY: 0.4,
-                rotationZ: -twistZ * 1.5,
-                opacity: 0,
-                filter: "blur(6px)",
-                duration: 1.0,
-                delay: stagger + 0.1,
-                ease: "power2.in",
-              });
-            }
-          });
-        }, 4.0);
+              // Crack: shatters apart
+              if (crack) {
+                gsap.to(crack, {
+                  y: riseY * 0.6,
+                  x: -driftX,
+                  scaleX: 1.5,
+                  scaleY: 0.4,
+                  rotationZ: -twistZ * 1.5,
+                  opacity: 0,
+                  filter: "blur(6px)",
+                  duration: 1.0,
+                  delay: stagger + 0.1,
+                  ease: "power2.in",
+                });
+              }
+            });
+          }, 4.0);
+        } else {
+          // Mobile: simple fade-out of shards/cracks without per-element blur
+          tl.add(() => {
+            allChars.forEach((char) => {
+              const shard = char.querySelector(`.${s.shard}`) as HTMLElement;
+              const crack = char.querySelector(`.${s.crack}`) as HTMLElement;
+              if (shard) gsap.to(shard, { opacity: 0, duration: 0.6, ease: "power1.in" });
+              if (crack) gsap.to(crack, { opacity: 0, duration: 0.4, ease: "power1.in" });
+            });
+          }, 2.8);
+        }
 
         // Phase 5: Clean up
+        const cleanupTime = isMobile ? 3.8 : 5.8;
         tl.add(() => {
           allChars.forEach((char) => {
             char.setAttribute("data-glass", "false");
             char.setAttribute("data-frost", "false");
             char.setAttribute("data-evaporate", "false");
           });
-        }, 5.8);
+        }, cleanupTime);
 
         // Phase 6: "Dimensions" gradient ignites
         tl.add(() => {
@@ -244,7 +283,7 @@ export default function HeroSection() {
             accentInnerRef.current.setAttribute("data-ignited", "true");
           }
           animDoneRef.current = true;
-        }, 5.9);
+        }, cleanupTime + 0.1);
       } else {
         /* ===================================
            RETURN VISIT — quick stagger fade
@@ -308,7 +347,7 @@ export default function HeroSection() {
   let charIndex = 0;
 
   return (
-    <div ref={sectionRef} className={s.section}>
+    <div id="hero" ref={sectionRef} className={s.section}>
       {/* Explosion light flash */}
       <div ref={flashRef} className={s.flash} aria-hidden="true" />
 

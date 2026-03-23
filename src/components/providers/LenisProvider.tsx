@@ -16,12 +16,20 @@ gsap.registerPlugin(ScrollTrigger);
 
 export const LenisContext = createContext<Lenis | null>(null);
 
+function isTouchDevice() {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(pointer: coarse)").matches || window.innerWidth < 768;
+}
+
 export default function LenisProvider({ children }: { children: ReactNode }) {
   const [lenis, setLenis] = useState<Lenis | null>(null);
   const rafCallbackRef = useRef<((time: number) => void) | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
+    // Skip Lenis on touch/mobile — native inertial scrolling is better
+    if (isTouchDevice()) return;
+
     const instance = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -51,8 +59,10 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (lenis) {
       lenis.scrollTo(0, { immediate: true });
-      ScrollTrigger.refresh();
+    } else {
+      window.scrollTo(0, 0);
     }
+    ScrollTrigger.refresh();
   }, [pathname, lenis]);
 
   return (

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type React from "react";
 import { isAlreadyLoaded, markLoaded } from "@/lib/preloaderState";
 import s from "./Preloader.module.css";
 
@@ -48,12 +49,8 @@ export default function Preloader() {
       <div className={s.track}>
         <div
           className={`grad-primary ${s.bar}`}
-          style={{
-            width: `${progress}%`,
-            transition: progress === 0
-              ? "none"
-              : `width ${progress < 100 ? "1.8s" : "0.4s"} cubic-bezier(0.22, 1, 0.36, 1)`,
-          }}
+          data-state={progress === 0 ? 'idle' : progress < 100 ? 'loading' : 'done'}
+          style={{ '--progress': `${progress}%` } as React.CSSProperties}
         />
       </div>
       <span className={s.label}>Loading experience...</span>

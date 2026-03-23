@@ -1,5 +1,3 @@
-export type Theme = "dark" | "light";
-
 export type SceneConfig = {
   blobColor: string;
   blobScale: number;
@@ -34,8 +32,16 @@ export type Project = {
   year: number;
   category: string;
   thumbnail: string;
+  blurDataURL?: string;
   tags: string[];
   featured: boolean;
+  /* Extended fields for detail page */
+  description?: string;
+  challenge?: string;
+  solution?: string;
+  results?: string[];
+  liveUrl?: string;
+  accentColor?: string;
 };
 
 export type Testimonial = {

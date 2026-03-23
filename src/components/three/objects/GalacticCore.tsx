@@ -522,8 +522,12 @@ export default function GalacticCore({ isMobile }: GalacticCoreProps) {
     return tex;
   }, []);
 
-  // All logo textures — generated from logoTextures.ts
-  const logoTextures = useMemo(() => createLogoTextures(), []);
+  // All logo textures — generated from logoTextures.ts (mobile: only active logos)
+  const logoTextures = useMemo(
+    () => createLogoTextures(isMobile ? activeLogos.map((c) => c.name) : undefined),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isMobile],
+  );
 
   // Cosmic dust geometry
   const dustGeo = useMemo(() => {
