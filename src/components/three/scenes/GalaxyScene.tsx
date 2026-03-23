@@ -131,17 +131,19 @@ export default function GalaxyScene({ isMobile = false }: { isMobile?: boolean }
       /* ══════════════════════════════════════════════════════════
          CINEMATIC KEYFRAME CAMERA PATH
 
-         6 handcrafted compositions — one per page section.
-         Each keyframe defines a unique angle, distance, height,
-         and screen-framing of the Sitely planet.
+         Planet is NEVER centered — always off-screen-center in
+         beautiful asymmetric compositions. Camera orbits ~400°
+         with varied distance, height, and framing offset.
 
-         Camera orbits ~330° total with varied compositions:
-         KF0: Hero        — planet LEFT,   wide establishing
-         KF1: Transition  — planet CENTER, sweeping mid-orbit
-         KF2: FeaturedWork— planet TOP,    dramatic low upshot
-         KF3: Services    — planet RIGHT,  elegant profile
-         KF4: Process     — planet BELOW,  elevated bird's eye
-         KF5: Testimonials— planet CENTER, intimate close-up
+         lookX/lookY push the look-target AWAY from origin,
+         placing the planet in corners/edges of the frame.
+
+         KF0: Hero        — planet far LEFT
+         KF1: Work        — planet upper-RIGHT, pulling away
+         KF2: FeaturedWork— planet lower-LEFT,  close fly-by
+         KF3: Services    — planet far RIGHT,   distant profile
+         KF4: Process     — planet upper-LEFT,  overhead sweep
+         KF5: Testimonials— planet lower-RIGHT, intimate drift
          ══════════════════════════════════════════════════════════ */
       gal.position.set(0, 0, 0);
       gal.scale.setScalar(1.0);
@@ -153,21 +155,21 @@ export default function GalaxyScene({ isMobile = false }: { isMobile?: boolean }
       /* angleDeg, radius, height, lookX, lookY, fov */
       const KF: [number, number, number, number, number, number][] = mob
         ? [
-            /*  angle   r    h   lookX lookY  fov  */
-            [    0,    28,  10,   20,   -4,   58 ],  // KF0 Hero — planet left
-            [   50,    26,  14,    6,   -1,   55 ],  // KF1 sweep center-left
-            [  110,    24,   2,    0,    7,   60 ],  // KF2 low upshot
-            [  180,    30,  12,  -14,   -3,   54 ],  // KF3 planet right
-            [  250,    22,  22,    3,   -8,   58 ],  // KF4 bird's eye
-            [  330,    18,   6,    1,    1,   50 ],  // KF5 intimate
+            /*  angle   r    h    lookX  lookY  fov  */
+            [    0,    28,  10,    18,    -5,   58 ],  // KF0 planet far left
+            [   65,    34,  20,   -16,    -8,   54 ],  // KF1 planet upper-right, distant
+            [  140,    22,   4,    14,     8,   62 ],  // KF2 planet lower-left, close
+            [  210,    36,  16,   -20,    -3,   52 ],  // KF3 planet far right, distant
+            [  290,    24,  26,    12,   -10,   56 ],  // KF4 planet upper-left, overhead
+            [  380,    20,   6,   -14,     6,   58 ],  // KF5 planet lower-right, intimate
           ]
         : [
-            [    0,    40,  15,   32,   -6,   48 ],  // KF0 Hero — intro end
-            [   50,    38,  22,   10,   -2,   46 ],  // KF1 sweep center-left
-            [  110,    35,   3,    0,   10,   52 ],  // KF2 dramatic low upshot
-            [  185,    42,  18,  -20,   -4,   45 ],  // KF3 elegant profile right
-            [  255,    32,  30,    5,  -12,   50 ],  // KF4 elevated bird's eye
-            [  335,    28,  10,    2,    1,   42 ],  // KF5 intimate close-up
+            [    0,    40,  15,    32,    -6,   48 ],  // KF0 planet far left (intro end)
+            [   70,    52,  28,   -28,   -10,   44 ],  // KF1 planet upper-right, pulling far
+            [  150,    30,   4,    24,    12,   54 ],  // KF2 planet lower-left, close fly-by
+            [  220,    55,  20,   -32,    -5,   42 ],  // KF3 planet far right, cinematic wide
+            [  300,    35,  35,    20,   -14,   50 ],  // KF4 planet upper-left, bird's eye
+            [  400,    28,   8,   -22,     8,   46 ],  // KF5 planet lower-right, intimate drift
           ];
 
       const N = KF.length - 1; // 5 segments

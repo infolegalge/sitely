@@ -85,6 +85,7 @@
 html {
   scroll-behavior: auto; /* Lenis handles smooth scroll */
   scrollbar-width: none; /* Firefox */
+  overflow-x: hidden;
 }
 
 html::-webkit-scrollbar {

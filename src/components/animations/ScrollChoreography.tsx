@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, Children, type ReactNode } from "react";
+import React, { useEffect, useRef, type ReactNode } from "react";
 import s from "./ScrollChoreography.module.css";
 
 /* ─── Section IDs in display order ─── */
@@ -34,7 +34,6 @@ interface Props {
 export default function ScrollChoreography({ children }: Props) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const atmoRef = useRef<HTMLDivElement>(null);
-  const dividerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const particleRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
@@ -88,49 +87,6 @@ export default function ScrollChoreography({ children }: Props) {
             });
           });
         }
-
-        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-           2) INTER-SECTION GLOW DIVIDERS
-           React-rendered = no race condition.
-           ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-        dividerRefs.current.forEach((divider) => {
-          if (!divider) return;
-          const line = divider.querySelector("." + s.dividerLine);
-          const glow = divider.querySelector("." + s.dividerGlow);
-
-          if (line) {
-            gsap.fromTo(line,
-              { scaleX: 0 },
-              {
-                scaleX: 1,
-                ease: "power2.out",
-                scrollTrigger: {
-                  trigger: divider,
-                  start: "top 85%",
-                  end: "top 45%",
-                  scrub: 1,
-                },
-              },
-            );
-          }
-
-          if (glow) {
-            gsap.fromTo(glow,
-              { scaleX: 0, opacity: 0 },
-              {
-                scaleX: 1,
-                opacity: 1,
-                ease: "power2.out",
-                scrollTrigger: {
-                  trigger: divider,
-                  start: "top 85%",
-                  end: "top 45%",
-                  scrub: 1,
-                },
-              },
-            );
-          }
-        });
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            3) BACKGROUND ATMOSPHERE SHIFTS
@@ -207,29 +163,6 @@ export default function ScrollChoreography({ children }: Props) {
     return () => ctx?.revert();
   }, []);
 
-  /* ─── Interleave dividers between children ─── */
-  const childArray = Children.toArray(children);
-  const interleaved: ReactNode[] = [];
-  let divIdx = 0;
-
-  childArray.forEach((child, i) => {
-    interleaved.push(child);
-    if (i < childArray.length - 1) {
-      const idx = divIdx++;
-      interleaved.push(
-        <div
-          key={`divider-${idx}`}
-          className={s.divider}
-          aria-hidden="true"
-          ref={(el) => { dividerRefs.current[idx] = el; }}
-        >
-          <div className={s.dividerLine} />
-          <div className={s.dividerGlow} />
-        </div>,
-      );
-    }
-  });
-
   return (
     <>
       {/* Fixed atmosphere layer */}
@@ -260,9 +193,9 @@ export default function ScrollChoreography({ children }: Props) {
         ))}
       </div>
 
-      {/* Content with interleaved dividers */}
+      {/* Content */}
       <div ref={wrapperRef} className={s.wrapper}>
-        {interleaved}
+        {children}
       </div>
     </>
   );

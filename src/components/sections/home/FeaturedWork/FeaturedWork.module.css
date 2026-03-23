@@ -40,7 +40,7 @@
   padding: 48px 14px;
   max-width: var(--mw);
   margin: 0 auto;
-  overflow: visible;
+  overflow: hidden;
 }
 
 /* ─── Header ─── */
