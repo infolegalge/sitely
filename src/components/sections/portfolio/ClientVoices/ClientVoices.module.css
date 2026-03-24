@@ -1,0 +1,212 @@
+/* ═══════════════════════════════════════════
+   ClientVoices — /portfolio §5
+   Project-linked testimonials
+   ═══════════════════════════════════════════ */
+
+.section {
+  position: relative;
+  z-index: 1;
+  padding: 60px 24px 80px;
+  max-width: var(--mw);
+  margin: 0 auto;
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+.header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 48px;
+  will-change: transform, opacity;
+}
+
+.label {
+  font-family: var(--font-code, monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.labelLine {
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--blue);
+  opacity: 0.5;
+}
+
+.title {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(1.6rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--tx);
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.subtitle {
+  font-family: var(--font-body, sans-serif);
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  line-height: 1.7;
+  color: var(--tx-2);
+}
+
+/* ─── Grid ─── */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  transform-style: preserve-3d;
+}
+
+@media (min-width: 600px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ─── Card ─── */
+
+.card {
+  position: relative;
+  border-radius: 18px;
+  padding: 1.5px;
+  background: var(--brd);
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+
+.card:hover {
+  box-shadow:
+    0 20px 50px rgba(79, 110, 247, 0.08),
+    0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.holoGlow {
+  position: absolute;
+  inset: -1px;
+  border-radius: 19px;
+  background: conic-gradient(
+    from var(--holo-angle, 0deg),
+    var(--blue) 0%,
+    var(--cyan) 25%,
+    var(--violet) 50%,
+    var(--blue) 75%,
+    var(--cyan) 100%
+  );
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 0.5s var(--ease);
+  filter: blur(0.5px);
+}
+
+.card:hover .holoGlow {
+  opacity: 1;
+  animation: holoSpin 4s linear infinite;
+}
+
+@keyframes holoSpin {
+  to { --holo-angle: 360deg; }
+}
+
+@property --holo-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.cardInner {
+  position: relative;
+  z-index: 1;
+  border-radius: 16.5px;
+  padding: 28px 24px;
+  background: rgba(8, 8, 16, 0.82);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ─── Stars ─── */
+
+.stars {
+  display: flex;
+  gap: 3px;
+  font-size: 0.85rem;
+  color: #facc15;
+}
+
+/* ─── Quote ─── */
+
+.quote {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--tx-2);
+  font-style: italic;
+}
+
+/* ─── Author ─── */
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading, sans-serif);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  flex-shrink: 0;
+}
+
+.authorInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.authorName {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--tx);
+}
+
+.authorMeta {
+  font-family: var(--font-code, monospace);
+  font-size: 0.6rem;
+  color: var(--tx-2);
+  opacity: 0.7;
+}
+
+/* Scan line */
+.scanLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--blue) 20%, var(--cyan) 50%, var(--violet) 80%, transparent 100%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+}
+
+.card:hover .scanLine { transform: scaleX(1); }

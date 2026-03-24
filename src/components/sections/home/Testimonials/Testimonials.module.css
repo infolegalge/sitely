@@ -33,6 +33,7 @@
   max-width: var(--mw);
   margin: 0 auto;
   overflow: hidden;
+  perspective: 1200px;
 }
 
 /* Subtle ambient glow behind section */
@@ -58,6 +59,7 @@
 .header {
   text-align: center;
   margin-bottom: 40px;
+  will-change: transform, opacity;
 }
 
 .label {
@@ -109,12 +111,15 @@
   justify-items: center;
   padding: 20px 0;
   margin-bottom: 40px;
+  transform-style: preserve-3d;
 }
 
 .orb {
   display: flex;
   flex-direction: column;
   align-items: center;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
 }
 
 /* ── Ring container ── */
@@ -262,6 +267,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
+  transform-style: preserve-3d;
 }
 
 .card {
@@ -271,6 +277,8 @@
   border-radius: 20px;
   padding: 28px 24px;
   overflow: hidden;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
   transition:
     transform 0.4s var(--ease),
     border-color 0.4s var(--ease),
@@ -283,6 +291,24 @@
   box-shadow:
     0 16px 48px rgba(0, 0, 0, 0.25),
     0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Holographic scan line */
+.card .cardIconWrap::before {
+  content: "";
+  position: absolute;
+  bottom: -28px;
+  left: -24px;
+  right: -24px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--card-accent, var(--blue)) 20%, var(--cyan) 50%, var(--violet) 80%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+}
+
+.card:hover .cardIconWrap::before {
+  transform: scaleX(1);
 }
 
 /* Animated sweep border on hover */

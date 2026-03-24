@@ -1,0 +1,339 @@
+/* ═══════════════════════════════════════════
+   ClientJourney — /services §4
+   3D timeline with scroll-fill + puzzle cards
+   ═══════════════════════════════════════════ */
+
+.section {
+  position: relative;
+  z-index: 1;
+  padding: 60px 14px 80px;
+  max-width: var(--mw);
+  margin: 0 auto;
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+/* ─── Header ─── */
+
+.header {
+  text-align: center;
+  margin-bottom: 24px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  will-change: transform, opacity;
+}
+
+.label {
+  font-family: var(--font-code, monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.labelLine {
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--cyan);
+  opacity: 0.5;
+}
+
+.title {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(1.6rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--tx);
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.subtitle {
+  font-family: var(--font-body, sans-serif);
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  line-height: 1.7;
+  color: var(--tx-2);
+}
+
+/* ─── Delivery Badge ─── */
+
+.deliveryBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 auto 40px;
+  padding: 10px 22px;
+  border-radius: 24px;
+  border: 1px solid var(--cyan-g);
+  background: rgba(6, 214, 160, 0.06);
+  width: fit-content;
+  will-change: transform, opacity;
+}
+
+.deliveryIcon { font-size: 1rem; }
+
+.deliveryText {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.85rem;
+  color: var(--tx-2);
+}
+
+.deliveryText strong {
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+/* ─── Timeline container ─── */
+
+.timeline {
+  position: relative;
+  max-width: 780px;
+  margin: 0 auto;
+  padding-left: 42px;
+  transform-style: preserve-3d;
+}
+
+/* ─── Track ─── */
+
+.track {
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--brd);
+  border-radius: 2px;
+}
+
+.trackFill {
+  width: 100%;
+  height: 0%;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--blue), var(--violet), var(--cyan));
+  transition: height 0.05s linear;
+}
+
+/* ─── Step ─── */
+
+.step {
+  position: relative;
+  margin-bottom: 32px;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+}
+
+.step:last-child { margin-bottom: 0; }
+
+/* ─── Dot ─── */
+
+.dot {
+  position: absolute;
+  left: -36px;
+  top: 28px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--brd-2);
+  background: var(--bg);
+  z-index: 2;
+  transition: border-color 0.4s var(--ease), background 0.4s var(--ease);
+}
+
+.dotActive {
+  border-color: var(--blue);
+  background: var(--blue);
+}
+
+.dotPulse {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: var(--blue-g);
+  animation: jPulse 2s ease-out infinite;
+}
+
+@keyframes jPulse {
+  0% { opacity: 0.6; transform: scale(0.8); }
+  100% { opacity: 0; transform: scale(2); }
+}
+
+/* ─── Card ─── */
+
+.card {
+  position: relative;
+  padding: 24px 22px;
+  border-radius: 16px;
+  border: 1px solid var(--brd);
+  background: rgba(8, 8, 16, 0.82);
+  backdrop-filter: blur(16px);
+  overflow: hidden;
+  transition: border-color 0.35s var(--ease), box-shadow 0.35s var(--ease);
+}
+
+.card:hover {
+  border-color: var(--brd-2);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+}
+
+.cardGlow {
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  width: 120%;
+  height: 80%;
+  translate: -50% 0;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease);
+}
+
+.card:hover .cardGlow { opacity: 1; }
+
+.accentBlue .cardGlow { background: radial-gradient(ellipse, var(--blue-s), transparent 70%); }
+.accentViolet .cardGlow { background: radial-gradient(ellipse, var(--violet-s), transparent 70%); }
+.accentCyan .cardGlow { background: radial-gradient(ellipse, var(--cyan-s), transparent 70%); }
+.accentGold .cardGlow { background: radial-gradient(ellipse, rgba(250, 204, 21, 0.07), transparent 70%); }
+
+/* Scan line */
+.scanLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blue) 20%, var(--cyan) 50%, var(--violet) 80%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+}
+
+.card:hover .scanLine { transform: scaleX(1); }
+
+.stepNum {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-family: var(--font-heading, sans-serif);
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--tx);
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+/* ─── Icon ─── */
+
+.iconWrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(8px);
+}
+
+.iconWrap svg { width: 20px; height: 20px; }
+
+.accentBlue .iconWrap { color: var(--blue); background: var(--blue-s); }
+.accentViolet .iconWrap { color: var(--violet); background: var(--violet-s); }
+.accentCyan .iconWrap { color: var(--cyan); background: var(--cyan-s); }
+.accentGold .iconWrap { color: #facc15; background: rgba(250, 204, 21, 0.07); }
+
+/* ─── Text ─── */
+
+.stepLabel {
+  font-family: var(--font-code, monospace);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--tx-3);
+  margin-bottom: 4px;
+}
+
+.stepTitle {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--tx);
+  margin-bottom: 8px;
+}
+
+.stepDesc {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: var(--tx-2);
+}
+
+/* ─── Speed Badge (step 05) ─── */
+
+.speedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 5px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--cyan-g);
+  background: rgba(6, 214, 160, 0.06);
+  font-family: var(--font-code, monospace);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--cyan);
+}
+
+.speedDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  animation: jPulse 2s ease-out infinite;
+}
+
+/* ─── Desktop: alternating zigzag ─── */
+
+@media (min-width: 768px) {
+  .timeline {
+    padding-left: 0;
+    max-width: 720px;
+  }
+
+  .track {
+    left: 50%;
+    translate: -50% 0;
+  }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .step:nth-child(odd) {
+    justify-content: flex-start;
+    padding-right: calc(50% + 28px);
+  }
+
+  .step:nth-child(even) {
+    justify-content: flex-end;
+    padding-left: calc(50% + 28px);
+  }
+
+  .dot {
+    left: 50%;
+    translate: -50% 0;
+  }
+}

@@ -1,12 +1,112 @@
-.page {
-  min-height: 100vh;
-  padding-top: clamp(80px, 15vh, 120px);
-  padding-inline: clamp(16px, 5vw, 24px);
+/* ═══════════════════════════════════════════
+   ServicesHero — /services §1
+   3D split-word entrance + floating badges
+   ═══════════════════════════════════════════ */
+
+.section {
+  position: relative;
+  z-index: 1;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(100px, 18vh, 160px) 24px clamp(60px, 10vh, 100px);
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+.glow {
+  position: absolute;
+  top: -20%;
+  left: 50%;
+  width: 140%;
+  height: 80%;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, var(--blue-s), var(--violet-s) 40%, transparent 70%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.inner {
+  max-width: 720px;
+  margin: 0 auto;
+  transform-style: preserve-3d;
+}
+
+.label {
+  font-family: var(--font-code, monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  will-change: transform, opacity;
+}
+
+.labelLine {
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--blue);
+  opacity: 0.5;
 }
 
 .title {
   font-family: var(--font-heading, sans-serif);
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 700;
-  text-align: center;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--tx);
+  margin-bottom: 18px;
+  perspective: 800px;
+}
+
+.word {
+  display: inline-block;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+}
+
+.subtitle {
+  font-family: var(--font-body, sans-serif);
+  font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--tx-2);
+  max-width: 560px;
+  margin: 0 auto 28px;
+  will-change: transform, opacity;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.badge {
+  font-family: var(--font-code, monospace);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  color: var(--tx-2);
+  padding: 6px 14px;
+  border: 1px solid var(--brd-2);
+  border-radius: 20px;
+  background: var(--surf);
+  backdrop-filter: blur(8px);
+  will-change: transform, opacity;
+  transition: border-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+
+.badge:hover {
+  border-color: var(--blue);
+  color: var(--blue);
 }

@@ -37,7 +37,7 @@ export default function Preloader() {
 
   useEffect(() => {
     if (!done) return;
-    const id = setTimeout(() => setShow(false), 700);
+    const id = setTimeout(() => setShow(false), 500);
     return () => clearTimeout(id);
   }, [done]);
 

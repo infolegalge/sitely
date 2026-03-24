@@ -1,0 +1,192 @@
+/* ═══════════════════════════════════════════
+   ServicesCTA — /services §6
+   3D floating card with holographic border
+   ═══════════════════════════════════════════ */
+
+.section {
+  position: relative;
+  z-index: 1;
+  padding: 80px 24px 100px;
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+.inner {
+  position: relative;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 56px 32px;
+  border-radius: 22px;
+  border: 1px solid var(--brd);
+  background: rgba(8, 8, 16, 0.82);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  transition: box-shadow 0.4s var(--ease);
+}
+
+.inner:hover {
+  box-shadow: 0 24px 64px rgba(79, 110, 247, 0.08), 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.glow {
+  position: absolute;
+  top: -60%;
+  left: 50%;
+  width: 140%;
+  height: 100%;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, var(--blue-s), var(--violet-s) 40%, transparent 70%);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Holographic border */
+.holoGlow {
+  position: absolute;
+  inset: -1px;
+  border-radius: 23px;
+  background: conic-gradient(
+    from var(--holo-angle, 0deg),
+    var(--blue) 0%,
+    var(--cyan) 25%,
+    var(--violet) 50%,
+    var(--blue) 75%,
+    var(--cyan) 100%
+  );
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.5s var(--ease);
+  filter: blur(0.5px);
+}
+
+.inner:hover .holoGlow {
+  opacity: 0.5;
+  animation: holoSpin 4s linear infinite;
+}
+
+@keyframes holoSpin {
+  to { --holo-angle: 360deg; }
+}
+
+@property --holo-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Scan line */
+.scanLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blue) 20%, var(--cyan) 50%, var(--violet) 80%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+}
+
+.inner:hover .scanLine { transform: scaleX(1); }
+
+.label {
+  font-family: var(--font-code, monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.labelLine {
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--blue);
+  opacity: 0.5;
+}
+
+.title {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(1.6rem, 4.5vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--tx);
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+.desc {
+  font-family: var(--font-body, sans-serif);
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  line-height: 1.7;
+  color: var(--tx-2);
+  max-width: 440px;
+  margin: 0 auto 28px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  color: #fff;
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  will-change: transform;
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+
+.btnPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px var(--blue-g);
+}
+
+.btnArrow {
+  transition: transform 0.3s var(--ease);
+}
+
+.btnPrimary:hover .btnArrow {
+  transform: translateX(4px);
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: 1px solid var(--brd-2);
+  background: transparent;
+  color: var(--tx-2);
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  will-change: transform;
+  transition: border-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+
+.btnSecondary:hover {
+  border-color: var(--brd-3);
+  color: var(--tx);
+}

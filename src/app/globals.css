@@ -1,5 +1,14 @@
 @import "tailwindcss";
-@import "lenis/dist/lenis.css";
+
+/* Lenis essentials (inlined to avoid scrollbar side-effects from lenis.css) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
 
 /* ============================================
    SITELY — "DIMENSION" Design System
@@ -84,12 +93,17 @@
 
 html {
   scroll-behavior: auto; /* Lenis handles smooth scroll */
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE / legacy Edge */
   overflow-x: hidden;
 }
 
-html::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Edge */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none !important; /* Chrome, Safari, Edge */
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
 
 body {
@@ -98,6 +112,8 @@ body {
   font-family: var(--font-body, sans-serif);
   line-height: 1.7;
   overflow-x: hidden;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

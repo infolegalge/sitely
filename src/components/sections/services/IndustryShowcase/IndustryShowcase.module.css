@@ -1,0 +1,226 @@
+/* ═══════════════════════════════════════════
+   IndustryShowcase — /services §2
+   3D puzzle-piece grid assembly
+   ═══════════════════════════════════════════ */
+
+.section {
+  position: relative;
+  z-index: 1;
+  padding: 60px 24px 80px;
+  max-width: var(--mw);
+  margin: 0 auto;
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+.header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 48px;
+  will-change: transform, opacity;
+}
+
+.label {
+  font-family: var(--font-code, monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.labelLine {
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--blue);
+  opacity: 0.5;
+}
+
+.title {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(1.6rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--tx);
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.subtitle {
+  font-family: var(--font-body, sans-serif);
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  line-height: 1.7;
+  color: var(--tx-2);
+}
+
+/* ─── Grid ─── */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  transform-style: preserve-3d;
+}
+
+@media (min-width: 600px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 960px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ─── Card ─── */
+
+.card {
+  position: relative;
+  border-radius: 18px;
+  padding: 1.5px;
+  background: var(--brd);
+  cursor: default;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+
+.card:hover {
+  box-shadow:
+    0 20px 50px rgba(79, 110, 247, 0.08),
+    0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Holographic border */
+.holoGlow {
+  position: absolute;
+  inset: -1px;
+  border-radius: 19px;
+  background: conic-gradient(
+    from var(--holo-angle, 0deg),
+    var(--blue) 0%,
+    var(--cyan) 25%,
+    var(--violet) 50%,
+    var(--blue) 75%,
+    var(--cyan) 100%
+  );
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 0.5s var(--ease);
+  filter: blur(0.5px);
+}
+
+.card:hover .holoGlow {
+  opacity: 1;
+  animation: holoSpin 4s linear infinite;
+}
+
+@keyframes holoSpin {
+  to { --holo-angle: 360deg; }
+}
+
+@property --holo-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.cardInner {
+  position: relative;
+  z-index: 1;
+  border-radius: 16.5px;
+  padding: 28px 24px;
+  background: rgba(8, 8, 16, 0.82);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+/* Shimmer sweep */
+.cardInner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(79, 110, 247, 0.04) 50%,
+    rgba(139, 92, 246, 0.06) 55%,
+    rgba(6, 214, 160, 0.04) 60%,
+    transparent 70%
+  );
+  transition: left 0.8s var(--ease);
+  pointer-events: none;
+}
+
+.card:hover .cardInner::after {
+  left: 120%;
+}
+
+/* ─── Icon ─── */
+
+.iconWrap {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.4s var(--ease);
+}
+
+.card:hover .iconWrap { border-color: rgba(255,255,255,0.15); }
+
+.iconWrap svg { width: 20px; height: 20px; }
+
+.accentBlue .iconWrap { color: var(--blue); background: var(--blue-s); }
+.accentViolet .iconWrap { color: var(--violet); background: var(--violet-s); }
+.accentCyan .iconWrap { color: var(--cyan); background: var(--cyan-s); }
+.accentGold .iconWrap { color: #facc15; background: rgba(250, 204, 21, 0.07); }
+
+/* ─── Text ─── */
+
+.cardTitle {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--tx);
+  margin-bottom: 8px;
+  transition: color 0.3s var(--ease);
+}
+
+.accentBlue:hover .cardTitle { color: var(--blue-l); }
+.accentViolet:hover .cardTitle { color: var(--violet); }
+.accentCyan:hover .cardTitle { color: var(--cyan); }
+.accentGold:hover .cardTitle { color: #facc15; }
+
+.cardDesc {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: var(--tx-2);
+}
+
+/* Scan line */
+.scanLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--blue) 20%, var(--cyan) 50%, var(--violet) 80%, transparent 100%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+}
+
+.card:hover .scanLine { transform: scaleX(1); }

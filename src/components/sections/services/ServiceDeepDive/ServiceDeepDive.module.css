@@ -1,0 +1,340 @@
+/* ═══════════════════════════════════════════
+   ServiceDeepDive — /services §3
+   Holographic orbit service cards
+   ═══════════════════════════════════════════ */
+
+.section {
+  position: relative;
+  z-index: 1;
+  padding: 60px 24px 80px;
+  max-width: var(--mw);
+  margin: 0 auto;
+  overflow: hidden;
+  perspective: 1200px;
+}
+
+.header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 48px;
+  will-change: transform, opacity;
+}
+
+.label {
+  font-family: var(--font-code, monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--violet);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.labelLine {
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--violet);
+  opacity: 0.5;
+}
+
+.title {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(1.6rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--tx);
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.subtitle {
+  font-family: var(--font-body, sans-serif);
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  line-height: 1.7;
+  color: var(--tx-2);
+}
+
+/* ─── Grid ─── */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  transform-style: preserve-3d;
+}
+
+@media (min-width: 600px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 960px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ─── Card ─── */
+
+.card {
+  position: relative;
+  border-radius: 22px;
+  padding: 1.5px;
+  background: var(--brd);
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease);
+}
+
+.card:hover {
+  box-shadow:
+    0 24px 64px rgba(79, 110, 247, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Holographic border */
+.holoGlow {
+  position: absolute;
+  inset: -1px;
+  border-radius: 23px;
+  background: conic-gradient(
+    from var(--holo-angle, 0deg),
+    var(--blue) 0%,
+    var(--cyan) 25%,
+    var(--violet) 50%,
+    var(--blue) 75%,
+    var(--cyan) 100%
+  );
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 0.6s var(--ease);
+  filter: blur(0.5px);
+}
+
+.card:hover .holoGlow {
+  opacity: 1;
+  animation: holoSpin 4s linear infinite;
+}
+
+@keyframes holoSpin {
+  to { --holo-angle: 360deg; }
+}
+
+@property --holo-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.cardInner {
+  position: relative;
+  z-index: 1;
+  border-radius: 20.5px;
+  padding: 28px 24px 24px;
+  background: rgba(8, 8, 16, 0.82);
+  backdrop-filter: blur(24px);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 18px;
+  align-items: start;
+  min-height: 160px;
+}
+
+/* Shimmer */
+.cardInner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(79, 110, 247, 0.04) 50%,
+    rgba(139, 92, 246, 0.06) 55%,
+    rgba(6, 214, 160, 0.04) 60%,
+    transparent 70%
+  );
+  transition: left 0.8s var(--ease);
+  pointer-events: none;
+}
+
+.card:hover .cardInner::after { left: 120%; }
+
+/* Number watermark */
+.num {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-family: var(--font-heading, sans-serif);
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--tx);
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+/* ─── 3D Shape ─── */
+
+.shape {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 200px;
+  flex-shrink: 0;
+}
+
+.shapeGlow {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  filter: blur(14px);
+  opacity: 0.25;
+  transition: opacity 0.5s var(--ease);
+}
+
+.card:hover .shapeGlow { opacity: 0.5; }
+
+.geo {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  transform-style: preserve-3d;
+  animation: geoFloat 8s ease-in-out infinite;
+}
+
+.card:hover .geo {
+  animation: geoSpin 3s linear infinite, geoFloat 8s ease-in-out infinite;
+}
+
+@keyframes geoFloat {
+  0%, 100% { transform: translateY(0) rotateX(15deg) rotateY(20deg); }
+  50% { transform: translateY(-4px) rotateX(20deg) rotateY(25deg); }
+}
+
+@keyframes geoSpin {
+  to { transform: rotateX(375deg) rotateY(380deg); }
+}
+
+.geoIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
+  font-size: 1.2rem;
+  transition: border-color 0.4s var(--ease);
+}
+
+.card:hover .geoIcon { border-color: rgba(255,255,255,0.15); }
+
+/* Accent colors */
+.accentBlue .shapeGlow { background: var(--blue); }
+.accentBlue .geoIcon { background: var(--blue-s); color: var(--blue); }
+.accentViolet .shapeGlow { background: var(--violet); }
+.accentViolet .geoIcon { background: var(--violet-s); color: var(--violet); }
+.accentCyan .shapeGlow { background: var(--cyan); }
+.accentCyan .geoIcon { background: var(--cyan-s); color: var(--cyan); }
+.accentGold .shapeGlow { background: #facc15; }
+.accentGold .geoIcon { background: rgba(250, 204, 21, 0.07); color: #facc15; }
+
+/* ─── Content ─── */
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cardTitle {
+  font-family: var(--font-heading, sans-serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--tx);
+  line-height: 1.2;
+  transition: color 0.3s var(--ease);
+}
+
+.accentBlue:hover .cardTitle { color: var(--blue-l); }
+.accentViolet:hover .cardTitle { color: var(--violet); }
+.accentCyan:hover .cardTitle { color: var(--cyan); }
+.accentGold:hover .cardTitle { color: #facc15; }
+
+.cardDesc {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: var(--tx-2);
+  margin-top: 4px;
+}
+
+/* Tags */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.tag {
+  font-family: var(--font-code, monospace);
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--tx-3);
+  padding: 4px 10px;
+  border-radius: 100px;
+  border: 1px solid var(--brd);
+  background: rgba(255, 255, 255, 0.015);
+  transition: border-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+
+.card:hover .tag {
+  border-color: var(--brd-2);
+  color: var(--tx-2);
+}
+
+/* Scan line */
+.scanLine {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blue) 20%, var(--cyan) 50%, var(--violet) 80%, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+  z-index: 2;
+  grid-column: 1 / -1;
+}
+
+.card:hover .scanLine { transform: scaleX(1); }
+
+/* ─── Responsive ─── */
+
+@media (min-width: 640px) {
+  .cardInner {
+    grid-template-columns: 1fr;
+    min-height: 200px;
+  }
+  .shape { width: 48px; height: 48px; }
+}
+
+@media (min-width: 960px) {
+  .cardInner { min-height: 220px; }
+}

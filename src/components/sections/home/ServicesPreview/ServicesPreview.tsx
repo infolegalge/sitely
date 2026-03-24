@@ -78,75 +78,81 @@ export default function ServicesPreview() {
   const sectionRef = useRef<HTMLElement>(null);
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  /* Reveal-on-scroll (IntersectionObserver) */
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const els = section.querySelectorAll<HTMLElement>("[data-rv]");
-    if (!els.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.08, rootMargin: "0px 0px -40px 0px" },
-    );
-
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
-  /* GSAP ScrollTrigger — 3D entrance + parallax depth */
+  /* GSAP ScrollTrigger — 3D puzzle entrance + parallax depth */
   useEffect(() => {
     let ctx: ReturnType<typeof import("gsap").gsap.context> | undefined;
+    let cancelled = false;
 
     async function init() {
       const { gsap } = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      if (cancelled) return;
       gsap.registerPlugin(ScrollTrigger);
 
       const section = sectionRef.current;
-      if (!section) return;
+      if (!section || cancelled) return;
 
       ctx = gsap.context(() => {
-        /* Staggered card entrance with 3D rotation */
+        /* Header entrance */
+        gsap.fromTo(
+          section.querySelector(`.${s.header}`),
+          { opacity: 0, y: 50, rotateX: 10 },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: section,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        );
+
+        /* Cards: 3D puzzle scatter → assemble */
         const cards = cardsRef.current.filter(Boolean);
         cards.forEach((card, i) => {
+          const col = i % 3;
+          const row = Math.floor(i / 3);
+          const xOffset = (col - 1) * 120;
+          const yOffset = 80 + row * 30;
+          const rotY = (col - 1) * 25;
+          const rotX = 15 + row * 5;
+
           gsap.fromTo(
             card,
             {
-              y: 60,
-              rotateX: 8,
               opacity: 0,
-              scale: 0.96,
+              x: xOffset,
+              y: yOffset,
+              rotateX: rotX,
+              rotateY: rotY,
+              scale: 0.7,
+              transformOrigin: "50% 50%",
             },
             {
+              opacity: 1,
+              x: 0,
               y: 0,
               rotateX: 0,
-              opacity: 1,
+              rotateY: 0,
               scale: 1,
               duration: 1,
               ease: "power3.out",
               scrollTrigger: {
-                trigger: card!,
+                trigger: section.querySelector(`.${s.grid}`),
                 start: "top 88%",
-                end: "top 50%",
+                end: "top 40%",
                 toggleActions: "play none none reverse",
               },
-              delay: i * 0.08,
+              delay: i * 0.1,
             },
           );
-        });
 
-        /* Parallax depth on scroll for each card */
-        cards.forEach((card, i) => {
-          const depth = i % 3 === 1 ? -6 : i % 3 === 2 ? 4 : -3;
+          /* Parallax depth */
+          const depth = [4, -3, 5, -4, 3, -5][i] ?? 0;
           gsap.to(card, {
             y: depth,
             ease: "none",
@@ -158,11 +164,31 @@ export default function ServicesPreview() {
             },
           });
         });
+
+        /* Footer CTA */
+        gsap.fromTo(
+          section.querySelector(`.${s.footer}`),
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.7,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: section.querySelector(`.${s.footer}`),
+              start: "top 92%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        );
       }, section);
     }
 
     init();
-    return () => ctx?.revert();
+    return () => {
+      cancelled = true;
+      ctx?.revert();
+    };
   }, []);
 
   /* Desktop: 3D tilt + cursor tracking */
@@ -188,7 +214,7 @@ export default function ServicesPreview() {
   return (
     <section id="services" ref={sectionRef} className={s.section}>
       {/* Header */}
-      <div className={s.header} data-rv="fade">
+      <div className={s.header}>
         <p className={s.label}>
           <span className={s.labelLine} />
           What We Do
@@ -210,8 +236,6 @@ export default function ServicesPreview() {
           <div
             key={service.id}
             className={`${s.card} ${ACCENT_CLS[i % 3]}`}
-            data-rv="fade"
-            data-d={String(i + 1)}
             ref={(el) => {
               cardsRef.current[i] = el;
             }}
@@ -257,7 +281,7 @@ export default function ServicesPreview() {
       </div>
 
       {/* Footer CTA */}
-      <div className={s.footer} data-rv="fade" data-d="6">
+      <div className={s.footer}>
         <Link href="/services" className={s.allLink}>
           Explore All Services <span className={s.arrow}>{"→"}</span>
         </Link>

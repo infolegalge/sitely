@@ -41,7 +41,7 @@ const FEATURES = [
 const STATS = [
   { end: 4.9, suffix: "", label: "Client Satisfaction", isFloat: true, accent: "blue", ringProgress: 0.98 },
   { end: 50, suffix: "+", label: "Projects Delivered", isFloat: false, accent: "violet", ringProgress: 1.0 },
-  { end: 98, suffix: "%", label: "On-Time Delivery", isFloat: false, accent: "cyan", ringProgress: 0.98 },
+  { end: 100, suffix: "%", label: "On-Time Delivery", isFloat: false, accent: "cyan", ringProgress: 1.0 },
   { end: 100, suffix: "%", label: "5\u2605 Recommendations", isFloat: false, accent: "gold", ringProgress: 1.0 },
 ];
 
@@ -125,89 +125,129 @@ export default function Testimonials() {
   const valRefs = useRef<(HTMLDivElement | null)[]>([]);
   const countedRef = useRef<Set<number>>(new Set());
 
-  /* Reveal-on-scroll for header text */
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const els = section.querySelectorAll<HTMLElement>("[data-rv]");
-    if (!els.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" },
-    );
-
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
-  /* GSAP ScrollTrigger — orb & card entrance */
+  /* GSAP ScrollTrigger — 3D puzzle entrance for header, orbs & cards */
   useEffect(() => {
     let ctx: ReturnType<typeof import("gsap").gsap.context> | undefined;
+    let cancelled = false;
 
     async function init() {
       const { gsap } = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      if (cancelled) return;
       gsap.registerPlugin(ScrollTrigger);
 
       const section = sectionRef.current;
-      if (!section) return;
+      if (!section || cancelled) return;
 
       ctx = gsap.context(() => {
+        /* Header entrance */
+        gsap.fromTo(
+          section.querySelector(`.${s.header}`),
+          { opacity: 0, y: 50, rotateX: 10 },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: section,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        );
+
+        /* Orbs: 3D scatter assemble with rotation */
         const orbEls = section.querySelectorAll(`.${s.orb}`);
         if (orbEls.length) {
-          gsap.fromTo(
-            Array.from(orbEls),
-            { scale: 0.3, opacity: 0 },
-            {
-              scale: 1,
-              opacity: 1,
-              stagger: 0.12,
-              duration: 0.75,
-              ease: "back.out(1.7)",
-              scrollTrigger: {
-                trigger: section.querySelector(`.${s.orbs}`),
-                start: "top 85%",
-                toggleActions: "play none none reverse",
+          Array.from(orbEls).forEach((orb, i) => {
+            gsap.fromTo(
+              orb,
+              {
+                scale: 0.3,
+                opacity: 0,
+                rotateY: (i - 1.5) * 30,
+                y: 40,
               },
-            },
-          );
+              {
+                scale: 1,
+                opacity: 1,
+                rotateY: 0,
+                y: 0,
+                duration: 0.75,
+                ease: "back.out(1.7)",
+                scrollTrigger: {
+                  trigger: section.querySelector(`.${s.orbs}`),
+                  start: "top 85%",
+                  toggleActions: "play none none reverse",
+                },
+                delay: i * 0.12,
+              },
+            );
+          });
         }
 
+        /* Cards: 3D puzzle scatter from different positions */
         const cardEls = section.querySelectorAll(`.${s.card}`);
         if (cardEls.length) {
-          gsap.fromTo(
-            Array.from(cardEls),
-            { y: 50, rotateX: 6, opacity: 0, scale: 0.97 },
-            {
-              y: 0,
-              rotateX: 0,
-              opacity: 1,
-              scale: 1,
-              stagger: 0.1,
-              duration: 0.7,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: section.querySelector(`.${s.bento}`),
-                start: "top 88%",
-                toggleActions: "play none none reverse",
+          Array.from(cardEls).forEach((card, i) => {
+            const col = i % 2;
+            const row = Math.floor(i / 2);
+            const xOffset = (col - 0.5) * 120;
+            const rotY = (col - 0.5) * 20;
+
+            gsap.fromTo(
+              card,
+              {
+                opacity: 0,
+                x: xOffset,
+                y: 60 + row * 20,
+                rotateX: 12,
+                rotateY: rotY,
+                scale: 0.75,
               },
-            },
-          );
+              {
+                opacity: 1,
+                x: 0,
+                y: 0,
+                rotateX: 0,
+                rotateY: 0,
+                scale: 1,
+                duration: 0.9,
+                ease: "power3.out",
+                scrollTrigger: {
+                  trigger: section.querySelector(`.${s.bento}`),
+                  start: "top 88%",
+                  end: "top 40%",
+                  toggleActions: "play none none reverse",
+                },
+                delay: i * 0.1,
+              },
+            );
+
+            /* Parallax depth */
+            const depth = [4, -3, -4, 5][i] ?? 0;
+            gsap.to(card, {
+              y: depth,
+              ease: "none",
+              scrollTrigger: {
+                trigger: section,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 2,
+              },
+            });
+          });
         }
       }, section);
     }
 
     init();
-    return () => ctx?.revert();
+    return () => {
+      cancelled = true;
+      ctx?.revert();
+    };
   }, []);
 
   /* Counter + ring animation on intersect */
@@ -265,15 +305,15 @@ export default function Testimonials() {
     <section id="testimonials" ref={sectionRef} className={s.section}>
       {/* Header */}
       <div className={s.header}>
-        <p className={s.label} data-rv="fade">
+        <p className={s.label}>
           <span className={s.labelLine} aria-hidden="true" />
           Why Sitely
           <span className={s.labelLine} aria-hidden="true" />
         </p>
-        <h2 className={s.title} data-rv="fade" data-d="1">
+        <h2 className={s.title}>
           Why teams choose <span className="grad-text">Sitely</span>
         </h2>
-        <p className={s.desc} data-rv="fade" data-d="2">
+        <p className={s.desc}>
           A premium 3D web studio where cutting-edge technology meets design
           excellence. We don&apos;t just build websites &mdash; we craft
           immersive digital experiences.

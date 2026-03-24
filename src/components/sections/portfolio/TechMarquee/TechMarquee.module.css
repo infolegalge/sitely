@@ -1,0 +1,133 @@
+/* ═══════════════════════════════════════════
+   TechMarquee — /portfolio §4
+   Infinite scrolling tech logos
+   ═══════════════════════════════════════════ */
+
+.section {
+  position: relative;
+  z-index: 1;
+  padding: 60px 0 80px;
+  overflow: hidden;
+}
+
+.header {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 40px;
+  padding: 0 24px;
+  will-change: transform, opacity;
+}
+
+.label {
+  font-family: var(--font-code, monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--blue);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.labelLine {
+  display: inline-block;
+  width: 20px;
+  height: 1px;
+  background: var(--blue);
+  opacity: 0.5;
+}
+
+.title {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(1.4rem, 4vw, 2.6rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--tx);
+  letter-spacing: -0.02em;
+}
+
+/* ─── Marquee track ─── */
+
+.track {
+  display: flex;
+  gap: 24px;
+  padding: 12px 0;
+  width: max-content;
+}
+
+.trackRow {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+  margin-bottom: 12px;
+}
+
+.trackRow:last-child {
+  margin-bottom: 0;
+}
+
+/* Forward (left) */
+.forward .track {
+  animation: scrollLeft 40s linear infinite;
+}
+
+/* Reverse (right) */
+.reverse .track {
+  animation: scrollRight 40s linear infinite;
+}
+
+@keyframes scrollLeft {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scrollRight {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+/* Pause on hover */
+.trackRow:hover .track {
+  animation-play-state: paused;
+}
+
+/* ─── Tech pill ─── */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--brd-2);
+  background: rgba(8, 8, 16, 0.6);
+  backdrop-filter: blur(12px);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: border-color 0.3s var(--ease), transform 0.3s var(--ease);
+}
+
+.pill:hover {
+  border-color: var(--blue);
+  transform: translateY(-2px);
+}
+
+.pillIcon {
+  font-size: 1.1rem;
+  line-height: 1;
+  opacity: 0.8;
+}
+
+.pillName {
+  font-family: var(--font-code, monospace);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  color: var(--tx-2);
+}
+
+.pill:hover .pillName {
+  color: var(--tx);
+}

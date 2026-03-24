@@ -101,32 +101,84 @@ export default function ProcessSection() {
   const timelineRef = useRef<HTMLDivElement>(null);
   const trackFillRef = useRef<HTMLDivElement>(null);
   const dotRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [activeDots, setActiveDots] = useState<boolean[]>(
     () => new Array(STEPS.length).fill(false),
   );
 
-  /* Reveal-on-scroll using the global data-rv system */
+  /* GSAP ScrollTrigger — 3D puzzle card entrance */
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
+    let ctx: ReturnType<typeof import("gsap").gsap.context> | undefined;
+    let cancelled = false;
 
-    const els = section.querySelectorAll<HTMLElement>("[data-rv]");
-    if (!els.length) return;
+    async function init() {
+      const { gsap } = await import("gsap");
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      if (cancelled) return;
+      gsap.registerPlugin(ScrollTrigger);
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
-          }
+      const section = sectionRef.current;
+      if (!section || cancelled) return;
+
+      ctx = gsap.context(() => {
+        /* Header entrance */
+        gsap.fromTo(
+          section.querySelector(`.${s.header}`),
+          { opacity: 0, y: 50, rotateX: 10 },
+          {
+            opacity: 1,
+            y: 0,
+            rotateX: 0,
+            duration: 0.9,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: section,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            },
+          },
+        );
+
+        /* Cards: alternating 3D puzzle entrance */
+        const cards = cardRefs.current.filter(Boolean);
+        cards.forEach((card, i) => {
+          const fromRight = i % 2 === 1;
+          gsap.fromTo(
+            card,
+            {
+              opacity: 0,
+              x: fromRight ? 100 : -100,
+              y: 40,
+              rotateY: fromRight ? -30 : 30,
+              rotateX: 10,
+              scale: 0.8,
+            },
+            {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              rotateY: 0,
+              rotateX: 0,
+              scale: 1,
+              duration: 1,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: card!,
+                start: "top 90%",
+                end: "top 55%",
+                toggleActions: "play none none reverse",
+              },
+            },
+          );
         });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" },
-    );
+      }, section);
+    }
 
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    init();
+    return () => {
+      cancelled = true;
+      ctx?.revert();
+    };
   }, []);
 
   /* Scroll-driven timeline fill + active dots */
@@ -181,7 +233,7 @@ export default function ProcessSection() {
   return (
     <section id="process" ref={sectionRef} className={s.section}>
       {/* Header */}
-      <div className={s.header} data-rv="fade">
+      <div className={s.header}>
         <p className={s.label}>
           <span className={s.labelLine} />
           How We Work
@@ -208,8 +260,7 @@ export default function ProcessSection() {
           <div
             key={step.num}
             className={s.step}
-            data-rv="fade"
-            data-d={String(i + 1)}
+            ref={(el) => { cardRefs.current[i] = el; }}
           >
             {/* Dot */}
             <div

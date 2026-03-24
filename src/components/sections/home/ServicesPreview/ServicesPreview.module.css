@@ -20,6 +20,7 @@
   margin: 0 auto;
   padding: 64px 14px 80px;
   overflow: hidden;
+  perspective: 1200px;
 }
 
 /* ─── Header ─── */
@@ -30,6 +31,7 @@
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
+  will-change: transform, opacity;
 }
 
 .label {
@@ -84,6 +86,7 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 20px;
+  transform-style: preserve-3d;
 }
 
 /* ─── Card ─── */
@@ -374,6 +377,7 @@
 .footer {
   margin-top: clamp(36px, 5vw, 56px);
   text-align: center;
+  will-change: transform, opacity;
 }
 
 .allLink {

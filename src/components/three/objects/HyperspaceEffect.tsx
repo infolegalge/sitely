@@ -3,6 +3,7 @@
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { isAlreadyLoaded } from "@/lib/preloaderState";
 
 /* ─── Config ─── */
 const FIELD_DEPTH = 1500;
@@ -132,7 +133,9 @@ export default function HyperspaceEffect({ isMobile }: HyperspaceEffectProps) {
     const mat = materialRef.current;
 
     if (startTimeRef.current < 0) {
+      if (!isAlreadyLoaded()) return;
       startTimeRef.current = state.clock.elapsedTime;
+      if (meshRef.current) meshRef.current.visible = true;
     }
     const elapsed = state.clock.elapsedTime - startTimeRef.current;
 

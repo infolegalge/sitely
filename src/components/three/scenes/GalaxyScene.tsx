@@ -7,6 +7,7 @@ import HyperspaceEffect from "../objects/HyperspaceEffect";
 import SpiralGalaxy from "../objects/SpiralGalaxy";
 import GalacticCore from "../objects/GalacticCore";
 import DistantStars from "../objects/DistantStars";
+import { isAlreadyLoaded } from "@/lib/preloaderState";
 
 /* ─── Timeline ─── */
 const T = {
@@ -48,7 +49,13 @@ export default function GalaxyScene({ isMobile = false }: { isMobile?: boolean }
   }, []);
 
   useFrame((state, delta) => {
-    if (startRef.current < 0) startRef.current = state.clock.elapsedTime;
+    /* Don't start the cinematic clock until preloader is done.
+       This prevents 2.4s of invisible GPU work and ensures
+       the 3D journey starts in sync with the hero animation. */
+    if (startRef.current < 0) {
+      if (!isAlreadyLoaded()) return;
+      startRef.current = state.clock.elapsedTime;
+    }
     const t = state.clock.elapsedTime - startRef.current;
     const cam = state.camera as THREE.PerspectiveCamera;
     const gal = galaxyRef.current;

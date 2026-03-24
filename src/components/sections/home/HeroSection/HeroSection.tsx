@@ -15,7 +15,8 @@ const LINE_1 = "We Build Websites in Three";
 const ACCENT_TEXT = "Dimensions";
 
 // Must match Preloader timing
-const PRELOADER_EXIT_AT = 2.5;
+const PRELOADER_EXIT_AT = 2.2;
+
 
 /* ─── Helpers ─── */
 
@@ -43,6 +44,7 @@ export default function HeroSection() {
   const flashRef = useRef<HTMLDivElement>(null);
 
   const animDoneRef = useRef(false);
+  const evaporateTimersRef = useRef<number[]>([]);
 
   // Collect char refs from the heading line
   const line1CharsRef = useRef<(HTMLSpanElement | null)[]>([]);
@@ -67,6 +69,7 @@ export default function HeroSection() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+    
     const isFirstVisit = !isAlreadyLoaded();
     const baseDelay = isFirstVisit ? PRELOADER_EXIT_AT : 0.15;
     const isMobile = window.innerWidth < 768;
@@ -217,9 +220,10 @@ export default function HeroSection() {
               const twistZ = seededRange(i, 11, -30, 30);
 
               // Dust particle CSS animation
-              setTimeout(() => {
+              const timerId = window.setTimeout(() => {
                 char.setAttribute("data-evaporate", "true");
               }, stagger * 1000);
+              evaporateTimersRef.current.push(timerId);
 
               // Shard: rises + stretches + blurs + fades
               if (shard) {
@@ -286,33 +290,105 @@ export default function HeroSection() {
         }, cleanupTime + 0.1);
       } else {
         /* ===================================
-           RETURN VISIT — quick stagger fade
+           RETURN VISIT — ServicesHero-style entrance
            =================================== */
-        const all = [
-          labelRef.current,
-          headingRef.current,
-          subtitleRef.current,
-          ctaRef.current,
-        ].filter(Boolean);
-
-        gsap.set(all, { opacity: 0, y: 30, filter: "blur(4px)" });
+        const section = sectionRef.current;
+        if (!section) return;
 
         if (accentInnerRef.current) {
           accentInnerRef.current.setAttribute("data-ignited", "true");
         }
 
-        gsap.timeline({ delay: baseDelay }).to(all, {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          duration: 0.5,
-          stagger: 0.06,
-          ease: "power2.out",
+        const tl = gsap.timeline({ delay: baseDelay, defaults: { ease: "power3.out" } });
+
+        /* Label slide in with rotateX */
+        if (labelRef.current) {
+          gsap.set(labelRef.current, { opacity: 0, y: 30, rotateX: 40 });
+          tl.to(labelRef.current, { opacity: 1, y: 0, rotateX: 0, duration: 0.8 }, 0.1);
+        }
+
+        /* Title words fly in from alternating depths */
+        const wordEls = section.querySelectorAll(`.${s.word}`);
+        const totalWords = wordEls.length;
+        wordEls.forEach((word, i) => {
+          const fromLeft = i % 2 === 0;
+          gsap.set(word, {
+            opacity: 0,
+            x: fromLeft ? -60 : 60,
+            y: 40,
+            rotateY: fromLeft ? 25 : -25,
+            rotateX: 15,
+            scale: 0.85,
+          });
+          tl.to(word, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            rotateY: 0,
+            rotateX: 0,
+            scale: 1,
+            duration: 0.9,
+          }, 0.15 + i * 0.08);
         });
+
+        /* "Dimensions" accent flies in same style as last word */
+        if (accentWrapRef.current) {
+          const accentIdx = totalWords;
+          const fromLeft = accentIdx % 2 === 0;
+          gsap.set(accentWrapRef.current, {
+            opacity: 0,
+            x: fromLeft ? -60 : 60,
+            y: 40,
+            rotateY: fromLeft ? 25 : -25,
+            rotateX: 15,
+            scale: 0.85,
+          });
+          tl.to(accentWrapRef.current, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            rotateY: 0,
+            rotateX: 0,
+            scale: 1,
+            duration: 0.9,
+          }, 0.15 + accentIdx * 0.08);
+        }
+
+        /* Subtitle fade up */
+        if (subtitleRef.current) {
+          gsap.set(subtitleRef.current, { opacity: 0, y: 30 });
+          tl.to(subtitleRef.current, { opacity: 1, y: 0, duration: 0.7 }, 0.5);
+        }
+
+        /* CTA buttons scatter in like puzzle pieces */
+        if (ctaRef.current) {
+          const buttons = Array.from(ctaRef.current.children) as HTMLElement[];
+          buttons.forEach((btn, i) => {
+            const angle = (i - 0.5) * 30;
+            gsap.set(btn, {
+              opacity: 0,
+              scale: 0.4,
+              y: 50,
+              x: (i - 0.5) * 40,
+              rotation: angle,
+            });
+            tl.to(btn, {
+              opacity: 1,
+              scale: 1,
+              y: 0,
+              x: 0,
+              rotation: 0,
+              duration: 0.6,
+              ease: "back.out(1.7)",
+            }, 0.65 + i * 0.06);
+          });
+        }
       }
     }, sectionRef);
 
     return () => {
+      evaporateTimersRef.current.forEach((id) => window.clearTimeout(id));
+      evaporateTimersRef.current = [];
       ctx.revert();
     };
   }, []);

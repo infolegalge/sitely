@@ -55,14 +55,30 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // Scroll to top on route change
+  // Route change: scroll to top after exit, refresh after full transition
+  const prevPathRef = useRef(pathname);
+
   useEffect(() => {
-    if (lenis) {
-      lenis.scrollTo(0, { immediate: true });
-    } else {
-      window.scrollTo(0, 0);
-    }
-    ScrollTrigger.refresh();
+    if (prevPathRef.current === pathname) return;
+    prevPathRef.current = pathname;
+
+    // Scroll to 0 after exit animation (250ms) — new page is at opacity 0
+    const scrollTimer = setTimeout(() => {
+      if (lenis) {
+        lenis.scrollTo(0, { immediate: true });
+      } else {
+        window.scrollTo(0, 0);
+      }
+    }, 300);
+
+    // Refresh ScrollTrigger after full transition settles
+    // (250ms exit + 400ms enter + buffer)
+    const refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 800);
+
+    return () => {
+      clearTimeout(scrollTimer);
+      clearTimeout(refreshTimer);
+    };
   }, [pathname, lenis]);
 
   return (

@@ -40,14 +40,16 @@ export default function ScrollChoreography({ children }: Props) {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let ctx: ReturnType<typeof import("gsap").gsap.context> | undefined;
+    let cancelled = false;
 
     async function init() {
       const { gsap } = await import("gsap");
       const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      if (cancelled) return;
       gsap.registerPlugin(ScrollTrigger);
 
       const wrapper = wrapperRef.current;
-      if (!wrapper) return;
+      if (!wrapper || cancelled) return;
 
       ctx = gsap.context(() => {
 
@@ -74,17 +76,21 @@ export default function ScrollChoreography({ children }: Props) {
           if (ctaGroup) items.push({ el: ctaGroup, ySpeed: -15, opacityEnd: 0 });
 
           items.forEach(({ el, ySpeed, opacityEnd }) => {
-            gsap.to(el, {
-              y: ySpeed,
-              opacity: opacityEnd,
-              ease: "none",
-              scrollTrigger: {
-                trigger: heroEl,
-                start: "top top",
-                end: "bottom top",
-                scrub: 0.6,
+            gsap.fromTo(el,
+              { y: 0, opacity: 1 },
+              {
+                y: ySpeed,
+                opacity: opacityEnd,
+                ease: "none",
+                immediateRender: false,
+                scrollTrigger: {
+                  trigger: heroEl,
+                  start: "top top",
+                  end: "bottom top",
+                  scrub: 0.6,
+                },
               },
-            });
+            );
           });
         }
 
@@ -160,7 +166,10 @@ export default function ScrollChoreography({ children }: Props) {
     }
 
     init();
-    return () => ctx?.revert();
+    return () => {
+      cancelled = true;
+      ctx?.revert();
+    };
   }, []);
 
   return (
