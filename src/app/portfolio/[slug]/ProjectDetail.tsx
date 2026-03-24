@@ -5,7 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Project } from "@/types";
 import { FEATURED_PROJECTS } from "@/lib/constants";
+import { PORTFOLIO_PROJECTS } from "@/lib/portfolio-projects";
 import s from "./ProjectDetail.module.css";
+
+const ALL_PROJECTS = [...FEATURED_PROJECTS, ...PORTFOLIO_PROJECTS];
 
 export default function ProjectDetail({ project }: { project: Project }) {
   const mainRef = useRef<HTMLElement>(null);
@@ -31,8 +34,8 @@ export default function ProjectDetail({ project }: { project: Project }) {
   }, []);
 
   /* Next / Prev project */
-  const idx = FEATURED_PROJECTS.findIndex((p) => p.id === project.id);
-  const next = FEATURED_PROJECTS[(idx + 1) % FEATURED_PROJECTS.length];
+  const idx = ALL_PROJECTS.findIndex((p) => p.id === project.id);
+  const next = ALL_PROJECTS[(idx + 1) % ALL_PROJECTS.length];
 
   return (
     <main ref={mainRef} className={s.page}>
@@ -158,6 +161,24 @@ export default function ProjectDetail({ project }: { project: Project }) {
           ))}
         </div>
       </section>
+
+      {/* ─── Client Testimonial ─── */}
+      {project.testimonial && (
+        <section className={s.testimonial} data-rv="fade">
+          <p className={s.sectionLabel}>Client Review</p>
+          <blockquote className={s.testimonialQuote}>
+            &ldquo;{project.testimonial.quote}&rdquo;
+          </blockquote>
+          <div className={s.testimonialAuthor}>
+            <span className={s.testimonialName}>
+              {project.testimonial.author}
+            </span>
+            <span className={s.testimonialRole}>
+              {project.testimonial.role}
+            </span>
+          </div>
+        </section>
+      )}
 
       {/* ─── Next Project ─── */}
       <section className={s.nextProject} data-rv="fade">

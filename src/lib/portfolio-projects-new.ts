@@ -1688,30 +1688,30 @@ export const PORTFOLIO_PROJECTS: Project[] = [
   {
     id: "cre-6",
     slug: "read-cv",
-    title: "Contra",
-    client: "Contra Inc.",
+    title: "Read.cv",
+    client: "Read.cv Inc.",
     year: 2025,
     category: "Creative & Design",
     thumbnail: "/images/projects/portfolio/read-cv.webp",
     tags: ["Next.js", "React", "Tailwind CSS", "TypeScript"],
     featured: false,
     description:
-      "Independent professional platform connecting freelancers with clients through portfolio-driven profiles, project-based contracts, and commission-free payments.",
+      "Professional profile platform for designers and developers with a clean, minimalist design, portfolio showcases, and community features.",
     challenge:
-      "Freelance marketplaces feel transactional and impersonal — Contra needed a platform that puts creative portfolios front and center while streamlining the business side.",
+      "LinkedIn alternatives fail because they're too complex — Read.cv needed an ultra-clean site that made professional identity curation feel effortless.",
     solution:
-      "Portfolio-first profile design with rich project showcases, integrated contract and payment tools with zero commissions, and a discovery feed connecting talent with opportunities.",
+      "Minimalist profile previews showing actual user portfolios, one-click profile import from LinkedIn, beautiful project showcase module, and a curated job board.",
     results: [
-      "Freelancer signups grew 4× after redesign",
-      "Average project value increased 35%",
-      "Portfolio views became the top conversion driver",
+      "User signups grew 3× after redesign",
+      "Profile completion rate: 85%",
+      "Job board became top feature driving retention",
     ],
-    liveUrl: "https://contra.com",
-    accentColor: "#6C5CE7",
+    liveUrl: "https://read.cv",
+    accentColor: "#171717",
     testimonial: {
-      quote: "Contra's redesign made our platform feel like a creative portfolio first, marketplace second. Freelancers finally have a home that represents their work beautifully.",
-      author: "Ben Huffman",
-      role: "Co-Founder, Contra",
+      quote: "The profile previews on our homepage convert visitors instantly. People see beautiful portfolios and want to create their own immediately.",
+      author: "Andy Chung",
+      role: "Founder, Read.cv",
     },
   },
 ];

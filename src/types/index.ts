@@ -42,6 +42,11 @@ export type Project = {
   results?: string[];
   liveUrl?: string;
   accentColor?: string;
+  testimonial?: {
+    quote: string;
+    author: string;
+    role: string;
+  };
 };
 
 export type Testimonial = {

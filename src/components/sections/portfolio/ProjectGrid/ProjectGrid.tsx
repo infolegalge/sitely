@@ -14,15 +14,21 @@ import s from "./ProjectGrid.module.css";
 
 const ALL_PROJECTS: Project[] = [...FEATURED_PROJECTS, ...PORTFOLIO_PROJECTS];
 
+const PAGE_SIZE = 12;
+
 export default function ProjectGrid() {
   const sectionRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<PortfolioCategory>("All");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const filtered =
     active === "All"
       ? ALL_PROJECTS
       : ALL_PROJECTS.filter((p) => p.category === active);
+
+  const visible = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
   /* ─── 3D hover tilt ─── */
   const handlePointerMove = useCallback(
@@ -140,7 +146,7 @@ export default function ProjectGrid() {
           <button
             key={cat}
             className={`${s.filterBtn} ${active === cat ? s.filterBtnActive : ""}`}
-            onClick={() => setActive(cat)}
+            onClick={() => { setActive(cat); setVisibleCount(PAGE_SIZE); }}
           >
             {cat}
             {cat !== "All" && (
@@ -155,7 +161,7 @@ export default function ProjectGrid() {
         {filtered.length === 0 && (
           <div className={s.empty}>No projects in this category yet.</div>
         )}
-        {filtered.map((project) => (
+        {visible.map((project) => (
           <Link
             key={project.id}
             href={`/portfolio/${project.slug}`}
@@ -203,6 +209,23 @@ export default function ProjectGrid() {
           </Link>
         ))}
       </div>
+
+      {/* Load more */}
+      {filtered.length > 0 && (
+        <div className={s.loadMoreWrap}>
+          <p className={s.showingCount}>
+            Showing {visible.length} of {filtered.length} projects
+          </p>
+          {hasMore && (
+            <button
+              className={s.loadMoreBtn}
+              onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+            >
+              Load More Projects
+            </button>
+          )}
+        </div>
+      )}
     </section>
   );
 }

@@ -1,47 +1,28 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { PORTFOLIO_PROJECTS } from "@/lib/portfolio-projects";
 import s from "./ClientVoices.module.css";
 
-/* ── testimonials linked to portfolio projects ── */
-const TESTIMONIALS = [
-  {
-    quote:
-      "They delivered a 3D shopping experience that doubled our average session time. The WebGL product viewer alone increased conversions by 34%.",
-    name: "Marcus Reinhardt",
-    role: "CTO",
-    company: "LuxeHaven",
-    initials: "MR",
-    stars: 5,
-  },
-  {
-    quote:
-      "Our booking platform feels like a premium travel magazine now. The immersive destination previews generated a 120% increase in direct bookings within two months.",
-    name: "Eva Lindström",
-    role: "Digital Director",
-    company: "Arctic Drift Expeditions",
-    initials: "EL",
-    stars: 5,
-  },
-  {
-    quote:
-      "Sitely rebuilt our entire SaaS dashboard from scratch — real-time analytics, smooth transitions, flawless on every device. Our churn dropped 18% after launch.",
-    name: "Daniel Kowalski",
-    role: "Co-Founder",
-    company: "PulseMetrics",
-    initials: "DK",
-    stars: 5,
-  },
-  {
-    quote:
-      "The 3D property tours completely transformed how clients explore listings. We closed 42% more deals in the first quarter after launch.",
-    name: "Isabelle Moreau",
-    role: "Head of Digital",
-    company: "Vantage Estates",
-    initials: "IM",
-    stars: 5,
-  },
-];
+/* ── pick 4 diverse testimonials from real projects ── */
+const VOICE_SLUGS = ["bellroy", "linear", "getaway-house", "ritual"] as const;
+const TESTIMONIALS = VOICE_SLUGS.map((slug) => {
+  const p = PORTFOLIO_PROJECTS.find((pr) => pr.slug === slug)!;
+  const t = p.testimonial!;
+  const initials = t.author
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2);
+  return {
+    quote: t.quote,
+    name: t.author,
+    role: t.role.split(",")[0].trim(),
+    company: p.client,
+    initials,
+    stars: 5 as const,
+  };
+});
 
 export default function ClientVoices() {
   const sectionRef = useRef<HTMLElement>(null);

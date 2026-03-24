@@ -301,6 +301,47 @@
   color: var(--blue);
 }
 
+/* ─── Client Testimonial ─── */
+
+.testimonial {
+  padding: clamp(40px, 8vw, 100px) clamp(16px, 5vw, 56px);
+  border-top: 1px solid var(--brd);
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.testimonialQuote {
+  font-family: var(--font-heading, sans-serif);
+  font-size: clamp(1.15rem, 2.5vw, 1.6rem);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--tx);
+  font-style: italic;
+  margin: clamp(20px, 3vw, 32px) 0 clamp(20px, 3vw, 28px);
+  letter-spacing: -0.01em;
+}
+
+.testimonialAuthor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.testimonialName {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--tx);
+}
+
+.testimonialRole {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.75rem;
+  color: var(--tx-3);
+}
+
 /* ─── Next Project ─── */
 
 .nextProject {
