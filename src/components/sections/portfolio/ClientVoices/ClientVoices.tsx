@@ -97,7 +97,7 @@ export default function ClientVoices() {
   }, []);
 
   return (
-    <section ref={sectionRef} className={s.section}>
+    <section id="p-voices" ref={sectionRef} className={s.section}>
       <div className={s.header}>
         <p className={s.label}>
           <span className={s.labelLine} aria-hidden="true" />

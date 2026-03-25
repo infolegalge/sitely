@@ -250,7 +250,7 @@ export default function ClientJourney() {
   }, [updateTimeline]);
 
   return (
-    <section ref={sectionRef} className={s.section}>
+    <section id="sv-journey" ref={sectionRef} className={s.section}>
       {/* Header */}
       <div className={s.header}>
         <p className={s.label}>

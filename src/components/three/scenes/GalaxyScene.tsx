@@ -7,12 +7,13 @@ import HyperspaceEffect from "../objects/HyperspaceEffect";
 import SpiralGalaxy from "../objects/SpiralGalaxy";
 import GalacticCore from "../objects/GalacticCore";
 import DistantStars from "../objects/DistantStars";
+import DistantGalaxies from "../objects/DistantGalaxies";
 import { isAlreadyLoaded } from "@/lib/preloaderState";
 
 /* ─── Timeline ─── */
 const T = {
-  APPEAR: 1.5,          // hyperspace ends, journey begins
-  JOURNEY_END: 6.0,     // spiral complete, at core
+  APPEAR: 0.8,           // hyperspace ends, journey begins
+  JOURNEY_END: 3.0,     // spiral complete, at core
 };
 
 /* ─── Helpers ─── */
@@ -91,13 +92,13 @@ export default function GalaxyScene({ isMobile = false }: { isMobile?: boolean }
         ? pRaw * (1.0 / 0.55) * 0.85                          // 0→0.85 (fast cruise)
         : 0.85 + (1 - Math.pow(1 - (pRaw - 0.55) / 0.45, 2.5)) * 0.15; // 0.85→1 (slow arrival)
 
-      // ── Galaxy flies in during first ~20% of q ──
-      const galP = ss(0, 0.2, q);
-      gal.position.z = mix(-600, 0, galP);
-      gal.scale.setScalar(mix(0.01, 1.0, galP));
+      // ── Galaxy flies in during first ~30% of q ──
+      const galP = ss(0, 0.3, q);
+      gal.position.z = mix(-400, 0, galP);
+      gal.scale.setScalar(mix(0.05, 1.0, galP));
 
-      // ── Continuous spiral angle — 2 full orbits for grand tour ──
-      const angle = q * Math.PI * 4.0;
+      // ── Continuous spiral angle — 1 orbit sweep into core ──
+      const angle = q * Math.PI * 2.0;
 
       // ── Radius: 0 → 300 (wide, feel the scale) → 40 (core) ──
       const outward = 1 - Math.pow(1 - Math.min(q * 3.0, 1.0), 3);
@@ -130,9 +131,9 @@ export default function GalaxyScene({ isMobile = false }: { isMobile?: boolean }
       const endFov = isMobile ? 58 : 48;
       targetFov = mix(isMobile ? 100 : 90, endFov, ss(0, 0.5, q));
 
-      // Galaxy fades out in last 20% of q, distant stars fade in
+      // Stars visible from start; galaxy fades in last 20%
       galaxyBrightness.current = 1 - ss(0.8, 0.95, q);
-      starsOpacity.current = ss(0.85, 1.0, q);
+      starsOpacity.current = Math.max(ss(0, 0.1, q) * 0.6, ss(0.85, 1.0, q));
 
     } else {
       /* ══════════════════════════════════════════════════════════
@@ -230,6 +231,7 @@ export default function GalaxyScene({ isMobile = false }: { isMobile?: boolean }
     <>
       <HyperspaceEffect isMobile={isMobile} />
       <DistantStars opacityRef={starsOpacity} isMobile={isMobile} />
+      <DistantGalaxies opacityRef={starsOpacity} isMobile={isMobile} />
       <group ref={galaxyRef} rotation={[-0.12, 0, 0.05]}>
         <SpiralGalaxy brightnessRef={galaxyBrightness} isMobile={isMobile} />
         <GalacticCore isMobile={isMobile} />

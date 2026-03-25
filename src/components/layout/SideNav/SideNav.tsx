@@ -9,23 +9,42 @@ interface Section {
   label: string;
 }
 
-const HOME_SECTIONS: Section[] = [
-  { id: "hero", label: "Home" },
-  { id: "work", label: "Selected Work" },
-  { id: "services", label: "Services" },
-  { id: "process", label: "Process" },
-  { id: "testimonials", label: "Why Us" },
-];
+const ROUTE_SECTIONS: Record<string, Section[]> = {
+  "/": [
+    { id: "hero", label: "Home" },
+    { id: "work", label: "Selected Work" },
+    { id: "services", label: "Services" },
+    { id: "process", label: "Process" },
+    { id: "testimonials", label: "Why Us" },
+  ],
+  "/portfolio": [
+    { id: "p-hero", label: "Portfolio" },
+    { id: "p-projects", label: "Projects" },
+    { id: "p-cases", label: "Case Studies" },
+    { id: "p-tech", label: "Tech Stack" },
+    { id: "p-voices", label: "Testimonials" },
+    { id: "p-cta", label: "Get Started" },
+  ],
+  "/services": [
+    { id: "sv-hero", label: "Services" },
+    { id: "sv-industries", label: "Industries" },
+    { id: "sv-deep", label: "Deep Dive" },
+    { id: "sv-journey", label: "Your Journey" },
+    { id: "sv-results", label: "Results" },
+    { id: "sv-cta", label: "Get Started" },
+  ],
+};
 
 export default function SideNav() {
   const pathname = usePathname();
-  const [active, setActive] = useState("hero");
+  const sections = ROUTE_SECTIONS[pathname];
+  const [active, setActive] = useState(sections?.[0]?.id ?? "");
   const ticking = useRef(false);
-  const isHome = pathname === "/";
 
   const updateActive = useCallback(() => {
-    let current = HOME_SECTIONS[0].id;
-    for (const section of HOME_SECTIONS) {
+    if (!sections) return;
+    let current = sections[0].id;
+    for (const section of sections) {
       const el = document.getElementById(section.id);
       if (el && el.getBoundingClientRect().top < window.innerHeight * 0.4) {
         current = section.id;
@@ -33,11 +52,11 @@ export default function SideNav() {
     }
     setActive(current);
     ticking.current = false;
-  }, []);
+  }, [sections]);
 
-  /* Scroll listener with rAF throttle */
   useEffect(() => {
-    if (!isHome) return;
+    if (!sections) return;
+    setActive(sections[0].id);
     const onScroll = () => {
       if (!ticking.current) {
         ticking.current = true;
@@ -47,7 +66,7 @@ export default function SideNav() {
     window.addEventListener("scroll", onScroll, { passive: true });
     updateActive();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [isHome, updateActive]);
+  }, [sections, updateActive]);
 
   const scrollTo = useCallback((id: string) => {
     const el = document.getElementById(id);
@@ -56,11 +75,10 @@ export default function SideNav() {
     window.scrollTo({ top, behavior: "smooth" });
   }, []);
 
-  /* Only show on homepage */
-  if (!isHome) return null;
+  if (!sections) return null;
   return (
     <nav className={s.nav} aria-label="Section navigation">
-      {HOME_SECTIONS.map(({ id, label }) => (
+      {sections.map(({ id, label }) => (
         <button
           key={id}
           className={`${s.dot}${active === id ? ` ${s.active}` : ""}`}

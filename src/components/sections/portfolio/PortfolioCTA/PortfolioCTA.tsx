@@ -93,7 +93,7 @@ export default function PortfolioCTA() {
   }, []);
 
   return (
-    <section ref={sectionRef} className={s.section}>
+    <section id="p-cta" ref={sectionRef} className={s.section}>
       <div className={s.inner}>
         <div className={s.glow} aria-hidden="true" />
         <div className={s.holoGlow} aria-hidden="true" />

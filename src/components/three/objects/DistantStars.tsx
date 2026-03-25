@@ -4,7 +4,7 @@ import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-const COUNT = 600;
+const COUNT = 1200;
 const RADIUS = 600;
 
 interface DistantStarsProps {
@@ -13,7 +13,7 @@ interface DistantStarsProps {
 }
 
 export default function DistantStars({ opacityRef, isMobile }: DistantStarsProps) {
-  const count = isMobile ? 350 : COUNT;
+  const count = isMobile ? 700 : COUNT;
   const matRef = useRef<THREE.PointsMaterial>(null);
 
   const geo = useMemo(() => {

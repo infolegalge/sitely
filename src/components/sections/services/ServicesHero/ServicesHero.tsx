@@ -113,7 +113,7 @@ export default function ServicesHero() {
   }, []);
 
   return (
-    <section ref={sectionRef} className={s.section}>
+    <section id="sv-hero" ref={sectionRef} className={s.section}>
       <div className={s.glow} aria-hidden="true" />
       <div className={s.inner}>
         <p className={s.label}>

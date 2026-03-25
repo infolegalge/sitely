@@ -11,10 +11,10 @@ const FIELD_RADIUS = 100;
 const WARP_SPEED = 500;
 
 /* ─── Timing (camera FOV handled by GalaxyScene) ─── */
-const DECEL_START = 3.0;   // start slowing
-const DECEL_END = 4.5;     // fully stopped
-const FADE_START = 3.5;    // start fading
-const FADE_END = 5.0;      // fully invisible
+const DECEL_START = 0.3;    // start slowing
+const DECEL_END = 0.7;      // fully stopped
+const FADE_START = 0.5;     // start fading
+const FADE_END = 1.0;       // fully invisible
 
 /* ─── Vertex Shader ─── */
 const vertexShader = /* glsl */ `

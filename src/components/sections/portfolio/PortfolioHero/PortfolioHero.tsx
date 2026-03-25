@@ -120,7 +120,7 @@ export default function PortfolioHero() {
   }, []);
 
   return (
-    <section ref={sectionRef} className={s.section}>
+    <section id="p-hero" ref={sectionRef} className={s.section}>
       <div className={s.glow} aria-hidden="true" />
       <div className={s.inner}>
         <p className={s.label}>
