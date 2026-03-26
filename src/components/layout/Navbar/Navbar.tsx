@@ -10,6 +10,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  if (pathname.startsWith("/secure-access")) return null;
+
   return (
     <>
       <nav className={s.nav}>

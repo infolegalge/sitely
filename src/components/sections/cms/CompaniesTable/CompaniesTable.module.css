@@ -1,0 +1,49 @@
+.wrapper {
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(13, 16, 28, 0.5);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.th {
+  padding: 0.6rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.45);
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.sortable {
+  cursor: pointer;
+  transition: color 140ms ease;
+}
+
+.sortable:hover {
+  color: rgba(79, 110, 247, 0.8);
+}
+
+.active {
+  color: rgba(79, 110, 247, 0.9);
+}
+
+.arrow {
+  font-size: 0.72rem;
+}
+
+.loading,
+.empty {
+  padding: 2rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+}

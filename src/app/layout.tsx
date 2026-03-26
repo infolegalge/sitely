@@ -4,6 +4,8 @@ import "./globals.css";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import LenisProvider from "@/components/providers/LenisProvider";
 import SceneProvider from "@/components/providers/SceneProvider";
+import HideOnCms from "@/components/providers/HideOnCms/HideOnCms";
+import ContentWrapper from "@/components/providers/ContentWrapper/ContentWrapper";
 import Navbar from "@/components/layout/Navbar/Navbar";
 import ScrollProgress from "@/components/layout/ScrollProgress/ScrollProgress";
 import NoiseOverlay from "@/components/layout/NoiseOverlay/NoiseOverlay";
@@ -12,7 +14,6 @@ import Preloader from "@/components/layout/Preloader/Preloader";
 import ScrollToTop from "@/components/layout/ScrollToTop/ScrollToTop";
 import SoundToggle from "@/components/layout/SoundToggle/SoundToggle";
 import SideNav from "@/components/layout/SideNav/SideNav";
-import PageTransitionWrapper from "@/components/layout/PageTransitionWrapper/PageTransitionWrapper";
 import SceneCanvasLoader from "@/components/three/SceneCanvasLoader";
 
 const spaceGrotesk = Space_Grotesk({
@@ -82,21 +83,25 @@ export default function RootLayout({
         <ThemeProvider>
           <LenisProvider>
             <SceneProvider>
-              <SceneCanvasLoader />
-              <NoiseOverlay />
-              <CustomCursor />
-              <ScrollProgress />
-              <Navbar />
-              <SoundToggle />
-              <SideNav />
-              <Preloader />
+              <HideOnCms>
+                <SceneCanvasLoader />
+                <NoiseOverlay />
+                <CustomCursor />
+                <ScrollProgress />
+                <Navbar />
+                <SoundToggle />
+                <SideNav />
+                <Preloader />
+              </HideOnCms>
               <a href="#main" className="skip-to-content">
                 Skip to content
               </a>
-              <PageTransitionWrapper>
-                <main id="main">{children}</main>
-              </PageTransitionWrapper>
-              <ScrollToTop />
+              <ContentWrapper>
+                {children}
+              </ContentWrapper>
+              <HideOnCms>
+                <ScrollToTop />
+              </HideOnCms>
             </SceneProvider>
           </LenisProvider>
         </ThemeProvider>

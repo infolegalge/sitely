@@ -1,0 +1,150 @@
+.loading {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 2rem 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.addCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  border: 2px dashed rgba(79, 110, 247, 0.25);
+  border-radius: 14px;
+  background: transparent;
+  color: rgba(79, 110, 247, 0.7);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.addCard:hover {
+  border-color: rgba(79, 110, 247, 0.5);
+  background: rgba(79, 110, 247, 0.05);
+}
+
+.addIcon {
+  font-size: 2.2rem;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.addText {
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-top: 0.3rem;
+}
+
+.card {
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(13, 16, 28, 0.6);
+  overflow: hidden;
+  transition: border-color 200ms ease;
+}
+
+.card:hover {
+  border-color: rgba(79, 110, 247, 0.35);
+}
+
+.thumb {
+  width: 100%;
+  height: 140px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.thumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.25);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.cardBody {
+  padding: 0.9rem 1rem;
+}
+
+.cardName {
+  margin: 0 0 0.3rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.industryBadge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.5rem;
+  border-radius: 5px;
+  background: rgba(79, 110, 247, 0.12);
+  color: rgba(79, 110, 247, 0.85);
+}
+
+.cardDesc {
+  margin: 0.4rem 0 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+}
+
+.editBtn,
+.deleteBtn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.73rem;
+  font-weight: 600;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.editBtn {
+  border: 1px solid rgba(79, 110, 247, 0.3);
+  background: transparent;
+  color: rgba(79, 110, 247, 0.85);
+  text-decoration: none;
+}
+
+.editBtn:hover {
+  background: rgba(79, 110, 247, 0.1);
+}
+
+.deleteBtn {
+  border: 1px solid rgba(255, 80, 80, 0.3);
+  background: transparent;
+  color: #ff6b6b;
+}
+
+.deleteBtn:hover {
+  background: rgba(255, 80, 80, 0.1);
+}

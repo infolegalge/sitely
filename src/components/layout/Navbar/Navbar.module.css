@@ -15,6 +15,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .logo {
@@ -22,12 +23,14 @@
   font-weight: 700;
   font-size: clamp(0.95rem, 2.5vw, 1.1rem);
   color: var(--tx);
+  flex-shrink: 0;
 }
 
 .desktop-links {
   display: flex;
-  gap: 28px;
+  gap: clamp(12px, 2vw, 28px);
   align-items: center;
+  min-width: 0;
 }
 
 .nav-link {
@@ -38,6 +41,7 @@
   color: var(--tx-2);
   transition: color 0.3s var(--ease);
   font-family: var(--font-heading, sans-serif);
+  white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -53,6 +57,7 @@
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .cta {
@@ -148,6 +153,20 @@
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background: rgba(6, 6, 11, 0.85);
+  }
+}
+
+@media (min-width: 861px) and (max-width: 1060px) {
+  .nav {
+    padding: 10px 16px;
+  }
+  .nav-link {
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+  }
+  .cta {
+    padding: 6px 14px;
+    font-size: 0.7rem;
   }
 }
 

@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{default company_name "სტომატოლოგიური კლინიკა"}} — {{default category "სტომატოლოგია"}}</title>
+<meta name="description" content="{{default description "თანამედროვე სტომატოლოგიური კლინიკა — პროფესიონალური მომსახურება, უახლესი ტექნოლოგიები, კომფორტული გარემო"}}">
+{{#if (gt (len images) 0)}}<meta property="og:image" content="{{images.[0]}}">{{/if}}
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Dentist","name":"{{default company_name "სტომატოლოგიური კლინიკა"}}"{{#if address}},"address":{"@type":"PostalAddress","streetAddress":"{{address}}"}{{/if}}{{#if phone}},"telephone":"{{phone}}"{{/if}}{{#if website}},"url":"{{website}}"{{/if}}{{#if (not_null rating)}},"aggregateRating":{"@type":"AggregateRating","ratingValue":{{rating}},"reviewCount":{{review_count}} }{{/if}},"description":"{{default description "სტომატოლოგიური კლინიკა"}}"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Noto+Sans+Georgian:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.7/ScrollTrigger.min.js"></script>
+<style>
+/* ═══════════════ RESET & BASE ═══════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:'DM Sans','Noto Sans Georgian',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{background:none;border:none;color:inherit;cursor:pointer;font:inherit}
+ul,ol{list-style:none}
+h1,h2,h3,h4{font-family:'Sora','Noto Sans Georgian',sans-serif;font-weight:700;line-height:1.15;letter-spacing:-0.02em}
+
+/* ═══════════════ VARIABLES ═══════════════ */
+:root{
+  --bg:#050510;
+  --bg-2:#0c0c1d;
+  --bg-3:#12122a;
+  --surface:#161630;
+  --surface-2:#1e1e40;
+  --border:rgba(255,255,255,.06);
+  --border-2:rgba(255,255,255,.1);
+  --text:#eeeef5;
+  --text-2:#a0a0b8;
+  --text-3:#6b6b85;
+  --primary:#00e5ff;
+  --primary-glow:rgba(0,229,255,.15);
+  --secondary:#7c3aed;
+  --secondary-glow:rgba(124,58,237,.15);
+  --accent:#ff6b6b;
+  --accent-glow:rgba(255,107,107,.12);
+  --gold:#ffd700;
+  --heading:'Sora','Noto Sans Georgian',sans-serif;
+  --body:'DM Sans','Noto Sans Georgian',sans-serif;
+  --radius:16px;
+  --radius-sm:10px;
+  --radius-lg:24px;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+.container{max-width:1200px;margin:0 auto;padding:0 2rem}
+.section-tag{display:inline-block;font-family:var(--heading);font-size:.8rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--primary);margin-bottom:1rem;position:relative;padding-left:2rem}
+.section-tag::before{content:'';position:absolute;left:0;top:50%;width:1.2rem;height:2px;background:var(--primary)}
+.section-title{font-size:clamp(2rem,5vw,3.5rem);margin-bottom:1.5rem}
+.gradient-text{background:linear-gradient(135deg,var(--text) 0%,var(--primary) 50%,var(--secondary) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* ═══════════════ SCROLL PROGRESS ═══════════════ */
+.scroll-prog{position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--secondary),var(--accent));z-index:10001;transform-origin:left;transform:scaleX(0);pointer-events:none}
+
+/* ═══════════════ CURSOR GLOW ═══════════════ */
+.cursor-glow{position:fixed;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,255,.05) 0%,transparent 70%);pointer-events:none;z-index:1;transform:translate(-50%,-50%);display:none}
+@media(hover:hover){.cursor-glow{display:block}}
+
+/* ═══════════════ THREE.JS CANVAS ═══════════════ */
+.three-bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* ═══════════════ CONTENT WRAPPER ═══════════════ */
+.wrap{position:relative;z-index:2}
+
+/* ═══════════════ NAVIGATION ═══════════════ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:9999;padding:0 2rem;height:72px;display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--ease)}
+.nav.scrolled{background:rgba(5,5,16,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-brand{font-family:var(--heading);font-size:1.15rem;font-weight:700;color:var(--text);white-space:nowrap;max-width:200px;overflow:hidden;text-overflow:ellipsis}
+.nav-menu{display:flex;align-items:center;gap:2rem}
+.nav-menu a{font-size:.9rem;color:var(--text-2);transition:color .3s;position:relative}
+.nav-menu a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--primary);transition:width .3s var(--ease)}
+.nav-menu a:hover{color:var(--text)}
+.nav-menu a:hover::after{width:100%}
+.nav-cta{padding:.55rem 1.4rem;border:1px solid var(--primary);border-radius:100px;font-size:.85rem;font-weight:500;color:var(--primary);transition:all .3s;white-space:nowrap}
+.nav-cta:hover{background:var(--primary);color:var(--bg)}
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:10000;position:relative;padding:4px}
+.ham span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .3s var(--ease)}
+.ham.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.ham.active span:nth-child(2){opacity:0}
+.ham.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+/* ═══════════════ HERO ═══════════════ */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:6rem 2rem 4rem;position:relative}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(0,229,255,.07) 0%,transparent 55%),radial-gradient(ellipse at 70% 60%,rgba(124,58,237,.07) 0%,transparent 55%);pointer-events:none}
+.hero-tag{display:inline-flex;align-items:center;gap:.5rem;padding:.5rem 1.2rem;border:1px solid var(--border-2);border-radius:100px;font-size:.8rem;color:var(--text-2);margin-bottom:2rem;backdrop-filter:blur(8px)}
+.hero-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--primary);animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.hero-title{font-size:clamp(2.8rem,9vw,7.5rem);font-weight:800;line-height:1.05;letter-spacing:-0.03em;margin-bottom:1.5rem;max-width:900px}
+.hero-title .char{display:inline-block;will-change:transform,opacity}
+.hero-title .word-space{display:inline-block;width:.3em}
+.hero-sub{font-size:clamp(1rem,2.5vw,1.3rem);color:var(--text-2);max-width:560px;margin-bottom:2.5rem;font-weight:300;line-height:1.7}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+.btn-primary{display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 2rem;background:var(--primary);color:var(--bg);border-radius:100px;font-weight:600;font-size:.95rem;transition:all .3s var(--ease);box-shadow:0 0 30px var(--primary-glow)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 40px rgba(0,229,255,.3)}
+.btn-outline{display:inline-flex;align-items:center;gap:.6rem;padding:.85rem 2rem;border:1px solid var(--border-2);border-radius:100px;font-weight:500;font-size:.95rem;color:var(--text);transition:all .3s var(--ease)}
+.btn-outline:hover{border-color:var(--text-2);transform:translateY(-2px)}
+.hero-rating{margin-top:3rem;display:flex;align-items:center;gap:.8rem;padding:.6rem 1.2rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px}
+.hero-rating .stars{color:var(--gold);font-size:1rem;letter-spacing:2px}
+.hero-rating .r-num{font-family:var(--heading);font-weight:700;font-size:1.1rem}
+.hero-rating .r-count{font-size:.85rem;color:var(--text-3)}
+
+/* ═══════════════ FONT CALIBRATION ═══════════════ */
+.name-short .hero-title{font-size:clamp(3rem,11vw,8rem)}
+.name-medium .hero-title{font-size:clamp(2.4rem,8vw,6rem)}
+.name-long .hero-title{font-size:clamp(1.8rem,5.5vw,4.2rem)}
+.name-xlong .hero-title{font-size:clamp(1.3rem,3.5vw,3rem)}
+
+/* ═══════════════ MARQUEE ═══════════════ */
+.marquee-sec{padding:1.2rem 0;background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;position:relative}
+.marquee-inner{display:flex;width:max-content;animation:marqueeSlide 35s linear infinite}
+.marquee-content{display:flex;align-items:center;gap:3rem;padding:0 1.5rem;white-space:nowrap}
+.marquee-content span{font-family:var(--heading);font-size:.85rem;font-weight:500;letter-spacing:.05em;color:var(--text-2)}
+.marquee-content .mx-dot{color:var(--primary);font-size:1.2rem}
+@keyframes marqueeSlide{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ═══════════════ ABOUT ═══════════════ */
+.about{padding:clamp(5rem,12vw,10rem) 0}
+.about-inner{display:grid;grid-template-columns:1.1fr .9fr;gap:4rem;align-items:center}
+.about-heading{font-size:clamp(1.8rem,4.5vw,3rem);margin-bottom:1.5rem}
+.about-desc{font-size:1.05rem;color:var(--text-2);line-height:1.8;margin-bottom:2rem;max-width:520px}
+.about-badge{display:inline-flex;align-items:center;gap:1rem;padding:1rem 1.5rem;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--radius);backdrop-filter:blur(12px)}
+.badge-num{font-family:var(--heading);font-size:2.2rem;font-weight:800;color:var(--primary)}
+.badge-info{display:flex;flex-direction:column;gap:.1rem}
+.badge-stars{color:var(--gold);font-size:.9rem;letter-spacing:2px}
+.badge-label{font-size:.8rem;color:var(--text-3)}
+.about-visual{position:relative;border-radius:var(--radius-lg);overflow:hidden}
+.about-img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:var(--radius-lg);border:1px solid var(--border)}
+.about-gradient{width:100%;aspect-ratio:4/5;border-radius:var(--radius-lg);background:linear-gradient(135deg,var(--bg-3) 0%,var(--surface) 50%,var(--bg-2) 100%);position:relative;overflow:hidden;border:1px solid var(--border)}
+.about-gradient::before{content:'';position:absolute;width:200%;height:200%;top:-50%;left:-50%;background:conic-gradient(from 0deg,transparent,var(--primary-glow),transparent,var(--secondary-glow),transparent);animation:gradSpin 10s linear infinite;opacity:.6}
+@keyframes gradSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* ═══════════════ SERVICES — HORIZONTAL SCROLL ═══════════════ */
+.svc-sec{padding:clamp(4rem,10vw,8rem) 0;overflow:hidden}
+.svc-header{text-align:center;margin-bottom:3rem;padding:0 2rem}
+.svc-header p{color:var(--text-2);font-size:1.05rem;max-width:520px;margin:0 auto}
+.svc-track{display:flex;gap:1.5rem;padding:0 4vw;will-change:transform}
+.svc-card{flex:0 0 370px;min-height:420px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--border);padding:2.5rem;display:flex;flex-direction:column;transition:all .45s var(--ease);position:relative;overflow:hidden}
+.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--secondary));opacity:0;transition:opacity .4s}
+.svc-card:hover{border-color:rgba(0,229,255,.25);transform:translateY(-6px);box-shadow:0 24px 60px rgba(0,229,255,.08)}
+.svc-card:hover::before{opacity:1}
+.svc-num{font-family:var(--heading);font-size:3.5rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:.15;margin-bottom:1rem;line-height:1}
+.svc-card h3{font-size:1.3rem;margin-bottom:.8rem}
+.svc-card p{color:var(--text-2);font-size:.95rem;line-height:1.7;flex:1}
+.svc-card .svc-arrow{display:flex;align-items:center;gap:.5rem;color:var(--primary);font-size:.85rem;font-weight:500;margin-top:1.5rem;opacity:0;transform:translateX(-8px);transition:all .3s var(--ease)}
+.svc-card:hover .svc-arrow{opacity:1;transform:translateX(0)}
+
+/* ═══════════════ STATS ═══════════════ */
+.stats-sec{padding:clamp(4rem,10vw,7rem) 0;background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;text-align:center}
+.stat-item{padding:2rem 1rem}
+.stat-row{display:flex;align-items:baseline;justify-content:center;gap:.2rem}
+.stat-num{font-family:var(--heading);font-size:clamp(2.5rem,7vw,4.5rem);font-weight:800;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.stat-suffix{font-family:var(--heading);font-size:clamp(1.5rem,4vw,2.5rem);font-weight:700;color:var(--primary)}
+.stat-label{display:block;margin-top:.6rem;font-size:.9rem;color:var(--text-3);font-weight:400}
+
+/* ═══════════════ GALLERY ═══════════════ */
+.gallery-sec{padding:clamp(5rem,12vw,10rem) 0}
+.gal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem}
+.gal-grid.single{grid-template-columns:1fr;max-width:600px;margin-left:auto;margin-right:auto}
+.gal-grid.duo{grid-template-columns:repeat(2,1fr)}
+.gal-item{position:relative;overflow:hidden;border-radius:var(--radius);aspect-ratio:4/3;cursor:pointer}
+.gal-item img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+.gal-item::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(5,5,16,.6) 0%,transparent 50%);opacity:0;transition:opacity .4s}
+.gal-item:hover img{transform:scale(1.08)}
+.gal-item:hover::after{opacity:1}
+
+/* ═══════════════ REVIEWS ═══════════════ */
+.rev-sec{padding:clamp(5rem,12vw,10rem) 0;background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.rev-header{text-align:center;margin-bottom:3rem}
+.rev-header p{color:var(--text-2);max-width:420px;margin:.5rem auto 0}
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem}
+.rev-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;transition:all .4s var(--ease);position:relative}
+.rev-card:hover{border-color:rgba(0,229,255,.15);transform:translateY(-3px)}
+.rev-stars{color:var(--gold);font-size:.95rem;letter-spacing:2px;margin-bottom:1rem}
+.rev-text{font-size:.95rem;color:var(--text-2);line-height:1.7;margin-bottom:1.5rem;font-style:italic}
+.rev-author{display:flex;align-items:center;gap:.8rem}
+.rev-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;font-family:var(--heading);font-weight:700;font-size:.9rem;color:var(--bg);flex-shrink:0}
+.rev-name{font-weight:600;font-size:.9rem}
+.rev-date{font-size:.8rem;color:var(--text-3)}
+
+/* ═══════════════ PROCESS ═══════════════ */
+.process-sec{padding:clamp(5rem,12vw,10rem) 0}
+.process-header{text-align:center;margin-bottom:4rem}
+.process-header p{color:var(--text-2);max-width:480px;margin:.5rem auto 0}
+.process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;position:relative}
+.process-step{text-align:center;position:relative;padding-top:4rem}
+.step-dot{width:18px;height:18px;border-radius:50%;background:var(--primary);position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:2;box-shadow:0 0 24px var(--primary-glow),0 0 48px rgba(0,229,255,.08)}
+.step-line{position:absolute;top:8px;left:calc(50% + 12px);width:calc(100% - 24px);height:2px;background:var(--border-2)}
+.process-step:last-child .step-line{display:none}
+.step-num{font-family:var(--heading);font-size:3rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:.15;margin-bottom:.5rem;line-height:1}
+.process-step h3{font-size:1.15rem;margin-bottom:.5rem}
+.process-step p{font-size:.9rem;color:var(--text-2);line-height:1.6;max-width:220px;margin:0 auto}
+
+/* ═══════════════ FAQ ═══════════════ */
+.faq-sec{padding:clamp(5rem,12vw,10rem) 0;background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.faq-header{text-align:center;margin-bottom:3rem}
+.faq-list{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:.8rem}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .3s}
+.faq-item:hover,.faq-item.open{border-color:rgba(0,229,255,.15)}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:1.3rem 1.5rem;font-size:1rem;font-weight:500;text-align:left;gap:1rem;cursor:pointer}
+.faq-chevron{width:20px;height:20px;flex-shrink:0;transition:transform .4s var(--ease);color:var(--text-3)}
+.faq-item.open .faq-chevron{transform:rotate(180deg);color:var(--primary)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .5s var(--ease)}
+.faq-a-inner{padding:0 1.5rem 1.3rem;color:var(--text-2);font-size:.95rem;line-height:1.7}
+
+/* ═══════════════ CONTACT ═══════════════ */
+.contact-sec{padding:clamp(5rem,12vw,10rem) 0}
+.contact-header{text-align:center;margin-bottom:3rem}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.contact-info{display:flex;flex-direction:column;gap:1rem}
+.contact-card{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);transition:all .3s var(--ease)}
+.contact-card:hover{border-color:rgba(0,229,255,.2);transform:translateX(4px)}
+.cc-icon{width:44px;height:44px;border-radius:12px;background:var(--primary-glow);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cc-icon svg{width:20px;height:20px;stroke:var(--primary);fill:none;stroke-width:2}
+.cc-label{font-size:.8rem;color:var(--text-3);display:block}
+.cc-value{font-weight:500;font-size:.95rem}
+.hours-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-top:.5rem}
+.hours-block h3{font-size:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.hours-row{display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--border);font-size:.9rem}
+.hours-row:last-child{border-bottom:none}
+.hours-row span:first-child{color:var(--text-2)}
+.hours-row span:last-child{font-weight:500}
+.social-row{display:flex;gap:.8rem;margin-top:.5rem}
+.social-row a{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:12px;background:var(--surface);border:1px solid var(--border);font-size:.8rem;font-weight:700;color:var(--text-3);transition:all .3s}
+.social-row a:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-glow)}
+.contact-map{border-radius:var(--radius-lg);overflow:hidden;min-height:400px;border:1px solid var(--border)}
+.contact-map iframe{width:100%;height:100%;min-height:400px;display:block}
+.map-placeholder{width:100%;min-height:400px;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;font-size:1rem;color:var(--text-3)}
+.map-placeholder span{font-size:3rem}
+
+/* ═══════════════ CTA BANNER ═══════════════ */
+.cta-sec{padding:clamp(5rem,12vw,8rem) 2rem;background:linear-gradient(135deg,rgba(0,229,255,.06) 0%,rgba(124,58,237,.08) 50%,rgba(255,107,107,.05) 100%);text-align:center;position:relative;overflow:hidden}
+.cta-sec::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:conic-gradient(from 180deg,transparent 60%,var(--primary-glow) 70%,transparent 80%);animation:ctaSpin 12s linear infinite;opacity:.3}
+@keyframes ctaSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.cta-inner{position:relative;z-index:2;max-width:650px;margin:0 auto}
+.cta-inner h2{font-size:clamp(2rem,5vw,3.2rem);margin-bottom:1rem}
+.cta-inner p{color:var(--text-2);font-size:1.1rem;margin-bottom:2.5rem}
+.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-cta-lg{display:inline-flex;align-items:center;gap:.6rem;padding:1rem 2.5rem;background:var(--primary);color:var(--bg);border-radius:100px;font-weight:700;font-size:1rem;transition:all .3s var(--ease);box-shadow:0 0 30px var(--primary-glow);animation:ctaPulse 3s ease infinite}
+@keyframes ctaPulse{0%,100%{box-shadow:0 0 30px var(--primary-glow)}50%{box-shadow:0 0 50px rgba(0,229,255,.25)}}
+.btn-cta-lg:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 12px 50px rgba(0,229,255,.3)}
+.btn-cta-ghost{display:inline-flex;align-items:center;gap:.6rem;padding:1rem 2.5rem;border:1px solid var(--border-2);border-radius:100px;font-weight:500;font-size:1rem;color:var(--text);transition:all .3s var(--ease)}
+.btn-cta-ghost:hover{border-color:var(--text-2);transform:translateY(-3px)}
+
+/* ═══════════════ FOOTER ═══════════════ */
+.footer-sec{padding:4rem 0 2rem;border-top:1px solid var(--border)}
+.footer-top{display:flex;justify-content:space-between;align-items:start;gap:2rem;margin-bottom:3rem}
+.footer-name{font-family:var(--heading);font-weight:700;font-size:1.2rem;display:block;margin-bottom:.3rem}
+.footer-cat{font-size:.85rem;color:var(--text-3)}
+.footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
+.footer-links a{font-size:.9rem;color:var(--text-3);transition:color .3s}
+.footer-links a:hover{color:var(--primary)}
+.footer-bottom{padding-top:2rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-bottom span{font-size:.8rem;color:var(--text-3)}
+
+/* ═══════════════ FLOATING PHONE ═══════════════ */
+.float-phone{position:fixed;bottom:2rem;right:2rem;z-index:9998;width:56px;height:56px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,229,255,.3);transition:all .3s var(--ease);animation:floatBob 3s ease-in-out infinite}
+.float-phone:hover{transform:scale(1.1);box-shadow:0 8px 30px rgba(0,229,255,.4)}
+.float-phone svg{width:24px;height:24px;stroke:#050510;fill:none;stroke-width:2}
+@keyframes floatBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/* ═══════════════ REVEAL ANIMATION PREP ═══════════════ */
+.reveal-el{opacity:0;transform:translateY(40px)}
+
+/* ═══════════════ RESPONSIVE — TABLET ═══════════════ */
+@media(max-width:1024px){
+  .about-inner{grid-template-columns:1fr;gap:3rem}
+  .about-visual{max-width:500px;margin:0 auto}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .gal-grid{grid-template-columns:repeat(2,1fr)}
+  .process-grid{grid-template-columns:repeat(2,1fr);gap:2rem 1.5rem}
+  .process-step:nth-child(2) .step-line{display:none}
+  .contact-grid{grid-template-columns:1fr}
+  .contact-map{min-height:320px}
+  .contact-map iframe{min-height:320px}
+}
+
+/* ═══════════════ RESPONSIVE — MOBILE ═══════════════ */
+@media(max-width:768px){
+  .nav-menu{position:fixed;inset:0;flex-direction:column;justify-content:center;background:rgba(5,5,16,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);opacity:0;pointer-events:none;transition:opacity .4s var(--ease);z-index:9998;gap:2.5rem}
+  .nav-menu.open{opacity:1;pointer-events:all}
+  .nav-menu a{font-size:1.4rem;color:var(--text)}
+  .nav-menu a::after{display:none}
+  .nav-cta{font-size:1rem;padding:.7rem 2rem}
+  .ham{display:flex}
+  .hero{min-height:100svh;padding:5rem 1.5rem 3rem}
+  .hero-sub{font-size:1rem}
+  .hero-actions{flex-direction:column;width:100%;max-width:320px}
+  .btn-primary,.btn-outline{justify-content:center;width:100%}
+  .name-short .hero-title{font-size:clamp(2.4rem,9vw,4rem)}
+  .name-medium .hero-title{font-size:clamp(2rem,7vw,3.2rem)}
+  .name-long .hero-title{font-size:clamp(1.5rem,5vw,2.4rem)}
+  .name-xlong .hero-title{font-size:clamp(1.2rem,3.5vw,1.8rem)}
+  .svc-track{flex-direction:column;padding:0 1.5rem}
+  .svc-card{flex:none;width:100%;min-height:auto}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:1rem}
+  .gal-grid{grid-template-columns:1fr}
+  .rev-grid{grid-template-columns:1fr}
+  .process-grid{grid-template-columns:1fr;gap:2rem}
+  .step-line{display:none}
+  .process-step{padding-top:0;padding-left:3.5rem;text-align:left}
+  .step-dot{left:0;top:4px;transform:none}
+  .process-step p{margin:0}
+  .contact-grid{grid-template-columns:1fr}
+  .footer-top{flex-direction:column;gap:1.5rem}
+  .footer-links{flex-direction:column;gap:.8rem}
+  .float-phone{bottom:1.2rem;right:1.2rem;width:50px;height:50px}
+  .container{padding:0 1.5rem}
+}
+
+/* ═══════════════ RESPONSIVE — SMALL ═══════════════ */
+@media(max-width:420px){
+  .hero{padding:4rem 1rem 2.5rem}
+  .hero-tag{font-size:.7rem;padding:.4rem 1rem}
+  .stats-grid{grid-template-columns:1fr}
+  .faq-q{font-size:.9rem;padding:1.1rem 1.2rem}
+  .faq-a-inner{padding:0 1.2rem 1.1rem;font-size:.9rem}
+  .rev-card{padding:1.5rem}
+  .svc-card{padding:2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- Scroll Progress -->
+<div class="scroll-prog" aria-hidden="true"></div>
+
+<!-- Cursor Glow -->
+<div class="cursor-glow" aria-hidden="true"></div>
+
+<!-- Three.js 3D Canvas -->
+<canvas class="three-bg" id="threeBg"></canvas>
+
+<!-- Content -->
+<div class="wrap">
+
+<!-- ════════ NAV ════════ -->
+<nav class="nav" id="mainNav">
+  <a href="#heroSec" class="nav-brand">{{default company_name "სტომატოლოგიური კლინიკა"}}</a>
+  <div class="nav-menu" id="navMenu">
+    <a href="#aboutSec">ჩვენ შესახებ</a>
+    <a href="#svcSec">სერვისები</a>
+    {{#if (gt review_count 0)}}<a href="#revSec">შეფასებები</a>{{/if}}
+    <a href="#contactSec">კონტაქტი</a>
+    {{#if phone}}<a href="tel:{{phone}}" class="nav-cta">დარეკეთ</a>{{/if}}
+  </div>
+  <button class="ham" id="hamBtn" aria-label="მენიუ"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- ════════ HERO ════════ -->
+<section class="hero {{company_name_class}}" id="heroSec">
+  <div class="hero-tag reveal-el"><span class="dot"></span> {{default category "სტომატოლოგია"}}</div>
+  <h1 class="hero-title gradient-text" id="heroTitle">{{default company_name "სტომატოლოგიური კლინიკა"}}</h1>
+  <p class="hero-sub reveal-el">{{default description "თანამედროვე სტომატოლოგიური კლინიკა — პროფესიონალური მომსახურება, უახლესი ტექნოლოგიები და კომფორტული გარემო თქვენი ჯანსაღი ღიმილისთვის"}}</p>
+  <div class="hero-actions reveal-el">
+    {{#if phone}}
+    <a href="tel:{{phone}}" class="btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      {{phone_display}}
+    </a>
+    {{/if}}
+    {{#if booking_link}}
+    <a href="{{booking_link}}" target="_blank" class="btn-outline">ონლაინ ჯავშანი →</a>
+    {{else}}
+    {{#if phone}}
+    <a href="#contactSec" class="btn-outline">კონტაქტი →</a>
+    {{/if}}
+    {{/if}}
+  </div>
+  {{#if (not_null rating)}}
+  <div class="hero-rating reveal-el">
+    <span class="r-num">{{rating}}</span>
+    <span class="stars">{{#repeat (math_floor rating)}}★{{/repeat}}</span>
+    {{#if (gt review_count 0)}}<span class="r-count">{{review_count}} შეფასება</span>{{/if}}
+  </div>
+  {{/if}}
+</section>
+
+<!-- ════════ MARQUEE TRUST STRIP ════════ -->
+<div class="marquee-sec">
+  <div class="marquee-inner">
+    <div class="marquee-content">
+      <span class="mx-dot">◆</span><span>თანამედროვე აღჭურვილობა</span>
+      <span class="mx-dot">◆</span><span>გამოცდილი სპეციალისტები</span>
+      <span class="mx-dot">◆</span><span>უმტკივნეულო პროცედურები</span>
+      <span class="mx-dot">◆</span><span>ინდივიდუალური მიდგომა</span>
+      <span class="mx-dot">◆</span><span>უფასო კონსულტაცია</span>
+      <span class="mx-dot">◆</span><span>მოქნილი განვადება</span>
+    </div>
+    <div class="marquee-content" aria-hidden="true">
+      <span class="mx-dot">◆</span><span>თანამედროვე აღჭურვილობა</span>
+      <span class="mx-dot">◆</span><span>გამოცდილი სპეციალისტები</span>
+      <span class="mx-dot">◆</span><span>უმტკივნეულო პროცედურები</span>
+      <span class="mx-dot">◆</span><span>ინდივიდუალური მიდგომა</span>
+      <span class="mx-dot">◆</span><span>უფასო კონსულტაცია</span>
+      <span class="mx-dot">◆</span><span>მოქნილი განვადება</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ ABOUT ════════ -->
+<section class="about" id="aboutSec">
+  <div class="container about-inner">
+    <div class="about-text">
+      <span class="section-tag reveal-el">ჩვენ შესახებ</span>
+      <h2 class="about-heading reveal-el">ჩვენ ვქმნით ღიმილებს,<br>რომლებიც ცხოვრებას ცვლის</h2>
+      <p class="about-desc reveal-el">{{default description "ჩვენი კლინიკა აერთიანებს თანამედროვე ტექნოლოგიებს, გამოცდილ სპეციალისტებს და ინდივიდუალურ მიდგომას. ყოველი პაციენტი ჩვენთვის უნიკალურია — სწორედ ამიტომ ვაქცევთ ყოველ ვიზიტს კომფორტულ და სასიამოვნო გამოცდილებად. ჩვენი მიზანია თქვენი ჯანმრთელი და ლამაზი ღიმილი."}}</p>
+      {{#if (not_null rating)}}
+      <div class="about-badge reveal-el">
+        <div class="badge-num">{{rating}}</div>
+        <div class="badge-info">
+          <div class="badge-stars">{{#repeat (math_floor rating)}}★{{/repeat}}{{#repeat (subtract 5 (math_floor rating))}}☆{{/repeat}}</div>
+          <span class="badge-label">Google-ის რეიტინგი{{#if (gt review_count 0)}} · {{review_count}} შეფასება{{/if}}</span>
+        </div>
+      </div>
+      {{/if}}
+    </div>
+    <div class="about-visual reveal-el">
+      {{#if (gt (len images) 0)}}
+      <img src="{{images.[0]}}" alt="{{company_name}}" class="about-img" loading="lazy">
+      {{else}}
+      <div class="about-gradient"></div>
+      {{/if}}
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SERVICES — HORIZONTAL SCROLL ════════ -->
+<section class="svc-sec" id="svcSec">
+  <div class="svc-header">
+    <span class="section-tag reveal-el">სერვისები</span>
+    <h2 class="section-title reveal-el">რას გთავაზობთ</h2>
+    <p class="reveal-el">პროფესიონალური სტომატოლოგიური მომსახურება თანამედროვე ტექნოლოგიებით</p>
+  </div>
+  <div class="svc-track" id="svcTrack">
+    <div class="svc-card">
+      <div class="svc-num">01</div>
+      <h3>იმპლანტაცია</h3>
+      <p>თანამედროვე იმპლანტების ჩანერგვა მაღალი ხარისხის მასალებით. აღვადგენთ დაკარგული კბილების ფუნქციას და ესთეტიკას ბუნებრივი შედეგით.</p>
+      <span class="svc-arrow">გაიგე მეტი →</span>
+    </div>
+    <div class="svc-card">
+      <div class="svc-num">02</div>
+      <h3>ესთეტიკური სტომატოლოგია</h3>
+      <p>ვინირები, გათეთრება და კოსმეტიკური რესტავრაცია. შევქმნით სრულყოფილ ღიმილს, რომელიც თავდაჯერებულობას მოგმატებთ.</p>
+      <span class="svc-arrow">გაიგე მეტი →</span>
+    </div>
+    <div class="svc-card">
+      <div class="svc-num">03</div>
+      <h3>ორთოდონტია</h3>
+      <p>ბრეკეტ-სისტემები და გამჭვირვალე ალაინერები კბილების სწორი განლაგებისთვის. თანამედროვე მიდგომა ყველა ასაკის პაციენტისთვის.</p>
+      <span class="svc-arrow">გაიგე მეტი →</span>
+    </div>
+    <div class="svc-card">
+      <div class="svc-num">04</div>
+      <h3>ბავშვთა სტომატოლოგია</h3>
+      <p>მეგობრული გარემო და ნაზი მიდგომა პატარა პაციენტებისთვის. ჯანსაღი ღიმილის საფუძველი ბავშვობიდან იწყება.</p>
+      <span class="svc-arrow">გაიგე მეტი →</span>
+    </div>
+    <div class="svc-card">
+      <div class="svc-num">05</div>
+      <h3>ქირურგიული სტომატოლოგია</h3>
+      <p>ამოღება, ძვლის აუგმენტაცია და ყბა-სახის ქირურგია. რთული შემთხვევების გადაწყვეტა მინიმალ-ინვაზიური მეთოდებით.</p>
+      <span class="svc-arrow">გაიგე მეტი →</span>
+    </div>
+    <div class="svc-card">
+      <div class="svc-num">06</div>
+      <h3>პროფილაქტიკა და ჰიგიენა</h3>
+      <p>პროფესიონალური წმენდა, ფტორირება და პერიოდული გამოკვლევა. პრევენცია საუკეთესო მკურნალობაა — დაიცავით ღიმილი დროულად.</p>
+      <span class="svc-arrow">გაიგე მეტი →</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ STATS ════════ -->
+<section class="stats-sec">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item reveal-el">
+        <div class="stat-row"><span class="stat-num" data-count="5000">0</span><span class="stat-suffix">+</span></div>
+        <span class="stat-label">კმაყოფილი პაციენტი</span>
+      </div>
+      <div class="stat-item reveal-el">
+        <div class="stat-row"><span class="stat-num" data-count="15">0</span><span class="stat-suffix">+</span></div>
+        <span class="stat-label">წლიანი გამოცდილება</span>
+      </div>
+      <div class="stat-item reveal-el">
+        <div class="stat-row"><span class="stat-num" data-count="98">0</span><span class="stat-suffix">%</span></div>
+        <span class="stat-label">კმაყოფილების მაჩვენებელი</span>
+      </div>
+      <div class="stat-item reveal-el">
+        <div class="stat-row"><span class="stat-num" data-count="12000">0</span><span class="stat-suffix">+</span></div>
+        <span class="stat-label">წარმატებული პროცედურა</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ GALLERY ════════ -->
+{{#if (gt (len images) 1)}}
+<section class="gallery-sec" id="galSec">
+  <div class="container">
+    <span class="section-tag reveal-el">გალერეა</span>
+    <h2 class="section-title reveal-el">ჩვენი კლინიკა</h2>
+    <div class="gal-grid{{#if (eq (len images) 2)}} duo{{/if}}">
+      {{#each (limit images 6)}}
+      <div class="gal-item reveal-el">
+        <img src="{{this}}" alt="კლინიკის ფოტო" loading="lazy">
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</section>
+{{/if}}
+
+<!-- ════════ REVIEWS ════════ -->
+<section class="rev-sec" id="revSec">
+  <div class="container">
+    <div class="rev-header">
+      <span class="section-tag reveal-el">შეფასებები</span>
+      <h2 class="section-title reveal-el">რას ამბობენ ჩვენი პაციენტები</h2>
+      {{#if (not_null rating)}}<p class="reveal-el">საშუალო რეიტინგი: <strong>{{rating}}</strong> / 5</p>{{/if}}
+    </div>
+    <div class="rev-grid">
+      {{#if (gt review_count 0)}}
+        {{#each (limit reviews 6)}}
+        <div class="rev-card reveal-el">
+          <div class="rev-stars">{{#repeat (math_floor this.rating)}}★{{/repeat}}{{#repeat (subtract 5 (math_floor this.rating))}}☆{{/repeat}}</div>
+          <p class="rev-text">"{{truncate this.text 200}}"</p>
+          <div class="rev-author">
+            <div class="rev-avatar">{{initial this.author}}</div>
+            <div>
+              <div class="rev-name">{{this.author}}</div>
+              {{#if this.date}}<div class="rev-date">{{this.date}}</div>{{/if}}
+            </div>
+          </div>
+        </div>
+        {{/each}}
+      {{else}}
+        {{#if (gt (len review_snippets) 0)}}
+          {{#each (limit review_snippets 4)}}
+          <div class="rev-card reveal-el">
+            <div class="rev-stars">★★★★★</div>
+            <p class="rev-text">"{{this}}"</p>
+            <div class="rev-author">
+              <div class="rev-avatar">?</div>
+              <div><div class="rev-name">პაციენტი</div></div>
+            </div>
+          </div>
+          {{/each}}
+        {{else}}
+        <!-- Fallback reviews -->
+        <div class="rev-card reveal-el">
+          <div class="rev-stars">★★★★★</div>
+          <p class="rev-text">"შესანიშნავი კლინიკა! ძალიან პროფესიონალური მიდგომა და კომფორტული გარემო. ექიმებმა ყველაფერი დეტალურად ამიხსნეს და პროცედურა სრულიად უმტკივნეულო იყო."</p>
+          <div class="rev-author">
+            <div class="rev-avatar">ნ</div>
+            <div><div class="rev-name">ნინო ა.</div></div>
+          </div>
+        </div>
+        <div class="rev-card reveal-el">
+          <div class="rev-stars">★★★★★</div>
+          <p class="rev-text">"უამრავ კლინიკაში ვიყავი, მაგრამ ეს საუკეთესოა. განსაკუთრებით აღსანიშნავია ექიმების კვალიფიკაცია და თანამედროვე აღჭურვილობა. გულითადად გირჩევთ."</p>
+          <div class="rev-author">
+            <div class="rev-avatar">გ</div>
+            <div><div class="rev-name">გიორგი მ.</div></div>
+          </div>
+        </div>
+        <div class="rev-card reveal-el">
+          <div class="rev-stars">★★★★★</div>
+          <p class="rev-text">"ადრე ექიმის ძალიან მეშინოდა, ახლა კი სიამოვნებით ვდივარ ვიზიტზე. მადლობა გუნდს თბილი და პროფესიონალური მიღებისთვის."</p>
+          <div class="rev-author">
+            <div class="rev-avatar">თ</div>
+            <div><div class="rev-name">თამარ ბ.</div></div>
+          </div>
+        </div>
+        <div class="rev-card reveal-el">
+          <div class="rev-stars">★★★★☆</div>
+          <p class="rev-text">"ხარისხიანი მომსახურება, გონივრული ფასები და სასიამოვნო ატმოსფერო. აუცილებლად გირჩევთ ყველას ვისაც კარგი სტომატოლოგი ესაჭიროება."</p>
+          <div class="rev-author">
+            <div class="rev-avatar">ლ</div>
+            <div><div class="rev-name">ლევან კ.</div></div>
+          </div>
+        </div>
+        {{/if}}
+      {{/if}}
+    </div>
+  </div>
+</section>
+
+<!-- ════════ PROCESS TIMELINE ════════ -->
+<section class="process-sec" id="processSec">
+  <div class="container">
+    <div class="process-header">
+      <span class="section-tag reveal-el">პროცესი</span>
+      <h2 class="section-title reveal-el">მარტივი გზა ჯანსაღი ღიმილისკენ</h2>
+      <p class="reveal-el">ოთხი მარტივი ნაბიჯი — კონსულტაციიდან ბრწყინვალე შედეგამდე</p>
+    </div>
+    <div class="process-grid">
+      <div class="process-step reveal-el">
+        <div class="step-dot"></div>
+        <div class="step-line"></div>
+        <div class="step-num">01</div>
+        <h3>კონსულტაცია</h3>
+        <p>უფასო პირველადი გასინჯვა და ინდივიდუალური მკურნალობის გეგმის შედგენა</p>
+      </div>
+      <div class="process-step reveal-el">
+        <div class="step-dot"></div>
+        <div class="step-line"></div>
+        <div class="step-num">02</div>
+        <h3>დიაგნოსტიკა</h3>
+        <p>ციფრული რენტგენი და 3D სკანირება ზუსტი და სანდო დიაგნოზისთვის</p>
+      </div>
+      <div class="process-step reveal-el">
+        <div class="step-dot"></div>
+        <div class="step-line"></div>
+        <div class="step-num">03</div>
+        <h3>მკურნალობა</h3>
+        <p>თანამედროვე მეთოდებით უმტკივნეულო და ეფექტური მკურნალობის ჩატარება</p>
+      </div>
+      <div class="process-step reveal-el">
+        <div class="step-dot"></div>
+        <div class="step-line"></div>
+        <div class="step-num">04</div>
+        <h3>შედეგი</h3>
+        <p>ბრწყინვალე ღიმილი და გრძელვადიანი თვალყურის დევნების პროგრამა</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ FAQ ════════ -->
+<section class="faq-sec" id="faqSec">
+  <div class="container">
+    <div class="faq-header">
+      <span class="section-tag reveal-el">FAQ</span>
+      <h2 class="section-title reveal-el">ხშირად დასმული კითხვები</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal-el">
+        <button class="faq-q">
+          <span>პირველი კონსულტაცია ფასიანია?</span>
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">არა, პირველი კონსულტაცია სრულიად უფასოა. ჩვენი სპეციალისტი დეტალურად შეაფასებს თქვენს მდგომარეობას და შეგიქმნით ინდივიდუალურ მკურნალობის გეგმას, ყოველგვარი ვალდებულების გარეშე.</div></div>
+      </div>
+      <div class="faq-item reveal-el">
+        <button class="faq-q">
+          <span>მტკივნეულია თუ არა პროცედურები?</span>
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">ჩვენ ვიყენებთ თანამედროვე ანესთეზიის მეთოდებს, რაც პროცედურებს სრულიად უმტკივნეულოს ხდის. პაციენტის კომფორტი ჩვენი უმთავრესი პრიორიტეტია — ყოველ ეტაპზე გიხსნით რა ხდება.</div></div>
+      </div>
+      <div class="faq-item reveal-el">
+        <button class="faq-q">
+          <span>რამდენ ხანს გრძელდება იმპლანტაცია?</span>
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">იმპლანტაციის პროცესი ჩვეულებრივ 2-6 თვეს მოიცავს ოსეოინტეგრაციის ჩათვლით. თავად ქირურგიული ჩარევა 30-60 წუთი გრძელდება. ზუსტ ვადებს კონსულტაციაზე განვსაზღვრავთ.</div></div>
+      </div>
+      <div class="faq-item reveal-el">
+        <button class="faq-q">
+          <span>გაქვთ განვადება?</span>
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">დიახ, ჩვენ გთავაზობთ მოქნილ გადახდის პირობებს. თანამშრომლობთ წამყვან ბანკებთან 0%-იანი განვადებისთვის, რაც მკურნალობას ხელმისაწვდომს ხდის ყველასთვის.</div></div>
+      </div>
+      <div class="faq-item reveal-el">
+        <button class="faq-q">
+          <span>რატომ ავირჩიოთ თქვენი კლინიკა?</span>
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">ჩვენი კლინიკა აღჭურვილია უახლესი ტექნოლოგიებით, გვყავს მაღალკვალიფიციური სპეციალისტები და ვუზრუნველყოფთ ინდივიდუალურ მიდგომას. ათასობით კმაყოფილი პაციენტი ჩვენი საუკეთესო რეკომენდაციაა.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ CONTACT ════════ -->
+<section class="contact-sec" id="contactSec">
+  <div class="container">
+    <div class="contact-header">
+      <span class="section-tag reveal-el">კონტაქტი</span>
+      <h2 class="section-title reveal-el">დაგვიკავშირდით</h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info">
+        {{#if address}}
+        <a href="{{default google_maps_url '#'}}" target="_blank" rel="noopener" class="contact-card reveal-el">
+          <div class="cc-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div><span class="cc-label">მისამართი</span><span class="cc-value">{{address}}</span></div>
+        </a>
+        {{/if}}
+        {{#if phone}}
+        <a href="tel:{{phone}}" class="contact-card reveal-el">
+          <div class="cc-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div><span class="cc-label">ტელეფონი</span><span class="cc-value">{{phone_display}}</span></div>
+        </a>
+        {{/if}}
+        {{#if email}}
+        <a href="mailto:{{email}}" class="contact-card reveal-el">
+          <div class="cc-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div><span class="cc-label">ელ-ფოსტა</span><span class="cc-value">{{email}}</span></div>
+        </a>
+        {{/if}}
+        {{#if working_hours}}
+        <div class="hours-block reveal-el">
+          <h3>🕐 სამუშაო საათები</h3>
+          {{#each working_hours}}
+          <div class="hours-row"><span>{{@key}}</span><span>{{this}}</span></div>
+          {{/each}}
+        </div>
+        {{else}}
+          {{#if working_hours_text}}
+          <div class="hours-block reveal-el">
+            <h3>🕐 სამუშაო საათები</h3>
+            <p style="color:var(--text-2);font-size:.9rem;line-height:1.7">{{working_hours_text}}</p>
+          </div>
+          {{/if}}
+        {{/if}}
+        {{#if (or social.facebook social.instagram)}}
+        <div class="social-row reveal-el">
+          {{#if social.facebook}}<a href="{{social.facebook}}" target="_blank" rel="noopener" aria-label="Facebook">FB</a>{{/if}}
+          {{#if social.instagram}}<a href="{{social.instagram}}" target="_blank" rel="noopener" aria-label="Instagram">IG</a>{{/if}}
+        </div>
+        {{/if}}
+      </div>
+      <div class="contact-map reveal-el">
+        {{#if map_embed_url}}
+        <iframe src="{{map_embed_url}}" width="100%" height="100%" style="border:0" allowfullscreen loading="lazy" title="რუკა"></iframe>
+        {{else}}
+        <div class="map-placeholder">
+          <span>📍</span>
+          {{#if address}}<p>{{address}}</p>{{/if}}
+          {{#if google_maps_url}}<a href="{{google_maps_url}}" target="_blank" style="color:var(--primary);font-size:.9rem">ნახე რუკაზე →</a>{{/if}}
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ CTA BANNER ════════ -->
+<section class="cta-sec">
+  <div class="cta-inner">
+    <h2 class="reveal-el">მზად ხართ ბრწყინვალე ღიმილისთვის?</h2>
+    <p class="reveal-el">ნუ გადადებთ — დაჯავშნეთ უფასო კონსულტაცია დღესვე და გადადგით პირველი ნაბიჯი ჯანსაღი ღიმილისკენ</p>
+    <div class="cta-btns reveal-el">
+      {{#if phone}}
+      <a href="tel:{{phone}}" class="btn-cta-lg">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        დარეკეთ ახლავე
+      </a>
+      {{/if}}
+      {{#if booking_link}}
+      <a href="{{booking_link}}" target="_blank" class="btn-cta-ghost">ონლაინ ჯავშანი →</a>
+      {{/if}}
+    </div>
+  </div>
+</section>
+
+<!-- ════════ FOOTER ════════ -->
+<footer class="footer-sec">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <span class="footer-name">{{default company_name "სტომატოლოგიური კლინიკა"}}</span>
+        <span class="footer-cat">{{default category "სტომატოლოგია"}}</span>
+      </div>
+      <div class="footer-links">
+        <a href="#heroSec">მთავარი</a>
+        <a href="#aboutSec">ჩვენ შესახებ</a>
+        <a href="#svcSec">სერვისები</a>
+        <a href="#contactSec">კონტაქტი</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; {{default company_name "სტომატოლოგიური კლინიკა"}} — ყველა უფლება დაცულია</span>
+      {{#if website}}<a href="{{website}}" target="_blank" style="color:var(--text-3);font-size:.8rem">{{website}}</a>{{/if}}
+    </div>
+  </div>
+</footer>
+
+<!-- ════════ FLOATING PHONE ════════ -->
+{{#if phone}}
+<a href="tel:{{phone}}" class="float-phone" aria-label="დარეკეთ">
+  <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+</a>
+{{/if}}
+
+</div><!-- /.wrap -->
+
+<script>
+(function(){
+'use strict';
+
+var isMobile = window.innerWidth < 768;
+
+/* ═══════════════ THREE.JS — MORPHING AURORA MESH ═══════════════ */
+(function initThree(){
+  if(typeof THREE==='undefined')return;
+  var canvas = document.getElementById('threeBg');
+  if(!canvas)return;
+
+  var W = window.innerWidth, H = window.innerHeight;
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(55, W/H, 0.1, 100);
+  camera.position.z = isMobile ? 4.5 : 3.8;
+
+  var renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:!isMobile, alpha:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  renderer.setClearColor(0x000000, 0);
+
+  /* --- Shaders --- */
+  var vertSrc = [
+    'uniform float uTime;',
+    'uniform float uMorph;',
+    'varying vec3 vNorm;',
+    'varying float vDisp;',
+    '',
+    '// Simplex 3D Noise — Ashima/Stefan Gustavson',
+    'vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x,289.0);}',
+    'vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}',
+    'float snoise(vec3 v){',
+    '  const vec2 C=vec2(1.0/6.0,1.0/3.0);',
+    '  const vec4 D=vec4(0.0,0.5,1.0,2.0);',
+    '  vec3 i=floor(v+dot(v,C.yyy));',
+    '  vec3 x0=v-i+dot(i,C.xxx);',
+    '  vec3 g=step(x0.yzx,x0.xyz);',
+    '  vec3 l=1.0-g;',
+    '  vec3 i1=min(g.xyz,l.zxy);',
+    '  vec3 i2=max(g.xyz,l.zxy);',
+    '  vec3 x1=x0-i1+C.xxx;',
+    '  vec3 x2=x0-i2+C.yyy;',
+    '  vec3 x3=x0-D.yyy;',
+    '  i=mod(i,289.0);',
+    '  vec4 p=permute(permute(permute(',
+    '    i.z+vec4(0.0,i1.z,i2.z,1.0))',
+    '    +i.y+vec4(0.0,i1.y,i2.y,1.0))',
+    '    +i.x+vec4(0.0,i1.x,i2.x,1.0));',
+    '  float n_=1.0/7.0;',
+    '  vec3 ns=n_*D.wyz-D.xzx;',
+    '  vec4 j=p-49.0*floor(p*ns.z*ns.z);',
+    '  vec4 x_=floor(j*ns.z);',
+    '  vec4 y_=floor(j-7.0*x_);',
+    '  vec4 x=x_*ns.x+ns.yyyy;',
+    '  vec4 y=y_*ns.x+ns.yyyy;',
+    '  vec4 h=1.0-abs(x)-abs(y);',
+    '  vec4 b0=vec4(x.xy,y.xy);',
+    '  vec4 b1=vec4(x.zw,y.zw);',
+    '  vec4 s0=floor(b0)*2.0+1.0;',
+    '  vec4 s1=floor(b1)*2.0+1.0;',
+    '  vec4 sh=-step(h,vec4(0.0));',
+    '  vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;',
+    '  vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;',
+    '  vec3 p0=vec3(a0.xy,h.x);',
+    '  vec3 p1=vec3(a0.zw,h.y);',
+    '  vec3 p2=vec3(a1.xy,h.z);',
+    '  vec3 p3=vec3(a1.zw,h.w);',
+    '  vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));',
+    '  p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;',
+    '  vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0);',
+    '  m=m*m;',
+    '  return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));',
+    '}',
+    '',
+    'void main(){',
+    '  float n=snoise(position*1.2+uTime*0.25)*uMorph;',
+    '  n+=snoise(position*2.4+uTime*0.15)*uMorph*0.5;',
+    '  vec3 newPos=position+normal*n;',
+    '  vNorm=normalize(normalMatrix*normal);',
+    '  vDisp=n;',
+    '  gl_Position=projectionMatrix*modelViewMatrix*vec4(newPos,1.0);',
+    '}'
+  ].join('\n');
+
+  var fragSrc = [
+    'uniform vec3 uColorA;',
+    'uniform vec3 uColorB;',
+    'uniform vec3 uColorC;',
+    'varying vec3 vNorm;',
+    'varying float vDisp;',
+    '',
+    'void main(){',
+    '  float t=smoothstep(-0.3,0.3,vDisp);',
+    '  vec3 col=mix(uColorA,uColorB,t);',
+    '  col=mix(col,uColorC,smoothstep(0.35,0.85,t));',
+    '  float rim=1.0-abs(dot(vNorm,vec3(0.0,0.0,1.0)));',
+    '  rim=pow(rim,2.5);',
+    '  col+=uColorA*rim*0.5;',
+    '  gl_FragColor=vec4(col,0.6+rim*0.3);',
+    '}'
+  ].join('\n');
+
+  /* --- Mesh --- */
+  var detail = isMobile ? 3 : 4;
+  var geo = new THREE.IcosahedronGeometry(1.5, detail);
+  var mat = new THREE.ShaderMaterial({
+    uniforms:{
+      uTime:{value:0},
+      uMorph:{value:0.3},
+      uColorA:{value:new THREE.Color('#00e5ff')},
+      uColorB:{value:new THREE.Color('#7c3aed')},
+      uColorC:{value:new THREE.Color('#ff6b6b')}
+    },
+    vertexShader:vertSrc,
+    fragmentShader:fragSrc,
+    transparent:true,
+    side:THREE.DoubleSide,
+    depthWrite:false
+  });
+  var mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+
+  /* Wireframe overlay */
+  var wireGeo = new THREE.IcosahedronGeometry(1.55, isMobile?2:3);
+  var wireMat = new THREE.MeshBasicMaterial({color:0x00e5ff, wireframe:true, transparent:true, opacity:0.045, depthWrite:false});
+  var wireMesh = new THREE.Mesh(wireGeo, wireMat);
+  scene.add(wireMesh);
+
+  /* --- Mouse & Scroll --- */
+  var scrollY = 0, mouseX = 0, mouseY = 0;
+  var targetRX = 0, targetRY = 0;
+  window.addEventListener('scroll', function(){ scrollY = window.scrollY; }, {passive:true});
+  if(!isMobile){
+    document.addEventListener('mousemove', function(e){
+      mouseX = (e.clientX/W - 0.5)*2;
+      mouseY = (e.clientY/H - 0.5)*2;
+    }, {passive:true});
+  }
+
+  /* --- Resize --- */
+  window.addEventListener('resize', function(){
+    W = window.innerWidth; H = window.innerHeight;
+    camera.aspect = W/H;
+    camera.updateProjectionMatrix();
+    renderer.setSize(W, H);
+  });
+
+  /* --- Animate --- */
+  function animate(){
+    requestAnimationFrame(animate);
+    var t = performance.now()*0.001;
+    mat.uniforms.uTime.value = t;
+
+    var baseRY = t*0.12 + scrollY*0.0003;
+    var baseRX = Math.sin(t*0.08)*0.15;
+
+    targetRY += (mouseX*0.3 - targetRY)*0.04;
+    targetRX += (-mouseY*0.2 - targetRX)*0.04;
+
+    mesh.rotation.y = baseRY + targetRY;
+    mesh.rotation.x = baseRX + targetRX;
+    wireMesh.rotation.copy(mesh.rotation);
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  /* Fade canvas after hero */
+  if(typeof gsap!=='undefined'){
+    gsap.to(canvas,{opacity:0.12, scrollTrigger:{trigger:'.hero',start:'bottom center',end:'bottom top',scrub:true}});
+  }
+})();
+
+/* ═══════════════ GSAP ANIMATIONS ═══════════════ */
+if(typeof gsap!=='undefined' && typeof ScrollTrigger!=='undefined'){
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* --- Scroll Progress Bar --- */
+  gsap.to('.scroll-prog',{scaleX:1,ease:'none',scrollTrigger:{trigger:'body',start:'top top',end:'bottom bottom',scrub:0.3}});
+
+  /* --- Nav Scroll --- */
+  ScrollTrigger.create({
+    start:'top -80',
+    onUpdate:function(self){
+      var nav = document.getElementById('mainNav');
+      if(!nav)return;
+      if(self.scroll()>80) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    }
+  });
+
+  /* --- Hero Character Split --- */
+  (function(){
+    var title = document.getElementById('heroTitle');
+    if(!title)return;
+    var text = title.textContent.trim();
+    var html = '';
+    for(var i=0;i<text.length;i++){
+      if(text[i]===' '){
+        html += '<span class="word-space"> </span>';
+      } else {
+        html += '<span class="char">'+text[i]+'</span>';
+      }
+    }
+    title.innerHTML = html;
+    title.style.opacity = '1';
+
+    gsap.from('.hero-title .char',{
+      y:60, opacity:0, rotateX:-40,
+      stagger:0.025, duration:0.7,
+      ease:'back.out(1.4)',
+      delay:0.3
+    });
+  })();
+
+  /* --- Hero Sub & Actions --- */
+  gsap.from('.hero-sub',{y:30,opacity:0,duration:0.8,delay:0.8,ease:'power2.out'});
+  gsap.from('.hero-actions',{y:20,opacity:0,duration:0.7,delay:1.0,ease:'power2.out'});
+  gsap.from('.hero-rating',{y:15,opacity:0,duration:0.6,delay:1.2,ease:'power2.out'});
+
+  /* --- General Section Reveals --- */
+  gsap.utils.toArray('.reveal-el').forEach(function(el){
+    gsap.to(el,{
+      y:0, opacity:1, duration:0.8,
+      ease:'power2.out',
+      scrollTrigger:{trigger:el, start:'top 88%', once:true}
+    });
+  });
+
+  /* --- Horizontal Scroll (Services) — Desktop Only --- */
+  if(!isMobile){
+    var track = document.getElementById('svcTrack');
+    var svcSec = document.getElementById('svcSec');
+    if(track && svcSec){
+      // Wait for layout
+      ScrollTrigger.addEventListener('refresh',function(){});
+      requestAnimationFrame(function(){
+        var scrollDist = track.scrollWidth - window.innerWidth + 80;
+        if(scrollDist > 0){
+          gsap.to(track,{
+            x: -scrollDist,
+            ease:'none',
+            scrollTrigger:{
+              trigger:svcSec,
+              pin:true,
+              scrub:1,
+              end:function(){return '+=' + scrollDist;},
+              invalidateOnRefresh:true
+            }
+          });
+        }
+      });
+    }
+  }
+
+  /* --- Counter Animation --- */
+  document.querySelectorAll('.stat-num').forEach(function(el){
+    var target = parseInt(el.getAttribute('data-count'),10);
+    if(isNaN(target))return;
+    ScrollTrigger.create({
+      trigger:el,
+      start:'top 85%',
+      once:true,
+      onEnter:function(){
+        var obj = {val:0};
+        gsap.to(obj,{
+          val:target,
+          duration:2.2,
+          ease:'power2.out',
+          onUpdate:function(){
+            el.textContent = Math.round(obj.val).toLocaleString();
+          }
+        });
+      }
+    });
+  });
+
+  /* --- Gallery Stagger --- */
+  gsap.utils.toArray('.gal-item').forEach(function(el,i){
+    gsap.to(el,{
+      y:0,opacity:1,duration:0.7,
+      delay:i*0.1,
+      ease:'power2.out',
+      scrollTrigger:{trigger:el,start:'top 90%',once:true}
+    });
+  });
+
+  /* --- Review Card Stagger --- */
+  gsap.utils.toArray('.rev-card').forEach(function(el,i){
+    gsap.to(el,{
+      y:0,opacity:1,duration:0.7,
+      delay:i*0.08,
+      ease:'power2.out',
+      scrollTrigger:{trigger:el,start:'top 90%',once:true}
+    });
+  });
+
+  /* --- Service Card Stagger (mobile) --- */
+  if(isMobile){
+    gsap.utils.toArray('.svc-card').forEach(function(el,i){
+      gsap.fromTo(el,{y:30,opacity:0},{
+        y:0,opacity:1,duration:0.6,
+        delay:i*0.08,
+        ease:'power2.out',
+        scrollTrigger:{trigger:el,start:'top 90%',once:true}
+      });
+    });
+  }
+
+  /* --- Process Steps Stagger --- */
+  gsap.utils.toArray('.process-step').forEach(function(el,i){
+    gsap.to(el,{
+      y:0,opacity:1,duration:0.6,
+      delay:i*0.15,
+      ease:'power2.out',
+      scrollTrigger:{trigger:el,start:'top 88%',once:true}
+    });
+  });
+}
+
+/* ═══════════════ FAQ ACCORDION ═══════════════ */
+document.querySelectorAll('.faq-q').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var item = btn.closest('.faq-item');
+    var answer = item.querySelector('.faq-a');
+    var isOpen = item.classList.contains('open');
+
+    // Close all others
+    document.querySelectorAll('.faq-item.open').forEach(function(other){
+      if(other!==item){
+        other.classList.remove('open');
+        other.querySelector('.faq-a').style.maxHeight = '0';
+      }
+    });
+
+    if(isOpen){
+      item.classList.remove('open');
+      answer.style.maxHeight = '0';
+    } else {
+      item.classList.add('open');
+      answer.style.maxHeight = answer.scrollHeight + 'px';
+    }
+  });
+});
+
+/* ═══════════════ MOBILE NAV TOGGLE ═══════════════ */
+var ham = document.getElementById('hamBtn');
+var navMenu = document.getElementById('navMenu');
+if(ham && navMenu){
+  ham.addEventListener('click',function(){
+    navMenu.classList.toggle('open');
+    ham.classList.toggle('active');
+    document.body.style.overflow = navMenu.classList.contains('open') ? 'hidden' : '';
+  });
+  navMenu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click',function(){
+      navMenu.classList.remove('open');
+      ham.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+  });
+}
+
+/* ═══════════════ CURSOR GLOW ═══════════════ */
+(function(){
+  var glow = document.querySelector('.cursor-glow');
+  if(!glow || isMobile || !matchMedia('(hover:hover)').matches)return;
+  document.addEventListener('mousemove',function(e){
+    if(typeof gsap!=='undefined'){
+      gsap.to(glow,{left:e.clientX,top:e.clientY,duration:0.8,ease:'power2.out'});
+    } else {
+      glow.style.left = e.clientX+'px';
+      glow.style.top = e.clientY+'px';
+    }
+  },{passive:true});
+})();
+
+/* ═══════════════ SMOOTH SCROLL (anchor links) ═══════════════ */
+document.querySelectorAll('a[href^="#"]').forEach(function(a){
+  a.addEventListener('click',function(e){
+    var id = a.getAttribute('href');
+    if(id.length<2)return;
+    var target = document.querySelector(id);
+    if(!target)return;
+    e.preventDefault();
+    target.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+
+})();
+</script>
+</body>
+</html>

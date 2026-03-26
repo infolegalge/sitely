@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>{{company_name}}{{#if category}} — {{category}}{{/if}}</title>
+<meta name="description" content="{{company_name}}{{#if address}} · {{address}}{{/if}}{{#if phone}} · {{phone}}{{/if}}">
+<meta property="og:title" content="{{company_name}}{{#if category}} — {{category}}{{/if}}">
+<meta property="og:description" content="{{#if description}}{{truncate description 160}}{{else}}{{company_name}}{{#if address}} · {{address}}{{/if}}{{/if}}">
+{{#if (gt (len images) 0)}}<meta property="og:image" content="{{images.[0]}}">{{/if}}
+<meta property="og:type" content="website">
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Dentist",
+  "name":"{{company_name}}",
+  {{#if address}}"address":{"@type":"PostalAddress","streetAddress":"{{address}}"},{{/if}}
+  {{#if phone}}"telephone":"{{phone}}",{{/if}}
+  {{#if email}}"email":"{{email}}",{{/if}}
+  {{#if website}}"url":"{{website}}",{{/if}}
+  {{#if (not_null rating)}}"aggregateRating":{"@type":"AggregateRating","ratingValue":"{{rating}}","reviewCount":"{{review_count}}","bestRating":"5"},{{/if}}
+  {{#if (gt (len images) 0)}}"image":"{{images.[0]}}",{{/if}}
+  {{#if lat}}"geo":{"@type":"GeoCoordinates","latitude":"{{lat}}","longitude":"{{lng}}"},{{/if}}
+  {{#if category}}"medicalSpecialty":"{{category}}",{{/if}}
+  "sameAs":[{{#if social.facebook}}"{{social.facebook}}"{{/if}}{{#if social.instagram}}{{#if social.facebook}},{{/if}}"{{social.instagram}}"{{/if}}]
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Georgian:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+/* ═══════ RESET & VARIABLES ═══════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F8FAFB;--bg2:#EFF3F5;--bg3:#E4EAED;
+  --surface:#FFFFFF;--surface2:#F0F4F6;
+  --text:#0A1628;--text2:#3D5066;--text3:#7B8FA3;
+  --primary:#0D9488;--primary-dark:#0F766E;--primary-light:rgba(13,148,136,.08);
+  --accent:#F59E0B;--accent2:#D97706;
+  --dark:#0A1628;--dark2:#142236;--dark3:#1E3248;
+  --white:#FFFFFF;
+  --heading:'Outfit','Noto Sans Georgian',system-ui,sans-serif;
+  --body:'Inter','Noto Sans Georgian',system-ui,sans-serif;
+  --r:8px;--r2:14px;--r3:20px;--r4:28px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --shadow-sm:0 1px 3px rgba(10,22,40,.06);
+  --shadow-md:0 8px 32px rgba(10,22,40,.08);
+  --shadow-lg:0 20px 60px rgba(10,22,40,.12);
+  --shadow-xl:0 32px 80px rgba(10,22,40,.16);
+}
+
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:var(--body);color:var(--text);background:var(--bg);line-height:1.6;overflow-x:hidden}
+img{max-width:100%;display:block}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* ═══════ TYPOGRAPHY SCALE ═══════ */
+.sec-tag{font-family:var(--heading);font-size:clamp(11px,1.2vw,14px);font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--primary);margin-bottom:clamp(12px,2vw,20px)}
+.sec-title{font-family:var(--heading);font-size:clamp(28px,5vw,60px);font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--text)}
+.sec-title em{font-style:normal;color:var(--primary)}
+.sec-sub{font-size:clamp(15px,1.6vw,19px);color:var(--text2);line-height:1.65;max-width:640px;margin-top:clamp(12px,2vw,20px)}
+.container{max-width:1320px;margin:0 auto;padding:0 clamp(20px,4vw,80px)}
+.section{padding:clamp(60px,10vw,140px) 0}
+
+/* ═══════ NAVIGATION ═══════ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:0 clamp(20px,4vw,60px);height:72px;display:flex;align-items:center;justify-content:space-between;transition:all .5s var(--ease);background:rgba(10,22,40,.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.08)}
+.nav .nav-brand,.nav .nav-links a{color:rgba(255,255,255,.85)}
+.nav .nav-links a:hover{color:var(--primary)}
+.nav.scrolled{background:rgba(248,250,251,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(13,148,136,.08);box-shadow:var(--shadow-sm)}
+.nav.scrolled .nav-brand,.nav.scrolled .nav-links a{color:var(--text)}
+.nav.scrolled .nav-links a:hover{color:var(--primary)}
+.nav.scrolled .ham span{background:var(--text)}
+.nav-brand{font-family:var(--heading);font-size:clamp(16px,1.8vw,22px);font-weight:800;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px}
+.nav-links{display:flex;gap:clamp(20px,3vw,40px);align-items:center}
+.nav-links a{font-size:14px;font-weight:500;color:var(--text2);transition:color .3s;position:relative}
+.nav-links a:hover{color:var(--primary)}
+.nav-cta{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:100px;background:var(--primary);color:var(--white);font-size:14px;font-weight:600;transition:all .3s var(--ease)}
+.nav-cta:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 8px 24px rgba(13,148,136,.3)}
+.nav-cta svg{width:16px;height:16px}
+
+/* Hamburger */
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:1001;padding:8px}
+.ham span{display:block;width:24px;height:2px;background:rgba(255,255,255,.85);border-radius:2px;transition:all .4s var(--ease)}
+.ham.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.ham.open span:nth-child(2){opacity:0}
+.ham.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+/* Mobile menu */
+.mmenu{position:fixed;inset:0;background:var(--white);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;opacity:0;pointer-events:none;transition:opacity .4s var(--ease)}
+.mmenu.open{opacity:1;pointer-events:all}
+.mmenu a{font-family:var(--heading);font-size:clamp(24px,5vw,36px);font-weight:700;color:var(--text);transition:color .3s}
+.mmenu a:hover{color:var(--primary)}
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .ham{display:flex}
+}
+
+/* ═══════ HERO ═══════ */
+.hero{position:relative;min-height:100vh;min-height:100dvh;display:flex;align-items:flex-end;overflow:hidden;background:var(--dark)}
+.hero-bg{position:absolute;inset:0;z-index:1}
+.hero-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(.5) contrast(1.1)}
+.hero-bg-fallback{width:100%;height:100%;background:linear-gradient(165deg,var(--dark) 0%,var(--dark3) 40%,var(--primary-dark) 100%)}
+.hero-overlay{position:absolute;inset:0;z-index:2;background:linear-gradient(180deg,rgba(10,22,40,.2) 0%,rgba(10,22,40,.5) 50%,rgba(10,22,40,.85) 100%)}
+.hero-canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
+.hero-content{position:relative;z-index:4;padding:0 clamp(24px,5vw,80px) clamp(48px,8vh,100px);width:100%;max-width:1400px;margin:0 auto}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:100px;background:rgba(13,148,136,.2);backdrop-filter:blur(8px);border:1px solid rgba(13,148,136,.3);margin-bottom:clamp(16px,3vw,32px)}
+.hero-tag span{font-size:clamp(11px,1.1vw,13px);font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.08em;text-transform:uppercase}
+.hero-tag svg{width:14px;height:14px;color:var(--primary)}
+
+.hero-title{font-family:var(--heading);color:var(--white);line-height:.95;letter-spacing:-.04em;font-weight:900;margin-bottom:clamp(16px,2.5vw,28px);overflow:hidden}
+.hero-title .line{display:block;overflow:hidden}
+.hero-title .line-in{display:block;transform:translateY(110%)}
+
+/* Font calibration by company name length */
+.name-short .hero-title{font-size:clamp(48px,11vw,160px)}
+.name-medium .hero-title{font-size:clamp(36px,8vw,120px)}
+.name-long .hero-title{font-size:clamp(26px,5.5vw,80px)}
+.name-xlong .hero-title{font-size:clamp(18px,3.5vw,56px);letter-spacing:-.03em;line-height:.98}
+
+.hero-desc{font-size:clamp(14px,1.4vw,18px);color:rgba(255,255,255,.7);max-width:560px;line-height:1.7;margin-bottom:clamp(20px,3vw,36px);overflow:hidden}
+.hero-desc span{display:block;transform:translateY(100%)}
+
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;overflow:hidden}
+.hero-actions > div{transform:translateY(100%)}
+.btn-primary{display:inline-flex;align-items:center;gap:10px;padding:clamp(12px,1.5vw,16px) clamp(24px,2.5vw,36px);border-radius:100px;background:var(--primary);color:var(--white);font-size:clamp(14px,1.2vw,16px);font-weight:600;transition:all .4s var(--ease)}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px);box-shadow:0 12px 32px rgba(13,148,136,.35)}
+.btn-primary svg{width:18px;height:18px}
+.btn-ghost{display:inline-flex;align-items:center;gap:10px;padding:clamp(12px,1.5vw,16px) clamp(24px,2.5vw,36px);border-radius:100px;border:1px solid rgba(255,255,255,.25);color:var(--white);font-size:clamp(14px,1.2vw,16px);font-weight:500;transition:all .4s var(--ease);backdrop-filter:blur(4px)}
+.btn-ghost:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.4);transform:translateY(-2px)}
+
+.hero-scroll{position:absolute;bottom:clamp(20px,3vh,40px);left:50%;transform:translateX(-50%);z-index:5;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0}
+.hero-scroll span{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+.scroll-line{width:1px;height:40px;background:rgba(255,255,255,.15);position:relative;overflow:hidden}
+.scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:var(--primary);animation:scrollPulse 2s ease-in-out infinite}
+@keyframes scrollPulse{0%{top:-100%}50%{top:0}100%{top:100%}}
+
+/* Category tags on hero */
+.cat-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:clamp(16px,2vw,24px)}
+.cat-tag{padding:6px 16px;border-radius:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-size:12px;font-weight:500;backdrop-filter:blur(4px)}
+
+@media(max-width:768px){
+  .name-short .hero-title{font-size:clamp(36px,11vw,72px)}
+  .name-medium .hero-title{font-size:clamp(28px,9vw,56px)}
+  .name-long .hero-title{font-size:clamp(22px,7vw,44px)}
+  .name-xlong .hero-title{font-size:clamp(16px,5vw,32px)}
+  .hero-actions{flex-direction:column}
+  .hero-actions .btn-primary,.hero-actions .btn-ghost{width:100%;justify-content:center}
+}
+
+/* ═══════ MARQUEE ═══════ */
+.marquee-sec{padding:clamp(16px,3vw,28px) 0;background:var(--dark);overflow:hidden;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+.mq-track{display:flex;gap:clamp(24px,4vw,60px);white-space:nowrap;animation:mq 45s linear infinite;will-change:transform}
+.mq-track.reverse{animation-direction:reverse;animation-duration:38s}
+.mq-item{font-family:var(--heading);font-size:clamp(14px,1.5vw,20px);font-weight:600;color:rgba(255,255,255,.35);display:flex;align-items:center;gap:clamp(12px,2vw,24px);flex-shrink:0}
+.mq-item.accent{color:var(--primary)}
+.mq-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0}
+@keyframes mq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ═══════ ABOUT SECTION ═══════ */
+.about{background:var(--bg)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:center}
+.about-text{font-size:clamp(15px,1.5vw,18px);color:var(--text2);line-height:1.8;margin-top:clamp(16px,2.5vw,28px)}
+.about-quote{position:relative;margin-top:clamp(28px,4vw,48px);padding:clamp(20px,2.5vw,32px);border-left:3px solid var(--primary);background:var(--primary-light);border-radius:0 var(--r2) var(--r2) 0}
+.about-quote p{font-size:clamp(14px,1.3vw,17px);color:var(--text2);font-style:italic;line-height:1.7}
+.about-quote cite{display:block;margin-top:12px;font-size:13px;color:var(--text3);font-style:normal;font-weight:600}
+.about-img{position:relative;border-radius:var(--r3);overflow:hidden;aspect-ratio:4/5}
+.about-img img{width:100%;height:100%;object-fit:cover;transition:all .6s var(--ease);filter:saturate(.9)}
+.about-img:hover img{transform:scale(1.04);filter:saturate(1)}
+.about-img-badge{position:absolute;bottom:clamp(16px,2vw,28px);left:clamp(16px,2vw,28px);padding:clamp(12px,1.5vw,18px) clamp(16px,2vw,24px);background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-radius:var(--r2);box-shadow:var(--shadow-md)}
+.about-img-badge .badge-num{font-family:var(--heading);font-size:clamp(24px,3vw,36px);font-weight:800;color:var(--primary);line-height:1}
+.about-img-badge .badge-label{font-size:clamp(11px,1vw,13px);color:var(--text3);font-weight:500;margin-top:2px}
+
+@media(max-width:768px){
+  .about-grid{grid-template-columns:1fr;gap:32px}
+  .about-img{aspect-ratio:3/2}
+}
+
+/* ═══════ SERVICES ═══════ */
+.services{background:var(--white)}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(16px,2vw,24px);margin-top:clamp(32px,5vw,56px)}
+.svc-card{padding:clamp(24px,3vw,36px);border-radius:var(--r3);background:var(--bg);border:1px solid rgba(10,22,40,.04);transition:all .5s var(--ease);cursor:default;position:relative;overflow:hidden}
+.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--primary);transform:scaleX(0);transform-origin:left;transition:transform .5s var(--ease)}
+.svc-card:hover{background:var(--dark);color:var(--white);transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.svc-card:hover::before{transform:scaleX(1)}
+.svc-card:hover .svc-num,.svc-card:hover .svc-desc{color:rgba(255,255,255,.5)}
+.svc-card:hover .svc-name{color:var(--white)}
+.svc-card:hover .svc-icon{background:var(--primary);color:var(--white)}
+.svc-icon{width:clamp(44px,4vw,56px);height:clamp(44px,4vw,56px);border-radius:var(--r2);background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;margin-bottom:clamp(16px,2vw,24px);transition:all .4s var(--ease)}
+.svc-icon svg{width:24px;height:24px}
+.svc-num{font-family:var(--heading);font-size:12px;font-weight:700;color:var(--text3);letter-spacing:.1em;margin-bottom:8px;transition:color .4s}
+.svc-name{font-family:var(--heading);font-size:clamp(18px,2vw,24px);font-weight:700;line-height:1.2;letter-spacing:-.01em;margin-bottom:10px;transition:color .4s}
+.svc-desc{font-size:clamp(13px,1.2vw,15px);color:var(--text3);line-height:1.65;transition:color .4s}
+
+@media(max-width:600px){
+  .svc-grid{grid-template-columns:1fr}
+}
+
+/* ═══════ GALLERY ═══════ */
+.gallery{background:var(--bg2);overflow:hidden}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(12px,2vw,20px);margin-top:clamp(32px,5vw,56px)}
+.gal-item{position:relative;border-radius:var(--r3);overflow:hidden;aspect-ratio:4/3;cursor:default}
+.gal-item img{width:100%;height:100%;object-fit:cover;transition:all .7s var(--ease);filter:grayscale(.2)}
+.gal-item:hover img{transform:scale(1.06);filter:grayscale(0)}
+.gal-item::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(10,22,40,.3) 0%,transparent 50%);pointer-events:none;transition:opacity .5s}
+.gal-item:hover::after{opacity:.5}
+
+.gal-single{max-width:900px;margin:clamp(32px,5vw,56px) auto 0;border-radius:var(--r3);overflow:hidden;box-shadow:var(--shadow-lg)}
+.gal-single img{width:100%;aspect-ratio:16/9;object-fit:cover;filter:grayscale(.15);transition:filter .7s var(--ease)}
+.gal-single:hover img{filter:grayscale(0)}
+
+@media(max-width:600px){
+  .gal-grid{grid-template-columns:1fr}
+}
+
+/* ═══════ STATS ═══════ */
+.stats{background:var(--white);border-top:1px solid rgba(10,22,40,.04);border-bottom:1px solid rgba(10,22,40,.04)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:clamp(24px,3vw,40px);text-align:center;padding:clamp(24px,4vw,48px) 0}
+.stat-item{padding:clamp(20px,2.5vw,32px)}
+.stat-num{font-family:var(--heading);font-size:clamp(36px,6vw,72px);font-weight:900;color:var(--text);line-height:1;letter-spacing:-.03em}
+.stat-label{font-size:clamp(12px,1.1vw,14px);color:var(--text3);font-weight:500;margin-top:8px;text-transform:uppercase;letter-spacing:.08em}
+
+/* ═══════ REVIEWS ═══════ */
+.reviews{background:var(--bg)}
+.rev-header{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.rev-badge{display:flex;align-items:center;gap:16px;padding:clamp(14px,2vw,20px) clamp(20px,2.5vw,28px);background:var(--dark);border-radius:var(--r3);flex-shrink:0}
+.rev-badge-score{font-family:var(--heading);font-size:clamp(32px,4vw,48px);font-weight:900;color:var(--white);line-height:1}
+.rev-badge-info{display:flex;flex-direction:column;gap:6px}
+.rev-stars{display:flex;gap:2px}
+.rev-stars svg{width:16px;height:16px}
+.rev-badge-ct{font-size:12px;color:rgba(255,255,255,.5);font-weight:500;white-space:nowrap}
+
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(14px,2vw,20px);margin-top:clamp(32px,5vw,56px)}
+.rev-card{position:relative;padding:clamp(24px,2.5vw,32px);background:var(--white);border-radius:var(--r3);border:1px solid rgba(10,22,40,.04);transition:all .5s var(--ease);overflow:hidden}
+.rev-card:hover{background:var(--dark);color:var(--white);transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.rev-card:hover .rev-text{color:rgba(255,255,255,.65)}
+.rev-card:hover .rev-date{color:rgba(255,255,255,.3)}
+.rev-card:hover .rev-name{color:var(--white)}
+.rev-card:hover .rev-q{color:rgba(255,255,255,.04)}
+.rev-card:hover .owner-resp{background:rgba(255,255,255,.06)}
+.rev-card:hover .owner-resp-label{border-left-color:rgba(255,255,255,.2);color:rgba(255,255,255,.4)}
+.rev-card:hover .owner-resp-text{color:rgba(255,255,255,.5)}
+
+.rev-q{position:absolute;top:8px;right:20px;font-family:Georgia,serif;font-size:clamp(100px,12vw,140px);line-height:1;color:rgba(10,22,40,.03);pointer-events:none;transition:color .4s}
+.rev-top{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.rev-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--heading);font-size:16px;font-weight:700;color:var(--white);flex-shrink:0}
+.rev-meta{display:flex;flex-direction:column;gap:2px}
+.rev-name{font-weight:600;font-size:15px;transition:color .4s}
+.rev-date{font-size:12px;color:var(--text3);transition:color .4s}
+.rev-card-stars{display:flex;gap:2px;margin-bottom:12px}
+.rev-card-stars svg{width:14px;height:14px}
+.rev-text{font-size:clamp(13px,1.2vw,15px);color:var(--text2);line-height:1.7;transition:color .4s}
+
+.owner-resp{margin-top:16px;padding:14px 16px;border-radius:var(--r);background:var(--primary-light);transition:background .4s}
+.owner-resp-label{font-size:11px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.08em;padding-left:12px;border-left:2px solid var(--primary);margin-bottom:6px;transition:all .4s}
+.owner-resp-text{font-size:13px;color:var(--text3);line-height:1.6;transition:color .4s}
+
+@media(max-width:600px){
+  .rev-grid{grid-template-columns:1fr}
+  .rev-header{flex-direction:column;align-items:flex-start}
+}
+
+/* ═══════ CONTACT / INFO ═══════ */
+.contact{background:var(--white)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,64px);margin-top:clamp(32px,5vw,56px)}
+
+.hrs-table{width:100%}
+.hrs-row{display:flex;justify-content:space-between;padding:clamp(12px,1.5vw,16px) 0;border-bottom:1px solid rgba(10,22,40,.06);font-size:clamp(14px,1.3vw,16px)}
+.hrs-day{font-weight:600;color:var(--text)}
+.hrs-time{color:var(--text2)}
+.wh-text{font-size:clamp(14px,1.3vw,16px);color:var(--text2);padding:16px 0}
+.no-hrs-msg{font-size:15px;color:var(--text3);padding:20px 0;font-style:italic}
+
+.map-wrap{margin-top:clamp(20px,3vw,32px);border-radius:var(--r3);overflow:hidden;aspect-ratio:16/9;background:var(--bg2)}
+.map-wrap iframe{width:100%;height:100%;border:0;filter:grayscale(.8) contrast(1.05);opacity:.8;transition:all .5s}
+.map-wrap:hover iframe{filter:grayscale(0);opacity:1}
+
+.c-stack{display:flex;flex-direction:column;gap:clamp(10px,1.5vw,14px)}
+.c-card{display:flex;align-items:center;gap:16px;padding:clamp(16px,2vw,22px);border-radius:var(--r2);background:var(--bg);border:1px solid rgba(10,22,40,.04);transition:all .4s var(--ease)}
+.c-card:hover{transform:translateX(6px);background:var(--primary-light);border-color:rgba(13,148,136,.15)}
+.c-icon{width:44px;height:44px;border-radius:var(--r);background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.c-icon svg{width:20px;height:20px}
+.c-label{font-size:12px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.c-value{font-size:clamp(14px,1.3vw,16px);font-weight:500;color:var(--text);overflow-wrap:break-word;word-break:break-word}
+
+.gm-btn{display:inline-flex;align-items:center;gap:10px;margin-top:clamp(16px,2vw,24px);padding:12px 28px;border-radius:100px;background:var(--dark);color:var(--white);font-size:14px;font-weight:600;transition:all .4s var(--ease)}
+.gm-btn:hover{background:var(--primary);transform:translateY(-2px);box-shadow:0 8px 24px rgba(13,148,136,.3)}
+.gm-btn svg{width:18px;height:18px}
+
+.social-row{display:flex;gap:12px;margin-top:clamp(16px,2vw,24px)}
+.soc-link{width:44px;height:44px;border-radius:50%;background:var(--bg);border:1px solid rgba(10,22,40,.06);display:flex;align-items:center;justify-content:center;transition:all .4s var(--ease)}
+.soc-link:hover{background:var(--primary);border-color:var(--primary);color:var(--white);transform:translateY(-3px);box-shadow:0 6px 20px rgba(13,148,136,.25)}
+.soc-link svg{width:18px;height:18px}
+
+@media(max-width:768px){
+  .info-grid{grid-template-columns:1fr}
+}
+
+/* ═══════ CTA ═══════ */
+.cta-sec{position:relative;background:var(--dark);overflow:hidden}
+.cta-sec::before{content:'SITELY';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--heading);font-size:clamp(80px,20vw,300px);font-weight:900;color:rgba(255,255,255,.02);white-space:nowrap;pointer-events:none}
+.cta-content{text-align:center;max-width:640px;margin:0 auto;position:relative;z-index:1}
+.cta-content .sec-title{color:var(--white)}
+.cta-content .sec-sub{color:rgba(255,255,255,.55);margin:clamp(12px,2vw,20px) auto clamp(28px,3.5vw,40px)}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+@media(max-width:480px){
+  .cta-btns{flex-direction:column}
+  .cta-btns a{width:100%;justify-content:center}
+}
+
+/* ═══════ FOOTER ═══════ */
+.footer{background:var(--dark2);padding:clamp(32px,4vw,48px) 0}
+.foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.foot-brand{font-family:var(--heading);font-size:16px;font-weight:700;color:rgba(255,255,255,.7)}
+.foot-links{display:flex;gap:clamp(16px,2vw,28px);flex-wrap:wrap}
+.foot-links a{font-size:13px;color:rgba(255,255,255,.4);transition:color .3s}
+.foot-links a:hover{color:var(--primary)}
+.foot-copy{font-size:12px;color:rgba(255,255,255,.3);width:100%;text-align:center;margin-top:24px;padding-top:24px;border-top:1px solid rgba(255,255,255,.06)}
+.foot-copy a{color:var(--primary);font-weight:500}
+
+@media(max-width:600px){
+  .foot-inner{flex-direction:column;text-align:center}
+}
+
+/* ═══════ FLOATING CTA ═══════ */
+.float-cta{position:fixed;bottom:clamp(20px,3vw,32px);right:clamp(20px,3vw,32px);z-index:900;width:56px;height:56px;border-radius:50%;background:var(--primary);color:var(--white);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 32px rgba(13,148,136,.35);transition:all .4s var(--ease);animation:floatPulse 3s ease-in-out infinite}
+.float-cta:hover{transform:scale(1.1);box-shadow:0 8px 40px rgba(13,148,136,.4)}
+.float-cta svg{width:24px;height:24px}
+@keyframes floatPulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/* ═══════ THREE.JS CANVAS ═══════ */
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.35}
+
+/* Ensure all content above canvas */
+.page-wrap{position:relative;z-index:1}
+</style>
+</head>
+<body>
+
+<!-- Three.js background canvas -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- ─── PAGE WRAPPER ─── -->
+<div class="page-wrap">
+
+<!-- ─── NAV ─── -->
+<nav class="nav" id="mainNav">
+  <a href="#" class="nav-brand">{{company_name}}</a>
+  <div class="nav-links">
+    {{#if (gt (len images) 1)}}<a href="#gallery">გალერეა</a>{{/if}}
+    <a href="#services">სერვისები</a>
+    <a href="#reviews">შეფასებები</a>
+    <a href="#contact">კონტაქტი</a>
+    {{#if menu_link}}<a href="{{menu_link}}" target="_blank" rel="noopener">მენიუ</a>{{/if}}
+    {{#if phone}}<a href="tel:{{phone}}" class="nav-cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>დარეკვა</a>{{/if}}
+  </div>
+  <div class="ham" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mmenu" id="mobileMenu">
+  {{#if (gt (len images) 1)}}<a href="#gallery" onclick="toggleMenu()">გალერეა</a>{{/if}}
+  <a href="#services" onclick="toggleMenu()">სერვისები</a>
+  <a href="#reviews" onclick="toggleMenu()">შეფასებები</a>
+  <a href="#contact" onclick="toggleMenu()">კონტაქტი</a>
+  {{#if phone}}<a href="tel:{{phone}}" class="nav-cta" style="margin-top:20px">დარეკვა</a>{{/if}}
+</div>
+
+<!-- ─── HERO ─── -->
+<section class="hero {{company_name_class}}" id="heroSec">
+  <div class="hero-bg">
+    {{#if (gt (len images) 0)}}
+    <img src="{{images.[0]}}" alt="{{company_name}}" id="heroImg">
+    {{else}}
+    <div class="hero-bg-fallback"></div>
+    {{/if}}
+  </div>
+  <div class="hero-overlay"></div>
+  <canvas class="hero-canvas" id="heroCanvas"></canvas>
+
+  <div class="hero-content">
+    <div class="hero-tag">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26z"/></svg>
+      <span>{{default category "სტომატოლოგიური კლინიკა"}}</span>
+    </div>
+
+    <h1 class="hero-title" id="heroTitle">
+      <span class="line"><span class="line-in">{{company_name}}</span></span>
+    </h1>
+
+    <div class="hero-desc">
+      <span>{{#if address}}{{truncate address 80}}{{else}}{{default category "თანამედროვე სტომატოლოგიური კლინიკა"}}{{/if}}</span>
+    </div>
+
+    {{#if (gt (len categories) 1)}}
+    <div class="cat-tags">
+      {{#each (limit categories 5)}}
+      <span class="cat-tag">{{this}}</span>
+      {{/each}}
+    </div>
+    {{/if}}
+
+    <div class="hero-actions">
+      <div>
+        {{#if phone}}
+        <a href="tel:{{phone}}" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          {{phone_display}}
+        </a>
+        {{/if}}
+      </div>
+      <div>
+        {{#if booking_link}}
+        <a href="{{booking_link}}" target="_blank" rel="noopener" class="btn-ghost">ჯავშანი</a>
+        {{else if website}}
+        <a href="{{website}}" target="_blank" rel="noopener" class="btn-ghost">ვებსაიტი</a>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-scroll" id="heroScroll">
+    <span>scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ─── MARQUEE ─── -->
+<div class="marquee-sec">
+  <div class="mq-track">
+    <span class="mq-item accent">{{company_name}}</span><span class="mq-dot"></span>
+    <span class="mq-item">{{default category "სტომატოლოგია"}}</span><span class="mq-dot"></span>
+    {{#if (not_null rating)}}<span class="mq-item accent">★ {{rating}}</span><span class="mq-dot"></span>{{/if}}
+    {{#if address}}<span class="mq-item">{{truncate address 40}}</span><span class="mq-dot"></span>{{/if}}
+    {{#if phone}}<span class="mq-item accent">{{phone_display}}</span><span class="mq-dot"></span>{{/if}}
+    <span class="mq-item accent">{{company_name}}</span><span class="mq-dot"></span>
+    <span class="mq-item">{{default category "სტომატოლოგია"}}</span><span class="mq-dot"></span>
+    {{#if (not_null rating)}}<span class="mq-item accent">★ {{rating}}</span><span class="mq-dot"></span>{{/if}}
+    {{#if address}}<span class="mq-item">{{truncate address 40}}</span><span class="mq-dot"></span>{{/if}}
+    {{#if phone}}<span class="mq-item accent">{{phone_display}}</span><span class="mq-dot"></span>{{/if}}
+  </div>
+</div>
+
+<!-- ─── ABOUT ─── -->
+<section class="about section" id="about">
+  <div class="container">
+    <div class="sec-tag">ჩვენ შესახებ</div>
+    <h2 class="sec-title">თანამედროვე <em>სტომატოლოგია</em></h2>
+    <div class="about-grid">
+      <div>
+        <p class="about-text">
+          {{#if description}}
+          {{description}}
+          {{else}}
+          {{company_name}} — თანამედროვე სტომატოლოგიური კლინიკა, რომელიც აღჭურვილია უახლესი ტექნოლოგიებით და გთავაზობთ მაღალკვალიფიციურ მომსახურებას. ჩვენი გამოცდილი გუნდი ზრუნავს თითოეული პაციენტის კომფორტსა და ჯანმრთელობაზე, რათა მიიღოთ საუკეთესო შედეგი უმტკივნეულო გარემოში.
+          {{/if}}
+        </p>
+        {{#if (gt (len review_snippets) 0)}}
+        <div class="about-quote">
+          <p>"{{review_snippets.[0]}}"</p>
+          <cite>— Google-ის მომხმარებელი</cite>
+        </div>
+        {{else}}
+        <div class="about-quote">
+          <p>"პროფესიონალური მომსახურება, ძალიან კომფორტული გარემო და მეგობრული პერსონალი."</p>
+          <cite>— კმაყოფილი პაციენტი</cite>
+        </div>
+        {{/if}}
+      </div>
+      {{#if (gt (len images) 1)}}
+      <div class="about-img">
+        <img src="{{images.[1]}}" alt="{{company_name}}" loading="lazy">
+        {{#if (not_null rating)}}
+        <div class="about-img-badge">
+          <div class="badge-num">{{rating}}</div>
+          <div class="badge-label">Google რეიტინგი</div>
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
+    </div>
+  </div>
+</section>
+
+<!-- ─── SERVICES ─── -->
+<section class="services section" id="services">
+  <div class="container">
+    <div class="sec-tag">სერვისები</div>
+    <h2 class="sec-title">ჩვენი <em>მომსახურება</em></h2>
+    <p class="sec-sub">პროფესიონალური სტომატოლოგიური სერვისები თანამედროვე ტექნოლოგიებით</p>
+
+    <div class="svc-grid" id="svcGrid">
+      {{#if (gt (len categories) 1)}}
+        {{#each categories}}
+        <div class="svc-card">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26z"/></svg></div>
+          <div class="svc-num">{{pad_num (add @index 1)}}</div>
+          <div class="svc-name">{{this}}</div>
+          <p class="svc-desc">{{../company_name}} — პროფესიონალური {{this}} მომსახურება თანამედროვე სტანდარტებით.</p>
+        </div>
+        {{/each}}
+      {{else}}
+        <div class="svc-card">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+          <div class="svc-num">01</div>
+          <div class="svc-name">ესთეტიკური სტომატოლოგია</div>
+          <p class="svc-desc">ვინირები, გათეთრება და ესთეტიკური რესტავრაცია — ლამაზი ღიმილისთვის.</p>
+        </div>
+        <div class="svc-card">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="svc-num">02</div>
+          <div class="svc-name">იმპლანტაცია</div>
+          <p class="svc-desc">თანამედროვე იმპლანტაციის ტექნოლოგიები დაკარგული კბილების აღსადგენად.</p>
+        </div>
+        <div class="svc-card">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg></div>
+          <div class="svc-num">03</div>
+          <div class="svc-name">ორთოდონტია</div>
+          <p class="svc-desc">ბრეკეტები და გამჭვირვალე ელაინერები — თანაბარი კბილების რიგისთვის.</p>
+        </div>
+        <div class="svc-card">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/></svg></div>
+          <div class="svc-num">04</div>
+          <div class="svc-name">თერაპიული სტომატოლოგია</div>
+          <p class="svc-desc">კარიესის მკურნალობა, ფესვის არხების თერაპია და პროფილაქტიკა.</p>
+        </div>
+        <div class="svc-card">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <div class="svc-num">05</div>
+          <div class="svc-name">ბავშვთა სტომატოლოგია</div>
+          <p class="svc-desc">მოთმინებიანი და თბილი მიდგომა პატარა პაციენტებისთვის.</p>
+        </div>
+        <div class="svc-card">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="svc-num">06</div>
+          <div class="svc-name">პროფესიონალური ჰიგიენა</div>
+          <p class="svc-desc">კბილის ქვის მოცილება, პოლირება და პროფილაქტიკური მოვლა.</p>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</section>
+
+<!-- ─── GALLERY ─── -->
+{{#if (gt (len images) 1)}}
+<section class="gallery section" id="gallery">
+  <div class="container">
+    <div class="sec-tag">გალერეა</div>
+    <h2 class="sec-title">ჩვენი <em>კლინიკა</em></h2>
+    <div class="gal-grid" id="galGrid">
+      {{#each (limit images 6)}}
+      <div class="gal-item">
+        <img src="{{this}}" alt="კლინიკის ფოტო {{add @index 1}}" loading="lazy">
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</section>
+{{else if (gt (len images) 0)}}
+<section class="gallery section" id="gallery">
+  <div class="container">
+    <div class="sec-tag">გალერეა</div>
+    <h2 class="sec-title">ჩვენი <em>კლინიკა</em></h2>
+    <div class="gal-single">
+      <img src="{{images.[0]}}" alt="{{company_name}}" loading="lazy">
+    </div>
+  </div>
+</section>
+{{/if}}
+
+<!-- ─── STATS ─── -->
+{{#if (not_null rating)}}
+<section class="stats section">
+  <div class="container">
+    <div class="stats-grid" id="statsGrid">
+      {{#if (gt review_count 0)}}
+      <div class="stat-item">
+        <div class="stat-num" data-count="{{review_count}}">0</div>
+        <div class="stat-label">შეფასება</div>
+      </div>
+      {{/if}}
+      <div class="stat-item">
+        <div class="stat-num" data-count="{{math_floor rating}}">0</div>
+        <div class="stat-label">რეიტინგი</div>
+      </div>
+      {{#if (gt (len images) 0)}}
+      <div class="stat-item">
+        <div class="stat-num" data-count="{{len images}}">0</div>
+        <div class="stat-label">ფოტო</div>
+      </div>
+      {{/if}}
+      <div class="stat-item">
+        <div class="stat-num" data-count="{{len categories}}">0</div>
+        <div class="stat-label">სერვისი</div>
+      </div>
+    </div>
+  </div>
+</section>
+{{/if}}
+
+<!-- ─── REVIEWS ─── -->
+<section class="reviews section" id="reviews">
+  <div class="container">
+    <div class="rev-header">
+      <div>
+        <div class="sec-tag">შეფასებები</div>
+        <h2 class="sec-title">რას ამბობენ<br><em>ჩვენზე</em></h2>
+      </div>
+      {{#if (not_null rating)}}
+      <div class="rev-badge">
+        <div class="rev-badge-score">{{rating}}</div>
+        <div class="rev-badge-info">
+          <div class="rev-stars">
+            {{#repeat 5}}<svg viewBox="0 0 20 20"><polygon points="10,1.5 12.39,7.36 18.81,7.64 13.76,11.82 15.53,18.08 10,14.27 4.47,18.08 6.24,11.82 1.19,7.64 7.61,7.36" fill="{{star_fill ../rating num}}"/></svg>{{/repeat}}
+          </div>
+          <div class="rev-badge-ct">{{review_count}} შეფასება · Google</div>
+        </div>
+      </div>
+      {{/if}}
+    </div>
+
+    <div class="rev-grid" id="revGrid">
+      {{#if (gt (len reviews) 0)}}
+        {{#each (limit reviews 6)}}
+        <div class="rev-card">
+          <span class="rev-q">"</span>
+          <div class="rev-top">
+            <div class="rev-avatar" style="background:{{#if (eq @index 0)}}var(--primary){{else if (eq @index 1)}}var(--dark){{else if (eq @index 2)}}linear-gradient(135deg,#0D9488,#5EEAD4){{else}}var(--accent){{/if}}">{{initial author}}</div>
+            <div class="rev-meta">
+              <div class="rev-name">{{truncate author 30}}</div>
+              {{#if date}}<div class="rev-date">{{date}}</div>{{/if}}
+            </div>
+          </div>
+          <div class="rev-card-stars">
+            {{#repeat 5}}<svg viewBox="0 0 20 20"><polygon points="10,1.5 12.39,7.36 18.81,7.64 13.76,11.82 15.53,18.08 10,14.27 4.47,18.08 6.24,11.82 1.19,7.64 7.61,7.36" fill="{{star_fill ../rating num}}"/></svg>{{/repeat}}
+          </div>
+          <p class="rev-text">{{truncate text 300}}</p>
+          {{#if owner_response}}
+          <div class="owner-resp">
+            <div class="owner-resp-label">მფლობელის პასუხი</div>
+            <p class="owner-resp-text">{{truncate owner_response 200}}</p>
+          </div>
+          {{/if}}
+        </div>
+        {{/each}}
+      {{else if (gt (len review_snippets) 0)}}
+        {{#each review_snippets}}
+        <div class="rev-card">
+          <span class="rev-q">"</span>
+          <div class="rev-top">
+            <div class="rev-avatar" style="background:var(--primary)">★</div>
+            <div class="rev-meta">
+              <div class="rev-name">Google მომხმარებელი</div>
+            </div>
+          </div>
+          <div class="rev-card-stars">
+            {{#repeat 5}}<svg viewBox="0 0 20 20"><polygon points="10,1.5 12.39,7.36 18.81,7.64 13.76,11.82 15.53,18.08 10,14.27 4.47,18.08 6.24,11.82 1.19,7.64 7.61,7.36" fill="#0D9488"/></svg>{{/repeat}}
+          </div>
+          <p class="rev-text">{{truncate this 300}}</p>
+        </div>
+        {{/each}}
+      {{else}}
+        <!-- Fallback: realistic dental reviews -->
+        <div class="rev-card">
+          <span class="rev-q">"</span>
+          <div class="rev-top">
+            <div class="rev-avatar" style="background:var(--primary)">მ</div>
+            <div class="rev-meta">
+              <div class="rev-name">მარიამ გ.</div>
+              <div class="rev-date">3 თვის წინ</div>
+            </div>
+          </div>
+          <div class="rev-card-stars">
+            {{#repeat 5}}<svg viewBox="0 0 20 20"><polygon points="10,1.5 12.39,7.36 18.81,7.64 13.76,11.82 15.53,18.08 10,14.27 4.47,18.08 6.24,11.82 1.19,7.64 7.61,7.36" fill="#0D9488"/></svg>{{/repeat}}
+          </div>
+          <p class="rev-text">პროფესიონალური მომსახურება, უმტკივნეულო პროცედურები და ძალიან მეგობრული პერსონალი. კლინიკა აღჭურვილია უახლესი ტექნოლოგიებით. აუცილებლად გირჩევთ!</p>
+        </div>
+        <div class="rev-card">
+          <span class="rev-q">"</span>
+          <div class="rev-top">
+            <div class="rev-avatar" style="background:var(--dark)">ა</div>
+            <div class="rev-meta">
+              <div class="rev-name">ალექსანდრე კ.</div>
+              <div class="rev-date">1 თვის წინ</div>
+            </div>
+          </div>
+          <div class="rev-card-stars">
+            {{#repeat 5}}<svg viewBox="0 0 20 20"><polygon points="10,1.5 12.39,7.36 18.81,7.64 13.76,11.82 15.53,18.08 10,14.27 4.47,18.08 6.24,11.82 1.19,7.64 7.61,7.36" fill="#0D9488"/></svg>{{/repeat}}
+          </div>
+          <p class="rev-text">იმპლანტაცია გავიკეთე ამ კლინიკაში. ექიმის პროფესიონალიზმით და შედეგით აბსოლუტურად კმაყოფილი ვარ. მთელი პროცესი კომფორტულად წარიმართა.</p>
+        </div>
+        <div class="rev-card">
+          <span class="rev-q">"</span>
+          <div class="rev-top">
+            <div class="rev-avatar" style="background:linear-gradient(135deg,#0D9488,#5EEAD4)">ნ</div>
+            <div class="rev-meta">
+              <div class="rev-name">ნათია მ.</div>
+              <div class="rev-date">2 კვირის წინ</div>
+            </div>
+          </div>
+          <div class="rev-card-stars">
+            {{#repeat 5}}<svg viewBox="0 0 20 20"><polygon points="10,1.5 12.39,7.36 18.81,7.64 13.76,11.82 15.53,18.08 10,14.27 4.47,18.08 6.24,11.82 1.19,7.64 7.61,7.36" fill="#0D9488"/></svg>{{/repeat}}
+          </div>
+          <p class="rev-text">ბავშვებისთვის საუკეთესო კლინიკა! ძალიან მოთმინებიანი და თბილი ექიმები. ჩემი შვილი სიამოვნებით დადის ვიზიტებზე. დიდი მადლობა გუნდს!</p>
+        </div>
+        <div class="rev-card">
+          <span class="rev-q">"</span>
+          <div class="rev-top">
+            <div class="rev-avatar" style="background:var(--accent)">დ</div>
+            <div class="rev-meta">
+              <div class="rev-name">დავით ბ.</div>
+              <div class="rev-date">2 თვის წინ</div>
+            </div>
+          </div>
+          <div class="rev-card-stars">
+            {{#repeat 4}}<svg viewBox="0 0 20 20"><polygon points="10,1.5 12.39,7.36 18.81,7.64 13.76,11.82 15.53,18.08 10,14.27 4.47,18.08 6.24,11.82 1.19,7.64 7.61,7.36" fill="#0D9488"/></svg>{{/repeat}}
+            <svg viewBox="0 0 20 20"><polygon points="10,1.5 12.39,7.36 18.81,7.64 13.76,11.82 15.53,18.08 10,14.27 4.47,18.08 6.24,11.82 1.19,7.64 7.61,7.36" fill="rgba(13,148,136,.15)"/></svg>
+          </div>
+          <p class="rev-text">ესთეტიკური სტომატოლოგია უმაღლეს დონეზე. ვინირები დამიყენეს და შედეგი ბუნებრივად გამოიყურება. ფასი ხარისხს შეესაბამება.</p>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</section>
+
+<!-- ─── CONTACT ─── -->
+<section class="contact section" id="contact">
+  <div class="container">
+    <div class="sec-tag">კონტაქტი</div>
+    <h2 class="sec-title">დაგვიკავშირდით</h2>
+
+    <div class="info-grid">
+      <div>
+        {{#if working_hours}}
+        <div class="hrs-table">
+          {{#each working_hours}}
+          <div class="hrs-row">
+            <span class="hrs-day">{{@key}}</span>
+            <span class="hrs-time">{{this}}</span>
+          </div>
+          {{/each}}
+        </div>
+        {{else if working_hours_text}}
+        <div class="wh-text">{{working_hours_text}}</div>
+        {{else}}
+        <div class="no-hrs-msg">სამუშაო საათები მალე დაემატება</div>
+        {{/if}}
+
+        {{#if google_maps_url}}
+        <a href="{{google_maps_url}}" target="_blank" rel="noopener" class="gm-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Google Maps-ზე ნახვა
+        </a>
+        {{/if}}
+
+        {{#if map_embed_url}}
+        <div class="map-wrap">
+          <iframe src="{{map_embed_url}}" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map"></iframe>
+        </div>
+        {{/if}}
+      </div>
+
+      <div class="c-stack">
+        {{#if phone}}
+        <a href="tel:{{phone}}" class="c-card">
+          <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div>
+            <div class="c-label">ტელეფონი</div>
+            <div class="c-value">{{phone_display}}</div>
+          </div>
+        </a>
+        {{/if}}
+        {{#if email}}
+        <a href="mailto:{{email}}" class="c-card">
+          <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div>
+            <div class="c-label">ელ-ფოსტა</div>
+            <div class="c-value">{{email}}</div>
+          </div>
+        </a>
+        {{/if}}
+        {{#if address}}
+        <div class="c-card">
+          <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div>
+            <div class="c-label">მისამართი</div>
+            <div class="c-value">{{truncate address 80}}</div>
+          </div>
+        </div>
+        {{/if}}
+        {{#if website}}
+        <a href="{{website}}" target="_blank" rel="noopener" class="c-card">
+          <div class="c-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+          <div>
+            <div class="c-label">ვებსაიტი</div>
+            <div class="c-value">{{truncate website 50}}</div>
+          </div>
+        </a>
+        {{/if}}
+
+        {{#if (or social.facebook social.instagram)}}
+        <div class="social-row">
+          {{#if social.facebook}}
+          <a href="{{social.facebook}}" target="_blank" rel="noopener" class="soc-link" title="Facebook">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+          {{/if}}
+          {{#if social.instagram}}
+          <a href="{{social.instagram}}" target="_blank" rel="noopener" class="soc-link" title="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          {{/if}}
+          {{#if social.whatsapp}}
+          <a href="https://wa.me/{{social.whatsapp}}" target="_blank" rel="noopener" class="soc-link" title="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+          {{/if}}
+        </div>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section class="cta-sec section">
+  <div class="container">
+    <div class="cta-content">
+      <h2 class="sec-title">გსურთ ასეთი <em>ვებგვერდი?</em></h2>
+      <p class="sec-sub">ეს არის სადემონსტრაციო ვერსია. დაგვიკავშირდით და შევქმნით თქვენს უნიკალურ ვებგვერდს.</p>
+      <div class="cta-btns">
+        {{#if phone}}
+        <a href="tel:{{phone}}" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          დარეკეთ
+        </a>
+        {{/if}}
+        <a href="mailto:info@sitely.ge" class="btn-ghost">მოგვწერეთ</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer class="footer">
+  <div class="container">
+    <div class="foot-inner">
+      <div class="foot-brand">{{company_name}}</div>
+      <div class="foot-links">
+        {{#if (gt (len images) 1)}}<a href="#gallery">გალერეა</a>{{/if}}
+        <a href="#services">სერვისები</a>
+        <a href="#reviews">შეფასებები</a>
+        <a href="#contact">კონტაქტი</a>
+        {{#if google_maps_url}}<a href="{{google_maps_url}}" target="_blank" rel="noopener">Google Maps</a>{{/if}}
+      </div>
+    </div>
+    <div class="foot-copy">&copy; 2025 {{company_name}} · Built with <a href="https://sitely.ge" target="_blank" rel="noopener">Sitely</a></div>
+  </div>
+</footer>
+
+</div><!-- /page-wrap -->
+
+<!-- Floating phone -->
+{{#if phone}}
+<a href="tel:{{phone}}" class="float-cta">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+</a>
+{{/if}}
+
+<script>
+/* ═══════ MOBILE MENU ═══════ */
+function toggleMenu(){
+  document.querySelector('.ham').classList.toggle('open');
+  document.getElementById('mobileMenu').classList.toggle('open');
+  document.body.style.overflow=document.getElementById('mobileMenu').classList.contains('open')?'hidden':'';
+}
+
+/* ═══════ NAV SCROLL ═══════ */
+window.addEventListener('scroll',function(){
+  document.getElementById('mainNav').classList.toggle('scrolled',window.scrollY>60);
+});
+
+/* ═══════ THREE.JS BACKGROUND ═══════ */
+(function(){
+  var canvas=document.getElementById('bgCanvas');
+  if(!canvas||typeof THREE==='undefined')return;
+
+  var w=window.innerWidth,h=window.innerHeight;
+  var renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:true,antialias:false});
+  var dpr=window.innerWidth<768?1:Math.min(window.devicePixelRatio,1.5);
+  renderer.setPixelRatio(dpr);
+  renderer.setSize(w,h);
+
+  var scene=new THREE.Scene();
+  var camera=new THREE.PerspectiveCamera(60,w/h,.1,1000);
+  camera.position.z=30;
+
+  var isMobile=window.innerWidth<768;
+  var count=isMobile?60:150;
+  var particles=[];
+  var colors=[
+    new THREE.Color('#0D9488'),
+    new THREE.Color('#5EEAD4'),
+    new THREE.Color('#F59E0B'),
+    new THREE.Color('#0EA5E9'),
+    new THREE.Color('#A78BFA')
+  ];
+
+  /* Particle geometries */
+  var geos=[
+    new THREE.SphereGeometry(.15,8,8),
+    new THREE.TorusGeometry(.12,.04,8,16),
+    new THREE.IcosahedronGeometry(.14,0),
+    new THREE.OctahedronGeometry(.13,0)
+  ];
+
+  for(var i=0;i<count;i++){
+    var geo=geos[Math.floor(Math.random()*geos.length)];
+    var col=colors[Math.floor(Math.random()*colors.length)];
+    var mat=new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:Math.random()*.4+.1});
+    var mesh=new THREE.Mesh(geo,mat);
+    mesh.position.set(
+      (Math.random()-.5)*60,
+      (Math.random()-.5)*40,
+      (Math.random()-.5)*40
+    );
+    mesh.rotation.set(Math.random()*Math.PI,Math.random()*Math.PI,0);
+    mesh.userData={
+      vx:(Math.random()-.5)*.008,
+      vy:(Math.random()-.5)*.006,
+      vz:(Math.random()-.5)*.004,
+      rx:(Math.random()-.5)*.003,
+      ry:(Math.random()-.5)*.003
+    };
+    scene.add(mesh);
+    particles.push(mesh);
+  }
+
+  /* Subtle ambient light ring */
+  var ringGeo=new THREE.TorusGeometry(15,.03,4,64);
+  var ringMat=new THREE.MeshBasicMaterial({color:new THREE.Color('#0D9488'),transparent:true,opacity:.06});
+  var ring=new THREE.Mesh(ringGeo,ringMat);
+  ring.rotation.x=Math.PI*.5;
+  scene.add(ring);
+
+  var scrollY=0;
+  window.addEventListener('scroll',function(){scrollY=window.pageYOffset},{ passive:true });
+  window.addEventListener('resize',function(){
+    w=window.innerWidth;h=window.innerHeight;
+    camera.aspect=w/h;camera.updateProjectionMatrix();
+    renderer.setSize(w,h);
+  });
+
+  function animate(){
+    requestAnimationFrame(animate);
+    var scrollFactor=scrollY*.0003;
+
+    for(var i=0;i<particles.length;i++){
+      var p=particles[i];
+      p.position.x+=p.userData.vx;
+      p.position.y+=p.userData.vy;
+      p.position.z+=p.userData.vz;
+      p.rotation.x+=p.userData.rx;
+      p.rotation.y+=p.userData.ry;
+
+      /* Wrap around bounds */
+      if(p.position.x>32)p.position.x=-32;
+      if(p.position.x<-32)p.position.x=32;
+      if(p.position.y>22)p.position.y=-22;
+      if(p.position.y<-22)p.position.y=22;
+    }
+
+    ring.rotation.z+=.001;
+    camera.position.y=-scrollFactor*2;
+    camera.lookAt(0,-scrollFactor,0);
+
+    renderer.render(scene,camera);
+  }
+  animate();
+
+  /* Cleanup on unload */
+  window.addEventListener('beforeunload',function(){
+    renderer.dispose();
+    for(var i=0;i<particles.length;i++){
+      particles[i].geometry.dispose();
+      particles[i].material.dispose();
+    }
+    ringGeo.dispose();ringMat.dispose();
+  });
+})();
+
+/* ═══════ HERO THREE.JS PARTICLES ═══════ */
+(function(){
+  var hcanvas=document.getElementById('heroCanvas');
+  if(!hcanvas||typeof THREE==='undefined')return;
+
+  var w=hcanvas.parentElement.offsetWidth,h=hcanvas.parentElement.offsetHeight;
+  var renderer=new THREE.WebGLRenderer({canvas:hcanvas,alpha:true,antialias:false});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+  renderer.setSize(w,h);
+
+  var scene=new THREE.Scene();
+  var camera=new THREE.PerspectiveCamera(50,w/h,.1,500);
+  camera.position.z=20;
+
+  var isMobile=window.innerWidth<768;
+  var count=isMobile?30:80;
+  var dots=[];
+
+  for(var i=0;i<count;i++){
+    var geo=new THREE.SphereGeometry(Math.random()*.08+.02,6,6);
+    var mat=new THREE.MeshBasicMaterial({color:0x0D9488,transparent:true,opacity:Math.random()*.5+.1});
+    var m=new THREE.Mesh(geo,mat);
+    m.position.set((Math.random()-.5)*30,(Math.random()-.5)*20,(Math.random()-.5)*15);
+    m.userData={speed:Math.random()*.005+.002,angle:Math.random()*Math.PI*2};
+    scene.add(m);
+    dots.push(m);
+  }
+
+  /* Connecting lines */
+  var lineMat=new THREE.LineBasicMaterial({color:0x0D9488,transparent:true,opacity:.04});
+  var lineGeoArr=[];
+  for(var i=0;i<Math.min(20,count);i++){
+    var j=(i+1)%count;
+    var geo2=new THREE.BufferGeometry().setFromPoints([dots[i].position,dots[j].position]);
+    var line=new THREE.Line(geo2,lineMat);
+    scene.add(line);
+    lineGeoArr.push({line:line,a:i,b:j});
+  }
+
+  var time=0;
+  function tick(){
+    requestAnimationFrame(tick);
+    time+=.01;
+    for(var i=0;i<dots.length;i++){
+      var d=dots[i];
+      d.position.y+=Math.sin(time+d.userData.angle)*d.userData.speed;
+      d.position.x+=Math.cos(time*0.7+d.userData.angle)*d.userData.speed*.5;
+    }
+    /* Update connecting lines */
+    for(var i=0;i<lineGeoArr.length;i++){
+      var l=lineGeoArr[i];
+      l.line.geometry.setFromPoints([dots[l.a].position.clone(),dots[l.b].position.clone()]);
+    }
+    renderer.render(scene,camera);
+  }
+  tick();
+
+  window.addEventListener('resize',function(){
+    w=hcanvas.parentElement.offsetWidth;h=hcanvas.parentElement.offsetHeight;
+    camera.aspect=w/h;camera.updateProjectionMatrix();
+    renderer.setSize(w,h);
+  });
+
+  window.addEventListener('beforeunload',function(){
+    renderer.dispose();
+    dots.forEach(function(d){d.geometry.dispose();d.material.dispose()});
+    lineMat.dispose();
+  });
+})();
+
+/* ═══════ GSAP ANIMATIONS ═══════ */
+gsap.registerPlugin(ScrollTrigger);
+
+/* Hero entrance timeline */
+var heroTL=gsap.timeline({delay:.3});
+heroTL
+  .to('.hero-tag',{y:0,opacity:1,duration:.6,ease:'power3.out'},0)
+  .to('#heroTitle .line-in',{y:'0%',duration:1,ease:'power3.out',stagger:.12},.15)
+  .to('.hero-desc span',{y:'0%',duration:.7,ease:'power3.out'},.5)
+  .to('.hero-actions > div',{y:'0%',duration:.6,ease:'power3.out',stagger:.1},.7)
+  .to('#heroScroll',{opacity:1,duration:.5},.9);
+
+/* Hero tag initial state */
+gsap.set('.hero-tag',{y:30,opacity:0});
+
+/* Hero parallax */
+var heroImg=document.querySelector('#heroImg');
+if(heroImg&&heroImg.tagName==='IMG'){
+  gsap.to('#heroImg',{yPercent:20,ease:'none',scrollTrigger:{trigger:'#heroSec',start:'top top',end:'bottom top',scrub:true}});
+}
+
+/* Hero text fadeout */
+gsap.to('.hero-content',{opacity:0,y:-60,ease:'none',scrollTrigger:{trigger:'#heroSec',start:'30% top',end:'70% top',scrub:true}});
+
+/* Gallery items reveal */
+gsap.utils.toArray('.gal-item').forEach(function(el,i){
+  gsap.from(el,{y:60,opacity:0,duration:.8,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 90%',toggleActions:'play none none none'},delay:i*.08});
+});
+
+/* Stats counter */
+document.querySelectorAll('.stat-num[data-count]').forEach(function(el){
+  var target=parseInt(el.getAttribute('data-count'),10);
+  if(isNaN(target))return;
+  var suffix=target>10?'+':'';
+  ScrollTrigger.create({trigger:el,start:'top 85%',once:true,onEnter:function(){
+    gsap.to(el,{duration:2,ease:'power2.out',innerText:target,snap:{innerText:1},onUpdate:function(){
+      el.textContent=Math.round(parseFloat(el.textContent))+suffix;
+    }});
+  }});
+});
+
+/* Service cards stagger */
+gsap.utils.toArray('.svc-card').forEach(function(el,i){
+  gsap.from(el,{y:50,opacity:0,duration:.7,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none none'},delay:i*.06});
+});
+
+/* Review cards stagger */
+gsap.utils.toArray('#revGrid .rev-card').forEach(function(el,i){
+  gsap.from(el,{y:60,opacity:0,duration:.8,ease:'power3.out',scrollTrigger:{trigger:'#revGrid',start:'top 85%',toggleActions:'play none none none'},delay:i*.1});
+});
+
+/* General section reveals */
+gsap.utils.toArray('.sec-tag,.sec-title,.sec-sub,.about-grid,.about-quote,.info-grid,.c-stack,.hrs-table,.gm-btn,.cta-content,.rev-header,.rev-badge,.gal-single,.cat-tags,.wh-text').forEach(function(el){
+  gsap.from(el,{y:40,opacity:0,duration:.8,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',toggleActions:'play none none none'}});
+});
+</script>
+</body>
+</html>

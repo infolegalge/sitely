@@ -1,0 +1,57 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.info {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btn {
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: rgba(79, 110, 247, 0.1);
+  border-color: rgba(79, 110, 247, 0.3);
+}
+
+.btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.active {
+  background: rgba(79, 110, 247, 0.2);
+  border-color: rgba(79, 110, 247, 0.5);
+  color: #fff;
+}
+
+.ellipsis {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.3);
+  padding: 0 0.2rem;
+}

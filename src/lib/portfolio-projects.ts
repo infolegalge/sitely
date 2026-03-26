@@ -1599,119 +1599,35 @@ export const PORTFOLIO_PROJECTS: Project[] = [
     },
   },
   {
-    id: "cre-3",
-    slug: "readymag",
-    title: "Readymag",
-    client: "Readymag Inc.",
-    year: 2024,
-    category: "Creative & Design",
-    thumbnail: "/images/projects/portfolio/readymag.webp",
-    tags: ["Next.js", "GSAP", "TypeScript", "Contentful"],
-    featured: false,
-    description:
-      "Web design tool for creative professionals with an editorial showcase, template gallery, and beautifully designed case study presentations.",
-    challenge:
-      "Readymag competes with no-code tools — the site needed to position it as a premium creative tool, not another website builder.",
-    solution:
-      "Magazine-quality editorial showcases of user-created work, curated template gallery with premium aesthetics, creative professional interviews, and a portfolio-building tutorial series.",
-    results: [
-      "Pro subscription conversions up 42%",
-      "Showcase gallery is #1 traffic driver",
-      "Creative community grew to 500K+ users",
-    ],
-    liveUrl: "https://readymag.com",
-    accentColor: "#000000",
-    testimonial: {
-      quote: "The editorial approach to our marketing site positions Readymag exactly where we want it — at the intersection of design tool and creative platform.",
-      author: "Yury Vetrov",
-      role: "Head of Design, Readymag",
-    },
-  },
-  {
-    id: "cre-4",
-    slug: "pitch",
-    title: "Pitch",
-    client: "Pitch Software GmbH",
-    year: 2025,
-    category: "Creative & Design",
-    thumbnail: "/images/projects/portfolio/pitch.webp",
-    tags: ["Next.js", "Framer Motion", "TypeScript", "WebSocket"],
-    featured: false,
-    description:
-      "Collaborative presentation software with a polished marketing site, template gallery, and live collaboration demos showing real-time editing.",
-    challenge:
-      "Dethroning PowerPoint and Google Slides requires proving superiority visually — every element of the site needed to outclass competitor aesthetics.",
-    solution:
-      "Live collaboration demo showing real-time multi-cursor editing, template gallery with one-click import, design-forward landing page that itself looks like a perfect pitch deck.",
-    results: [
-      "Template gallery drives 55% of signups",
-      "Collaboration demo increases trial starts 3×",
-      "Enterprise inquiry rate up 67%",
-    ],
-    liveUrl: "https://pitch.com",
-    accentColor: "#7c5cfc",
-    testimonial: {
-      quote: "Our website is our best pitch deck. The live collaboration demo shows in 30 seconds what takes competitors entire sales calls to explain.",
-      author: "Christian Reber",
-      role: "CEO, Pitch",
-    },
-  },
-  {
-    id: "cre-5",
-    slug: "lottiefiles",
-    title: "LottieFiles",
-    client: "LottieFiles Sdn Bhd",
-    year: 2024,
-    category: "Creative & Design",
-    thumbnail: "/images/projects/portfolio/lottiefiles.webp",
-    tags: ["Next.js", "Lottie", "React", "TypeScript"],
-    featured: false,
-    description:
-      "Animation asset platform with a vibrant community marketplace, inline animation previews, and developer integration guides.",
-    challenge:
-      "Lottie animations are lightweight but hard to discover — the platform needed to make browsing thousands of animations fast, fun, and searchable.",
-    solution:
-      "Instant-preview animation grid with hover interactions, color customization right in the browser, one-click download in multiple formats, and developer SDK documentation with playground.",
-    results: [
-      "Animation downloads increased 120%",
-      "Color customizer used on 65% of downloads",
-      "Developer SDK adoption grew 4×",
-    ],
-    liveUrl: "https://lottiefiles.com",
-    accentColor: "#00ddb3",
-    testimonial: {
-      quote: "The inline color customizer transformed our marketplace. Designers customize and download in seconds instead of opening external tools.",
-      author: "Kshitij Minglani",
-      role: "Co-Founder, LottieFiles",
-    },
-  },
-  {
     id: "cre-6",
-    slug: "read-cv",
-    title: "Contra",
-    client: "Contra Inc.",
-    year: 2025,
+    slug: "ajsdkaskhdashd",
+    title: "aslkdjalksdjlkasd",
+    client: "asdkjakjlsd.",
+    year: 2028,
     category: "Creative & Design",
-    thumbnail: "/images/projects/portfolio/read-cv.webp",
-    tags: ["Next.js", "React", "Tailwind CSS", "TypeScript"],
+    thumbnail: "/images/projects/portfolio/spline.webp",
+    tags: ["Next.js", "Three.js", "WebGL", "TypeScript"],
     featured: false,
     description:
-      "Independent professional platform connecting freelancers with clients through portfolio-driven profiles, project-based contracts, and commission-free payments.",
+      "a,nsdjas,mdjklakjlsd kljasdjkl alkjsdkjl asring interactive 3D demos, community gallery, and collaborative design showcases.",
     challenge:
-      "Freelance marketplaces feel transactional and impersonal — Contra needed a platform that puts creative portfolios front and center while streamlining the business side.",
+      "3D design tools are intimidating — the alnsjdljakjsdkljajs dpproachable and fun, not technical and complex.",
     solution:
-      "Portfolio-first profile design with rich project showcases, integrated contract and payment tools with zero commissions, and a discovery feed connecting talent with opportunities.",
+      "Interactive 3D hero that visitors can manipulate, embedded design playground, community gallery with embeddable 3D scenes, and a template library for quick starts.",
     results: [
-      "Freelancer signups grew 4× after redesign",
-      "Average project value increased 35%",
-      "Portfolio views became the top conversion driver",
+      "Interactive hero engagement rate: 72%",
+      "Template usage drives 60% of activations",
+      "Community scenes shared 100K+ times",
     ],
-    liveUrl: "https://contra.com",
-    accentColor: "#6C5CE7",
+    liveUrl: "https://spline.design",
+    accentColor: "#7b61ff",
     testimonial: {
-      quote: "Contra's redesign made our platform feel like a creative portfolio first, marketplace second. Freelancers finally have a home that represents their work beautifully.",
-      author: "Ben Huffman",
-      role: "Co-Founder, Contra",
+      quote: "The interactive hero scene converts visitors in 5 seconds. People play with it and immediately understand what Spline does — no explanation needed.",
+      author: "Alejandro León",
+      role: "Founder, Spline",
     },
   },
+  
+  
+  
 ];

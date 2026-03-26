@@ -1,0 +1,101 @@
+.layout {
+  min-height: 100svh;
+  background: #000;
+  color: #fff;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem clamp(1rem, 3vw, 2rem);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: #000;
+  gap: 1rem;
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.brandName {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.badge {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(79, 110, 247, 0.2);
+  color: rgba(79, 110, 247, 0.9);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.navLink {
+  padding: 0.32rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  border-radius: 7px;
+  transition: color 140ms ease, background 140ms ease;
+}
+
+.navLink:hover {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.navActive {
+  color: #fff;
+  background: rgba(79, 110, 247, 0.15);
+}
+
+.adminInfo {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.email {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.logoutBtn {
+  padding: 0.35rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 80, 80, 0.4);
+  border-radius: 8px;
+  background: transparent;
+  color: #ff6b6b;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.logoutBtn:hover {
+  background: rgba(255, 80, 80, 0.12);
+  border-color: rgba(255, 80, 80, 0.7);
+}
+
+.content {
+  padding: clamp(1rem, 3vw, 2rem);
+}

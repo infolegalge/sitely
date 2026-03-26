@@ -1,0 +1,490 @@
+.wizard {
+  max-width: 1400px;
+}
+
+.stepper {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.stepItem.active {
+  color: #4f6ef7;
+}
+
+.stepItem.done {
+  color: rgba(79, 110, 247, 0.5);
+}
+
+.stepNum {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  font-size: 0.68rem;
+}
+
+.stepItem.active .stepNum {
+  background: #4f6ef7;
+  border-color: #4f6ef7;
+  color: #fff;
+}
+
+.stepLabel {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .stepLabel {
+    display: inline;
+  }
+}
+
+.body {
+  min-height: 400px;
+}
+
+.stepTitle {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.loading {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+  padding: 2rem 0;
+}
+
+.empty {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+}
+
+/* Step 1: Template Grid */
+.templateGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.templateCard {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(13, 16, 28, 0.6);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 200ms ease;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  padding: 0;
+}
+
+.templateCard:hover {
+  border-color: rgba(79, 110, 247, 0.4);
+}
+
+.templateThumb {
+  width: 100%;
+  height: 120px;
+  background: rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.templateThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.templatePlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+}
+
+.templateName {
+  padding: 0.6rem 0.8rem 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.templateIndustry {
+  padding: 0.2rem 0.8rem 0.6rem;
+  font-size: 0.7rem;
+  color: rgba(79, 110, 247, 0.7);
+}
+
+/* Step 2: Filters */
+.filterBar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.8rem;
+}
+
+.filterInput {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
+
+.filterInput:focus {
+  outline: none;
+  border-color: rgba(79, 110, 247, 0.5);
+}
+
+.filterSelect {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  cursor: pointer;
+}
+
+.filterReset {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+.selectionBar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.8rem;
+  padding: 0.5rem 0.7rem;
+  background: rgba(79, 110, 247, 0.06);
+  border-radius: 8px;
+}
+
+.selCount {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #4f6ef7;
+}
+
+.totalCount {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.selBtn {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid rgba(79, 110, 247, 0.25);
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(79, 110, 247, 0.8);
+  cursor: pointer;
+}
+
+.nextBtn {
+  margin-left: auto;
+  padding: 0.4rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  background: #4f6ef7;
+  color: #fff;
+  cursor: pointer;
+}
+
+.nextBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Company Table */
+.companyTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.companyTable th {
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.companyTable td {
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.companyTable tbody tr {
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.companyTable tbody tr:hover {
+  background: rgba(79, 110, 247, 0.04);
+}
+
+.companyTable tbody tr.selected {
+  background: rgba(79, 110, 247, 0.08);
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pagination button {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Step 3: Preview */
+.previewLayout {
+  display: flex;
+  gap: 1rem;
+  min-height: 500px;
+}
+
+.previewList {
+  width: 280px;
+  flex-shrink: 0;
+  overflow-y: auto;
+  max-height: 600px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.previewListHeader {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.previewItem {
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  transition: background 120ms ease;
+  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.previewItem:hover {
+  background: rgba(79, 110, 247, 0.04);
+}
+
+.previewItem.previewActive {
+  background: rgba(79, 110, 247, 0.1);
+  border-left: 3px solid #4f6ef7;
+}
+
+.previewName {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.previewMeta {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 0.15rem;
+}
+
+.excludeBtn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 4px;
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.previewItem:hover .excludeBtn {
+  opacity: 1;
+}
+
+.previewFrame {
+  flex: 1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  min-height: 500px;
+}
+
+.iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  border: none;
+  background: #fff;
+}
+
+.previewPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 500px;
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.85rem;
+}
+
+.previewActions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.backBtn {
+  padding: 0.5rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.generateBtn {
+  padding: 0.6rem 1.5rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  background: #4f6ef7;
+  color: #fff;
+  cursor: pointer;
+}
+
+.generateBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Step 4: Result */
+.resultSummary {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 1rem;
+}
+
+.copyAllBtn {
+  padding: 0.45rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  background: #4f6ef7;
+  color: #fff;
+  cursor: pointer;
+  margin-bottom: 1rem;
+}
+
+.resultList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.resultRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.7rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.resultUrl {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.6);
+  word-break: break-all;
+}
+
+.copyBtn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid rgba(79, 110, 247, 0.25);
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(79, 110, 247, 0.8);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .previewLayout {
+    flex-direction: column;
+  }
+
+  .previewList {
+    width: 100%;
+    max-height: 200px;
+  }
+}

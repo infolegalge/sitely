@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# preview & temp files
+preview-*.html
+concept-c-kinetic*.html
+scripts/_gen-*.mts
+prioritized_*.json

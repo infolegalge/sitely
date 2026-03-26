@@ -1,0 +1,147 @@
+.page {
+  max-width: 1400px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 600;
+}
+
+.generateLink {
+  padding: 0.45rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 8px;
+  background: #4f6ef7;
+  color: #fff;
+  text-decoration: none;
+  transition: opacity 160ms ease;
+}
+
+.generateLink:hover {
+  opacity: 0.88;
+}
+
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.filterSelect {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  cursor: pointer;
+}
+
+.totalCount {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.loading,
+.empty {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+  padding: 2rem 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.55rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.table td {
+  padding: 0.55rem 0.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.statusBadge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.status_generated {
+  background: rgba(79, 110, 247, 0.1);
+  color: rgba(79, 110, 247, 0.85);
+}
+
+.status_viewed {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.status_form_submitted {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.status_expired {
+  background: rgba(255, 80, 80, 0.1);
+  color: #ff6b6b;
+}
+
+.copyBtn {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid rgba(79, 110, 247, 0.25);
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(79, 110, 247, 0.8);
+  cursor: pointer;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pagination button {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

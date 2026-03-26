@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>{{company_name}}{{#if category}} — {{category}}{{/if}}</title>
+<meta name="description" content="{{company_name}}{{#if address}} · {{address}}{{/if}}{{#if phone}} · {{phone}}{{/if}}">
+<meta property="og:title" content="{{company_name}}{{#if category}} — {{category}}{{/if}}">
+<meta property="og:description" content="{{#if description}}{{truncate description 160}}{{else}}{{company_name}}{{#if address}} · {{address}}{{/if}}{{/if}}">
+{{#if (gt (len images) 0)}}
+<meta property="og:image" content="{{images.[0]}}">
+{{/if}}
+<meta property="og:type" content="website">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "{{company_name}}",
+  {{#if address}}"address": { "@type": "PostalAddress", "streetAddress": "{{address}}" },{{/if}}
+  {{#if phone}}"telephone": "{{phone}}",{{/if}}
+  {{#if email}}"email": "{{email}}",{{/if}}
+  {{#if website}}"url": "{{website}}",{{/if}}
+  {{#if (not_null rating)}}"aggregateRating": { "@type": "AggregateRating", "ratingValue": "{{rating}}", "reviewCount": "{{review_count}}", "bestRating": "5" },{{/if}}
+  {{#if (gt (len images) 0)}}"image": "{{images.[0]}}",{{/if}}
+  {{#if lat}}"geo": { "@type": "GeoCoordinates", "latitude": "{{lat}}", "longitude": "{{lng}}" },{{/if}}
+  {{#if category}}"category": "{{category}}",{{/if}}
+  "sameAs": [{{#if social.facebook}}"{{social.facebook}}"{{/if}}{{#if social.instagram}}{{#if social.facebook}},{{/if}}"{{social.instagram}}"{{/if}}]
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+Georgian:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FEFEFE;--bg2:#F4F4F2;--bg3:#EAEAE6;
+  --surface:#fff;
+  --text:#0D0D0D;--text2:#5A5A5A;--text3:#9A9A9A;
+  --accent:#FF3B30;--accent2:#FF6259;--accent-light:rgba(255,59,48,.06);
+  --dark:#0D0D0D;--dark2:#1A1A1A;--dark3:#2A2A2A;
+  --display:'Syne','Noto Sans Georgian',system-ui,sans-serif;
+  --sans:'Space Grotesk','Noto Sans Georgian',system-ui,sans-serif;
+  --r:8px;--r2:16px;--r3:24px;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+html{-webkit-font-smoothing:antialiased;overflow-x:hidden;scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden;cursor:default}
+a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
+::selection{background:var(--accent);color:#fff}
+
+/* ─── CUSTOM CURSOR ─── */
+.cursor{position:fixed;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--text);pointer-events:none;z-index:99999;transition:width .3s var(--ease),height .3s var(--ease),border-color .3s,background .3s;transform:translate(-50%,-50%);mix-blend-mode:difference;background:transparent}
+.cursor.active{width:48px;height:48px;border-color:var(--accent);background:rgba(255,59,48,.08)}
+@media(pointer:coarse){.cursor{display:none}}
+
+/* ─── NAV ─── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:10000;padding:0 clamp(20px,4vw,48px);height:72px;display:flex;align-items:center;justify-content:space-between;transition:.4s;gap:12px}
+.nav.scrolled{background:rgba(254,254,254,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,0,0,.06);box-shadow:0 1px 20px rgba(0,0,0,.03)}
+.nav-brand{font-family:var(--display);font-weight:800;font-size:18px;letter-spacing:-.03em;text-transform:uppercase;max-width:40%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex-shrink:1;min-width:0}
+@media(max-width:768px){.nav-brand{max-width:70%;font-size:15px}}
+.nav-r{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.nav-a{font-size:11px;font-weight:600;color:var(--text2);padding:8px 14px;text-transform:uppercase;letter-spacing:.1em;transition:.2s}
+.nav-a:hover{color:var(--accent)}
+.nav-cta{font-size:11px;font-weight:700;color:#fff;background:var(--dark);padding:10px 22px;border-radius:100px;text-transform:uppercase;letter-spacing:.06em;transition:.3s;margin-left:8px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav-cta:hover{background:var(--accent);transform:scale(1.04)}
+.ham{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
+.ham span{width:20px;height:1.5px;background:var(--text);border-radius:1px;transition:.3s}
+.ham.open span:nth-child(1){transform:rotate(45deg) translate(4.5px,4.5px)}.ham.open span:nth-child(2){opacity:0}.ham.open span:nth-child(3){transform:rotate(-45deg) translate(4.5px,-4.5px)}
+.mmenu{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;pointer-events:none;transition:.4s}
+.mmenu.open{opacity:1;pointer-events:auto}
+.mmenu a{font-family:var(--display);font-size:clamp(32px,8vw,56px);font-weight:800;text-transform:uppercase;letter-spacing:-.03em;transition:.3s}.mmenu a:hover{color:var(--accent);-webkit-text-stroke:1px var(--accent)}
+@media(max-width:768px){.nav-a,.nav-cta{display:none}.ham{display:flex}}
+
+/* ─── HERO ─── */
+.hero{position:relative;height:100vh;height:100dvh;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;filter:grayscale(30%)}
+.hero-bg-fallback{width:100%;height:100%;background:linear-gradient(135deg,var(--dark),var(--dark3))}
+.hero-mask{position:absolute;inset:0;background:var(--bg);z-index:1;clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+.hero-txt-layer{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 24px}
+.hero-mega{font-family:var(--display);font-weight:800;line-height:.88;letter-spacing:-.06em;text-transform:uppercase;color:var(--text);user-select:none;max-width:95vw;overflow-wrap:break-word;word-break:break-word}
+/* Dynamic font sizing based on company_name_class */
+.name-short .hero-mega{font-size:clamp(48px,11vw,160px)}
+.name-medium .hero-mega{font-size:clamp(36px,8vw,120px)}
+.name-long .hero-mega{font-size:clamp(28px,5.5vw,80px)}
+.name-xlong .hero-mega{font-size:clamp(20px,3.5vw,56px);letter-spacing:-.04em;line-height:.92}
+@media(max-width:768px){
+  .name-short .hero-mega{font-size:clamp(36px,12vw,80px)}
+  .name-medium .hero-mega{font-size:clamp(28px,9vw,64px)}
+  .name-long .hero-mega{font-size:clamp(22px,7vw,48px)}
+  .name-xlong .hero-mega{font-size:clamp(18px,5vw,36px)}
+}
+.hero-mega .line{display:block;overflow:hidden}
+.hero-mega .line-in{display:block;transform:translateY(110%)}
+.hero-sub-line{font-size:clamp(12px,1.4vw,16px);color:var(--text2);letter-spacing:.15em;text-transform:uppercase;font-weight:500;margin-top:32px;overflow:hidden;max-width:90vw}
+.hero-sub-line span{display:block;transform:translateY(100%);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:768px){.hero-sub-line{letter-spacing:.08em;font-size:11px}}
+.hero-acts-w{margin-top:48px;overflow:hidden}
+.hero-acts{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;transform:translateY(100%)}
+.hero-scroll{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0}
+.hero-scroll span{font-size:9px;text-transform:uppercase;letter-spacing:.3em;color:var(--text3);font-weight:600}
+.scroll-line{width:1px;height:48px;background:var(--text3);position:relative;overflow:hidden}
+.scroll-line::after{content:'';position:absolute;top:-100%;left:0;width:100%;height:100%;background:var(--accent);animation:scrollDown 2s ease-in-out infinite}
+@keyframes scrollDown{0%{top:-100%}50%{top:100%}100%{top:100%}}
+.red-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block;margin:0 clamp(4px,1vw,12px);vertical-align:middle}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--sans);font-weight:700;border-radius:100px;border:none;cursor:pointer;transition:.35s var(--ease);font-size:13px;padding:16px 36px;text-transform:uppercase;letter-spacing:.08em;line-height:1;position:relative;overflow:hidden}
+.btn-dark{background:var(--dark);color:#fff}
+.btn-dark:hover{background:var(--accent);transform:translateY(-2px)}
+.btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--text);padding:15px 34px}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn svg{width:16px;height:16px}
+
+/* ─── DUAL MARQUEE ─── */
+.dual-marquee{padding:32px 0;border-top:1px solid rgba(0,0,0,.06);border-bottom:1px solid rgba(0,0,0,.06);overflow:hidden}
+.marquee-row{white-space:nowrap;padding:8px 0}
+.marquee-inner{display:inline-flex;gap:clamp(32px,4vw,64px);animation:mq 40s linear infinite}
+.marquee-inner.rev{animation-direction:reverse;animation-duration:35s}
+@keyframes mq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.mq-item{font-family:var(--display);font-size:clamp(24px,4vw,48px);font-weight:800;text-transform:uppercase;letter-spacing:-.03em;color:var(--text);display:inline-flex;align-items:center;gap:clamp(16px,3vw,48px);flex-shrink:0}
+.mq-item.stroke{-webkit-text-stroke:1.5px var(--text);color:transparent}
+.mq-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0}
+
+/* ─── SECTIONS ─── */
+.sec{max-width:1200px;margin:0 auto;padding:clamp(100px,15vw,200px) clamp(20px,4vw,48px)}
+.sec-tag{font-size:10px;text-transform:uppercase;letter-spacing:.3em;color:var(--accent);font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.sec-tag::before{content:'';width:32px;height:1.5px;background:var(--accent)}
+.sec-t{font-family:var(--display);font-size:clamp(32px,6vw,72px);font-weight:800;line-height:.9;letter-spacing:-.05em;text-transform:uppercase;margin-bottom:20px}
+.sec-t em{font-style:normal;color:var(--accent)}
+.sec-sub{font-size:15px;color:var(--text2);max-width:480px;line-height:1.85}
+
+/* ─── ABOUT ─── */
+.about-sec{max-width:1200px;margin:0 auto;padding:clamp(80px,12vw,160px) clamp(20px,4vw,48px)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);margin-top:40px;align-items:center}
+@media(max-width:768px){.about-grid{grid-template-columns:1fr}}
+.about-text{font-size:16px;line-height:2;color:var(--text2)}
+.about-img{border-radius:var(--r2);overflow:hidden;aspect-ratio:4/3}
+.about-img img{width:100%;height:100%;object-fit:cover;filter:grayscale(20%);transition:.6s var(--ease)}
+.about-img:hover img{filter:grayscale(0);transform:scale(1.03)}
+
+/* ─── SERVICES ACCORDION ─── */
+.svc-sec{padding:clamp(100px,15vw,200px) 0;border-top:1px solid rgba(0,0,0,.06)}
+.svc-head{max-width:1200px;margin:0 auto;padding:0 clamp(20px,4vw,48px) clamp(60px,8vw,100px)}
+.svc-list{border-top:1px solid rgba(0,0,0,.1)}
+.svc-item{border-bottom:1px solid rgba(0,0,0,.1);overflow:hidden;cursor:pointer;transition:background .4s}
+.svc-item:hover{background:var(--bg2)}
+.svc-item.active{background:var(--dark);color:#fff}
+.svc-item.active .svc-row{color:#fff}
+.svc-item.active .svc-num{color:var(--accent)}
+.svc-item.active .svc-desc{color:rgba(255,255,255,.5)}
+.svc-item.active .svc-arrow{color:var(--accent);transform:rotate(45deg)}
+.svc-row{display:flex;align-items:center;padding:clamp(20px,3vw,40px) clamp(20px,4vw,48px);gap:clamp(16px,3vw,48px);transition:.4s}
+.svc-num{font-family:var(--display);font-weight:800;font-size:clamp(14px,1.5vw,18px);color:var(--text3);min-width:40px;transition:.3s}
+.svc-name{font-family:var(--display);font-weight:800;font-size:clamp(22px,3.5vw,44px);letter-spacing:-.04em;text-transform:uppercase;flex:1;transition:.3s}
+.svc-desc{font-size:13px;color:var(--text3);max-width:280px;line-height:1.6;transition:.3s;display:none}
+@media(min-width:769px){.svc-desc{display:block}}
+.svc-arrow{width:28px;height:28px;flex-shrink:0;transition:.4s var(--ease);color:var(--text3)}
+.svc-expand{max-height:0;overflow:hidden;transition:max-height .6s var(--ease)}
+.svc-expand-in{padding:0 clamp(20px,4vw,48px) clamp(24px,3vw,48px);padding-left:clamp(76px,7vw,136px)}
+.svc-expand-in p{font-size:14px;line-height:1.9;color:var(--text2);max-width:560px}
+.svc-item.active .svc-expand-in p{color:rgba(255,255,255,.6)}
+.svc-item.active .svc-expand{max-height:200px}
+
+/* ─── GALLERY STACKING CARDS ─── */
+.gal{padding:clamp(100px,15vw,200px) 0;overflow:hidden}
+.gal-head{max-width:1200px;margin:0 auto;padding:0 clamp(20px,4vw,48px) clamp(60px,8vw,100px)}
+.gal-stack{position:relative;height:100vh;height:100dvh}
+.gal-card{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:clamp(20px,4vw,48px)}
+.gal-card img{width:100%;max-width:900px;aspect-ratio:16/10;object-fit:cover;border-radius:var(--r2);box-shadow:0 20px 80px rgba(0,0,0,.12);border:1px solid rgba(0,0,0,.06)}
+/* Single-image gallery: skip stacking, static display */
+.gal-single{display:flex;align-items:center;justify-content:center;padding:clamp(20px,4vw,48px)}
+.gal-single img{width:100%;max-width:900px;aspect-ratio:16/10;object-fit:cover;border-radius:var(--r2);box-shadow:0 20px 80px rgba(0,0,0,.12);border:1px solid rgba(0,0,0,.06)}
+
+/* ─── STATS ─── */
+.stats{border-top:1px solid rgba(0,0,0,.06);border-bottom:1px solid rgba(0,0,0,.06);padding:clamp(60px,8vw,120px) clamp(20px,4vw,48px)}
+.stats-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:24px;text-align:center}
+.stat-n{font-family:var(--display);font-weight:800;font-size:clamp(36px,6vw,72px);line-height:1;letter-spacing:-.05em;margin-bottom:8px}
+.stat-l{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.15em;font-weight:600}
+
+/* ─── REVIEWS ─── */
+.rev-sec-header{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:24px;margin-bottom:20px}
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2px;margin-top:80px}
+@media(max-width:400px){.rev-grid{grid-template-columns:1fr}}
+.rev-card{background:var(--bg2);padding:clamp(28px,4vw,48px);position:relative;transition:.5s var(--ease);overflow:hidden}
+.rev-card:hover{background:var(--dark);color:#fff}
+.rev-card:hover .rev-txt{color:rgba(255,255,255,.6)}
+.rev-card:hover .rev-dt{color:rgba(255,255,255,.3)}
+.rev-card:hover .rev-nm{color:#fff}
+.rev-card .q{position:absolute;top:8px;right:20px;font-family:var(--display);font-size:140px;font-weight:800;line-height:1;color:rgba(0,0,0,.03)}
+.rev-card:hover .q{color:rgba(255,255,255,.04)}
+.rev-top{display:flex;align-items:center;gap:14px;margin-bottom:20px;min-width:0}
+.rev-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--display);font-size:16px;font-weight:800;flex-shrink:0}
+.rev-meta{min-width:0;flex:1}
+.rev-nm{font-family:var(--display);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:-.01em;transition:.3s;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.rev-dt{font-size:11px;color:var(--text3);margin-top:2px;transition:.3s}
+.rev-stars{margin-left:auto;display:flex;gap:2px;flex-shrink:0}
+.star-svg{width:14px;height:14px}
+.rev-txt{font-size:14px;line-height:1.9;color:var(--text2);position:relative;z-index:1;transition:.3s}
+.rev-badge{display:inline-flex;align-items:center;gap:16px;margin-top:48px;padding:20px 28px;background:var(--dark);border-radius:var(--r2);color:#fff}
+.rev-badge-score{font-family:var(--display);font-weight:800;font-size:48px;line-height:1;letter-spacing:-.04em}
+.rev-badge-info .rev-badge-stars{display:flex;gap:2px;margin-bottom:4px}
+.rev-badge-ct{font-size:11px;color:rgba(255,255,255,.4)}
+
+/* ─── INFO ─── */
+.info{max-width:1200px;margin:0 auto;padding:clamp(100px,15vw,200px) clamp(20px,4vw,48px)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);margin-top:60px;align-items:start}
+@media(max-width:768px){.info-grid{grid-template-columns:1fr}}
+.hrs-table{width:100%}
+.hrs-row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(0,0,0,.06);transition:.2s;gap:12px}
+.hrs-row:hover{padding-left:8px;color:var(--accent)}
+.hrs-day{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0}.hrs-time{color:var(--text2);font-size:13px;font-variant-numeric:tabular-nums;text-align:right}
+.no-hrs-msg{font-size:14px;color:var(--text3);padding:20px 0}
+.map-wrap{margin-top:24px;border-radius:var(--r2);overflow:hidden;border:1px solid rgba(0,0,0,.06);aspect-ratio:16/9}
+.map-wrap iframe{width:100%;height:100%;border:0;filter:grayscale(1) contrast(1.1);opacity:.7}
+.c-stack{display:flex;flex-direction:column;gap:8px}
+.c-card{display:flex;align-items:flex-start;gap:16px;padding:20px;border:1px solid rgba(0,0,0,.06);transition:.4s var(--ease);min-width:0}
+a.c-card:hover{border-color:var(--accent);transform:translateX(6px);background:var(--accent-light)}
+.c-ico{width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent)}
+.c-ico svg{width:20px;height:20px;stroke-width:1.5}
+.c-card-body{min-width:0;flex:1}
+.c-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.2em;font-weight:700;color:var(--text3);margin-bottom:2px}
+.c-val{font-size:17px;font-weight:800;color:var(--text);font-family:var(--display);overflow-wrap:break-word;word-break:break-word}
+.c-val-s{font-size:14px;color:var(--text2);line-height:1.6;overflow-wrap:break-word;word-break:break-word}
+
+/* ─── FINAL CTA ─── */
+.cta-final{background:var(--dark);color:#fff;padding:clamp(80px,15vw,200px) clamp(20px,4vw,48px);text-align:center;position:relative;overflow:hidden}
+.cta-final::before{content:'SITELY';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--display);font-weight:800;font-size:clamp(80px,20vw,300px);text-transform:uppercase;letter-spacing:-.06em;color:rgba(255,255,255,.02);pointer-events:none;white-space:nowrap}
+.cta-c{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.cta-final h2{font-family:var(--display);font-size:clamp(32px,6vw,72px);font-weight:800;line-height:.9;letter-spacing:-.05em;text-transform:uppercase;margin-bottom:24px}
+.cta-final h2 em{font-style:normal;color:var(--accent)}
+.cta-final p{font-size:15px;color:rgba(255,255,255,.4);line-height:1.85;margin-bottom:48px;max-width:420px;margin-left:auto;margin-right:auto}
+.cta-acts{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn-red{background:var(--accent);color:#fff;font-weight:700}
+.btn-red:hover{background:var(--accent2);transform:translateY(-2px)}
+.btn-ghost-w{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.15);padding:15px 34px}
+.btn-ghost-w:hover{border-color:var(--accent);color:var(--accent)}
+.cta-tag{color:var(--accent);justify-content:center}
+.cta-tag::before{display:none}
+
+/* ─── FLOATING CTA ─── */
+.float-cta{position:fixed;bottom:28px;right:28px;z-index:9990}
+.float-btn{width:56px;height:56px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 32px rgba(255,59,48,.3);transition:.4s var(--ease);border:none}
+.float-btn:hover{transform:scale(1.12);box-shadow:0 4px 48px rgba(255,59,48,.4)}
+.float-btn svg{width:24px;height:24px}
+
+/* ─── FOOTER ─── */
+.footer{border-top:1px solid rgba(0,0,0,.06);padding:48px clamp(20px,4vw,48px)}
+.footer-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.footer-brand{font-family:var(--display);font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:-.02em;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.footer-copy{font-size:11px;color:var(--text3);margin-top:4px}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap}.footer-links a{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;font-weight:600;transition:.2s}.footer-links a:hover{color:var(--accent)}
+.footer-built{font-size:11px;color:var(--text3)}.footer-built a{color:var(--text2);border-bottom:1px solid rgba(0,0,0,.1);transition:.2s}.footer-built a:hover{color:var(--accent);border-color:var(--accent)}
+@media(max-width:600px){.footer-in{flex-direction:column;text-align:center;align-items:center}.footer-links{justify-content:center}.footer-brand{max-width:100%}}
+
+/* ─── SOCIAL LINKS ─── */
+.social-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
+.social-link{width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;transition:.3s var(--ease);color:var(--text2)}
+.social-link:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+.social-link svg{width:18px;height:18px}
+
+/* ─── CATEGORY TAGS ─── */
+.cat-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px;max-width:90vw}
+.cat-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;padding:6px 16px;border:1px solid rgba(0,0,0,.1);border-radius:100px;color:var(--text2);background:rgba(255,255,255,.6);backdrop-filter:blur(8px);white-space:nowrap}
+
+/* ─── OWNER RESPONSE ─── */
+.owner-resp{margin-top:16px;padding:12px 16px;background:rgba(0,0,0,.03);border-left:2px solid var(--accent);border-radius:0 var(--r) var(--r) 0;position:relative;z-index:1}
+.rev-card:hover .owner-resp{background:rgba(255,255,255,.06);border-left-color:rgba(255,255,255,.3)}
+.owner-resp-label{font-size:9px;text-transform:uppercase;letter-spacing:.15em;font-weight:700;color:var(--accent);margin-bottom:4px}
+.rev-card:hover .owner-resp-label{color:var(--accent2)}
+.owner-resp-text{font-size:13px;line-height:1.7;color:var(--text2)}
+.rev-card:hover .owner-resp-text{color:rgba(255,255,255,.5)}
+
+/* ─── TESTIMONIAL QUOTE (about section) ─── */
+.about-quote{margin-top:32px;padding:24px;background:var(--bg2);border-radius:var(--r2);position:relative}
+.about-quote::before{content:'\201C';font-family:var(--display);font-size:64px;font-weight:800;color:var(--accent);line-height:1;position:absolute;top:8px;left:16px;opacity:.3}
+.about-quote p{font-size:14px;line-height:1.85;color:var(--text2);font-style:italic;padding-left:32px}
+
+/* ─── GOOGLE MAPS BUTTON ─── */
+.gm-btn{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:12px 24px;border:1px solid rgba(0,0,0,.08);border-radius:100px;color:var(--text2);transition:.3s var(--ease);margin-top:16px}
+.gm-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+.gm-btn svg{width:16px;height:16px}
+
+/* ─── YELL WORKING HOURS TEXT ─── */
+.wh-text{font-size:14px;color:var(--text2);padding:12px 0;line-height:1.7;border-bottom:1px solid rgba(0,0,0,.06)}
+
+/* ─── RATING BAR ─── */
+.rating-bar-wrap{margin-top:24px}
+.rating-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.rating-bar-label{font-size:11px;font-weight:700;color:var(--text3);min-width:12px;text-align:right}
+.rating-bar-track{flex:1;height:4px;background:rgba(0,0,0,.06);border-radius:2px;overflow:hidden}
+.rating-bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 1s var(--ease)}
+.rating-bar-count{font-size:10px;color:var(--text3);min-width:24px}
+</style>
+</head>
+<body>
+
+<!-- CUSTOM CURSOR -->
+<div class="cursor" id="cursor"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-brand">{{company_name}}</div>
+  <div class="nav-r">
+    {{#if (gt (len images) 0)}}
+    <a href="#gallery" class="nav-a">გალერეა</a>
+    {{/if}}
+    <a href="#services" class="nav-a">სერვისები</a>
+    <a href="#reviews" class="nav-a">შეფასებები</a>
+    <a href="#info" class="nav-a">კონტაქტი</a>
+    {{#if menu_link}}
+    <a href="{{menu_link}}" target="_blank" rel="noopener" class="nav-a">მენიუ</a>
+    {{/if}}
+    {{#if phone}}
+    <a href="tel:{{phone}}" class="nav-cta">{{phone_display}}</a>
+    {{/if}}
+    <div class="ham" id="ham" onclick="TM()"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+<div class="mmenu" id="mm">
+  {{#if (gt (len images) 0)}}
+  <a href="#gallery" onclick="TM()">გალერეა</a>
+  {{/if}}
+  <a href="#services" onclick="TM()">სერვისები</a>
+  <a href="#reviews" onclick="TM()">შეფასებები</a>
+  <a href="#info" onclick="TM()">კონტაქტი</a>
+  {{#if menu_link}}
+  <a href="{{menu_link}}" target="_blank" rel="noopener" onclick="TM()">მენიუ</a>
+  {{/if}}
+  {{#if phone}}
+  <a href="tel:{{phone}}" onclick="TM()">დარეკვა</a>
+  {{/if}}
+</div>
+
+<!-- HERO — CLIP REVEAL -->
+<section class="hero {{company_name_class}}" id="heroSec">
+  <div class="hero-bg" id="heroBg">
+    {{#if (gt (len images) 0)}}
+    <img src="{{images.[0]}}" alt="{{company_name}}" id="heroImg">
+    {{else}}
+    <div class="hero-bg-fallback" id="heroImg"></div>
+    {{/if}}
+  </div>
+  <div class="hero-mask" id="heroMask"></div>
+  <div class="hero-txt-layer" id="heroTxt">
+    <div class="hero-mega">
+      <span class="line"><span class="line-in">{{company_name}}<span class="red-dot"></span></span></span>
+    </div>
+    <div class="hero-sub-line">
+      <span>{{#if category}}{{category}}{{/if}}{{#if address}} · {{truncate address 60}}{{/if}}</span>
+    </div>
+    {{#if (gt (len categories) 1)}}
+    <div class="cat-tags">
+      {{#each (limit categories 5)}}
+      <span class="cat-tag">{{this}}</span>
+      {{/each}}
+    </div>
+    {{/if}}
+    <div class="hero-acts-w">
+      <div class="hero-acts">
+        {{#if phone}}
+        <a href="tel:{{phone}}" class="btn btn-dark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg>
+          დაგვირეკეთ
+        </a>
+        {{/if}}
+        {{#if menu_link}}
+        <a href="{{menu_link}}" target="_blank" rel="noopener" class="btn btn-outline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          მენიუ
+        </a>
+        {{else}}
+        {{#if website}}
+        <a href="{{website}}" target="_blank" rel="noopener" class="btn btn-outline">
+          ვებსაიტი
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17l9.2-9.2M17 17V7.8H7.8"/></svg>
+        </a>
+        {{/if}}
+        {{/if}}
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll" id="heroScroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- DUAL MARQUEE -->
+<div class="dual-marquee">
+  <div class="marquee-row">
+    <div class="marquee-inner">
+      <span class="mq-item">{{company_name}}<span class="mq-dot"></span></span>
+      <span class="mq-item stroke">{{default category "სერვისი"}}<span class="mq-dot"></span></span>
+      {{#if (not_null rating)}}
+      <span class="mq-item">{{rating}} ★ Google<span class="mq-dot"></span></span>
+      {{/if}}
+      <span class="mq-item stroke">{{company_name}}<span class="mq-dot"></span></span>
+      <span class="mq-item">{{default category "სერვისი"}}<span class="mq-dot"></span></span>
+      {{#if (not_null rating)}}
+      <span class="mq-item stroke">{{rating}} ★ Google<span class="mq-dot"></span></span>
+      {{/if}}
+      <span class="mq-item">{{company_name}}<span class="mq-dot"></span></span>
+      <span class="mq-item stroke">{{default category "სერვისი"}}<span class="mq-dot"></span></span>
+    </div>
+  </div>
+  <div class="marquee-row">
+    <div class="marquee-inner rev">
+      {{#if phone}}
+      <span class="mq-item stroke">{{phone_display}}<span class="mq-dot"></span></span>
+      {{/if}}
+      {{#if (gt review_count 0)}}
+      <span class="mq-item">{{review_count}} შეფასება<span class="mq-dot"></span></span>
+      {{/if}}
+      {{#if address}}
+      <span class="mq-item stroke">{{truncate address 50}}<span class="mq-dot"></span></span>
+      {{/if}}
+      {{#if phone}}
+      <span class="mq-item">{{phone_display}}<span class="mq-dot"></span></span>
+      {{/if}}
+      {{#if (gt review_count 0)}}
+      <span class="mq-item stroke">{{review_count}} შეფასება<span class="mq-dot"></span></span>
+      {{/if}}
+      {{#if address}}
+      <span class="mq-item">{{truncate address 50}}<span class="mq-dot"></span></span>
+      {{/if}}
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT SECTION -->
+<div class="about-sec" id="about">
+  <div class="sec-tag">ჩვენს შესახებ</div>
+  <h2 class="sec-t">{{company_name}}</h2>
+  <div class="about-grid">
+    <div>
+      {{#if description}}
+      <div class="about-text">{{description}}</div>
+      {{else}}
+      <div class="about-text">{{company_name}} — {{default category "თქვენი საიმედო პარტნიორი"}}. ჩვენ გთავაზობთ მაღალი ხარისხის მომსახურებას და ინდივიდუალურ მიდგომას თითოეული კლიენტისთვის.{{#if address}} ჩვენი მისამართია: {{address}}.{{/if}}{{#if (not_null rating)}} Google-ზე ჩვენი რეიტინგია {{rating}} ვარსკვლავი.{{/if}}</div>
+      {{/if}}
+      {{#if (gt (len review_snippets) 0)}}
+      <div class="about-quote">
+        <p>{{review_snippets.[0]}}</p>
+      </div>
+      {{/if}}
+    </div>
+    {{#if (gt (len images) 1)}}
+    <div class="about-img">
+      <img src="{{images.[1]}}" alt="{{company_name}}" loading="lazy">
+    </div>
+    {{/if}}
+  </div>
+</div>
+
+<!-- SERVICES SECTION -->
+<div class="svc-sec" id="services">
+  <div class="svc-head">
+    <div class="sec-tag">სერვისები</div>
+    <h2 class="sec-t">რას<br><em>ვთავაზობთ</em></h2>
+  </div>
+  <div class="svc-list">
+    {{#if (gt (len categories) 1)}}
+    {{#each categories}}
+    <div class="svc-item">
+      <div class="svc-row">
+        <span class="svc-num">{{pad_num (add @index 1)}}</span>
+        <span class="svc-name">{{this}}</span>
+        <span class="svc-desc">პროფესიონალური მომსახურება</span>
+        <svg class="svc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </div>
+      <div class="svc-expand"><div class="svc-expand-in"><p>{{../company_name}} გთავაზობთ {{this}} — მაღალი ხარისხის მომსახურება გამოცდილი გუნდისგან.</p></div></div>
+    </div>
+    {{/each}}
+    {{else}}
+    <div class="svc-item">
+      <div class="svc-row">
+        <span class="svc-num">01</span>
+        <span class="svc-name">{{default category "ჩვენი მომსახურება"}}</span>
+        <span class="svc-desc">ძირითადი მიმართულება</span>
+        <svg class="svc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </div>
+      <div class="svc-expand"><div class="svc-expand-in"><p>{{company_name}} — {{default category "სერვისი"}} სფეროში მოღვაწე კომპანია, რომელიც გთავაზობთ მაღალი ხარისხის მომსახურებას.</p></div></div>
+    </div>
+    <div class="svc-item">
+      <div class="svc-row">
+        <span class="svc-num">02</span>
+        <span class="svc-name">კონსულტაცია</span>
+        <span class="svc-desc">პროფესიონალური რჩევა</span>
+        <svg class="svc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </div>
+      <div class="svc-expand"><div class="svc-expand-in"><p>მიიღეთ პროფესიონალური კონსულტაცია ჩვენი გამოცდილი სპეციალისტებისგან.</p></div></div>
+    </div>
+    <div class="svc-item">
+      <div class="svc-row">
+        <span class="svc-num">03</span>
+        <span class="svc-name">ინდივიდუალური მიდგომა</span>
+        <span class="svc-desc">თქვენზე მორგებული</span>
+        <svg class="svc-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+      </div>
+      <div class="svc-expand"><div class="svc-expand-in"><p>ყველა კლიენტი უნიკალურია. ჩვენ ვქმნით პერსონალიზებულ გადაწყვეტილებებს თქვენი საჭიროებების მიხედვით.</p></div></div>
+    </div>
+    {{/if}}
+  </div>
+</div>
+
+<!-- GALLERY — STACKING CARDS -->
+{{#if (gt (len images) 1)}}
+<div class="gal" id="gallery">
+  <div class="gal-head">
+    <div class="sec-tag">გალერეა</div>
+    <h2 class="sec-t">ჩვენი<br><em>სივრცე</em></h2>
+  </div>
+  <div class="gal-stack" id="galStack">
+    {{#each (limit images 6)}}
+    <div class="gal-card"><img src="{{this}}" alt="{{../company_name}}" loading="lazy"></div>
+    {{/each}}
+  </div>
+</div>
+{{else}}
+{{#if (gt (len images) 0)}}
+<div class="gal" id="gallery">
+  <div class="gal-head">
+    <div class="sec-tag">გალერეა</div>
+    <h2 class="sec-t">ჩვენი<br><em>სივრცე</em></h2>
+  </div>
+  <div class="gal-single">
+    <img src="{{images.[0]}}" alt="{{company_name}}" loading="lazy">
+  </div>
+</div>
+{{/if}}
+{{/if}}
+
+<!-- STATS -->
+{{#if (not_null rating)}}
+<div class="stats">
+  <div class="stats-grid">
+    {{#if (gt review_count 0)}}
+    <div><div class="stat-n" data-count="{{review_count}}">0</div><div class="stat-l">Google შეფასება</div></div>
+    {{/if}}
+    <div><div class="stat-n" data-count="{{math_floor rating}}">0</div><div class="stat-l">რეიტინგი / 5</div></div>
+    {{#if (gt (len images) 0)}}
+    <div><div class="stat-n" data-count="{{len images}}">0</div><div class="stat-l">ფოტო</div></div>
+    {{/if}}
+    {{#if (gt (len reviews) 0)}}
+    <div><div class="stat-n" data-count="{{len reviews}}">0</div><div class="stat-l">ბოლო რევიუ</div></div>
+    {{/if}}
+  </div>
+</div>
+{{/if}}
+
+<!-- REVIEWS -->
+<div class="sec" id="reviews">
+  <div class="rev-sec-header">
+    <div>
+      <div class="sec-tag">შეფასებები</div>
+      <h2 class="sec-t">რას ამბობენ<br><em>კლიენტები</em></h2>
+    </div>
+    {{#if (not_null rating)}}
+    <div class="rev-badge">
+      <div class="rev-badge-score">{{rating}}</div>
+      <div class="rev-badge-info">
+        <div class="rev-badge-stars">
+          {{#repeat 5}}
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="{{star_fill ../rating num}}" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          {{/repeat}}
+        </div>
+        <div class="rev-badge-ct">{{review_count}} შეფასება · Google</div>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+  {{#if (gt (len reviews) 0)}}
+  <div class="rev-grid" id="revGrid">
+    {{#each (limit reviews 6)}}
+    <div class="rev-card">
+      <span class="q">&ldquo;</span>
+      <div class="rev-top">
+        <div class="rev-av" style="background:{{#if (eq (math_floor (add @index 1)) 1)}}var(--accent){{else}}{{#if (eq (math_floor (add @index 1)) 2)}}var(--dark){{else}}linear-gradient(135deg,#059669,#34D399){{/if}}{{/if}}">{{initial author}}</div>
+        <div class="rev-meta">
+          <div class="rev-nm">{{truncate author 30}}</div>
+          {{#if date}}<div class="rev-dt">{{date}}</div>{{/if}}
+        </div>
+        {{#if (gt rating 0)}}
+        <span class="rev-stars">
+          {{#repeat rating}}
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          {{/repeat}}
+        </span>
+        {{/if}}
+      </div>
+      <p class="rev-txt">{{truncate text 300}}</p>
+      {{#if owner_response}}
+      <div class="owner-resp">
+        <div class="owner-resp-label">მფლობელის პასუხი</div>
+        <div class="owner-resp-text">{{truncate owner_response 200}}</div>
+      </div>
+      {{/if}}
+    </div>
+    {{/each}}
+  </div>
+  {{else}}
+  <div class="rev-grid rev-fallback" id="revGrid">
+    {{#if (gt (len review_snippets) 0)}}
+    {{#each review_snippets}}
+    <div class="rev-card">
+      <span class="q">&ldquo;</span>
+      <div class="rev-top">
+        <div class="rev-av" style="background:var(--accent)">★</div>
+        <div class="rev-meta">
+          <div class="rev-nm">Google მომხმარებელი</div>
+        </div>
+      </div>
+      <p class="rev-txt">{{truncate this 300}}</p>
+    </div>
+    {{/each}}
+    {{else}}
+    <div class="rev-card">
+      <span class="q">&ldquo;</span>
+      <div class="rev-top">
+        <div class="rev-av" style="background:var(--accent)">ნ</div>
+        <div class="rev-meta">
+          <div class="rev-nm">ნინო გ.</div>
+          <div class="rev-dt">2 თვის წინ</div>
+        </div>
+        <span class="rev-stars">
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+        </span>
+      </div>
+      <p class="rev-txt">ძალიან კმაყოფილი დავრჩი მომსახურეობით. პროფესიონალი გუნდი, ყურადღებიანი მიდგომა და შედეგი სრულიად გამართლებული. უდიდესი რეკომენდაცია ჩემგან!</p>
+    </div>
+    <div class="rev-card">
+      <span class="q">&ldquo;</span>
+      <div class="rev-top">
+        <div class="rev-av" style="background:var(--dark)">გ</div>
+        <div class="rev-meta">
+          <div class="rev-nm">გიორგი მ.</div>
+          <div class="rev-dt">1 თვის წინ</div>
+        </div>
+        <span class="rev-stars">
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+        </span>
+      </div>
+      <p class="rev-txt">მეგობარმა მირჩია და ნამდვილად არ ვინანებ. თანამედროვე სივრცე, კვალიფიციური სპეციალისტები და რაც მთავარია — მშვიდი და კომფორტული გარემო. აუცილებლად მოვბრუნდები.</p>
+    </div>
+    <div class="rev-card">
+      <span class="q">&ldquo;</span>
+      <div class="rev-top">
+        <div class="rev-av" style="background:linear-gradient(135deg,#059669,#34D399)">თ</div>
+        <div class="rev-meta">
+          <div class="rev-nm">თამარ კ.</div>
+          <div class="rev-dt">3 კვირის წინ</div>
+        </div>
+        <span class="rev-stars">
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="#FF3B30" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+          <svg class="star-svg" viewBox="0 0 20 20"><path fill="rgba(255,59,48,.15)" d="M10 1l2.39 4.84 5.34.78-3.87 3.77.91 5.32L10 13.27l-4.77 2.51.91-5.32L2.27 6.69l5.34-.78z"/></svg>
+        </span>
+      </div>
+      <p class="rev-txt">პირველად ვეწვიე და ძალიან დადებითი შთაბეჭდილება დამრჩა. ადმინისტრატორი ძალიან თბილად შემხვდა, ყველაფერი კარგად ამიხსნა. ნამდვილად რეკომენდირებული ადგილია.</p>
+    </div>
+    {{/if}}
+  </div>
+  {{/if}}
+</div>
+
+<!-- INFO / CONTACT -->
+<div class="info" id="info">
+  <div class="sec-tag">კონტაქტი</div>
+  <h2 class="sec-t">საათები &<br><em>კონტაქტი</em></h2>
+  <div class="info-grid">
+    <div>
+      {{#if working_hours}}
+      <div class="hrs-table">
+        {{#each working_hours}}
+        <div class="hrs-row"><span class="hrs-day">{{@key}}</span><span class="hrs-time">{{this}}</span></div>
+        {{/each}}
+      </div>
+      {{else}}
+      {{#if working_hours_text}}
+      <div class="wh-text">{{working_hours_text}}</div>
+      {{else}}
+      <div class="no-hrs-msg">სამუშაო საათები მალე დაემატება</div>
+      {{/if}}
+      {{/if}}
+
+      {{#if google_maps_url}}
+      <a href="{{google_maps_url}}" target="_blank" rel="noopener" class="gm-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Google Maps-ზე ნახვა
+      </a>
+      {{/if}}
+
+      {{#if map_embed_url}}
+      <div class="map-wrap">
+        <iframe src="{{map_embed_url}}" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Map"></iframe>
+      </div>
+      {{/if}}
+    </div>
+    <div class="c-stack">
+      {{#if phone}}
+      <a href="tel:{{phone}}" class="c-card">
+        <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div class="c-card-body"><div class="c-lbl">ტელეფონი</div><div class="c-val">{{phone_display}}</div></div>
+      </a>
+      {{/if}}
+
+      {{#if email}}
+      <a href="mailto:{{email}}" class="c-card">
+        <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg></div>
+        <div class="c-card-body"><div class="c-lbl">ელ.ფოსტა</div><div class="c-val-s">{{email}}</div></div>
+      </a>
+      {{/if}}
+
+      {{#if address}}
+      <div class="c-card">
+        <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="c-card-body"><div class="c-lbl">მისამართი</div><div class="c-val-s">{{address}}</div></div>
+      </div>
+      {{/if}}
+
+      {{#if website}}
+      <a href="{{website}}" target="_blank" rel="noopener" class="c-card">
+        <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
+        <div class="c-card-body"><div class="c-lbl">ვებსაიტი</div><div class="c-val-s">{{truncate website 50}}</div></div>
+      </a>
+      {{/if}}
+
+      <!-- Social Links -->
+      {{#if social.facebook}}
+      <div class="social-row">
+        {{#if social.facebook}}
+        <a href="{{social.facebook}}" target="_blank" rel="noopener" class="social-link" title="Facebook">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        {{/if}}
+        {{#if social.instagram}}
+        <a href="{{social.instagram}}" target="_blank" rel="noopener" class="social-link" title="Instagram">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        </a>
+        {{/if}}
+        {{#if social.whatsapp}}
+        <a href="https://wa.me/{{social.whatsapp}}" target="_blank" rel="noopener" class="social-link" title="WhatsApp">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c-.001 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+        {{/if}}
+      </div>
+      {{/if}}
+    </div>
+  </div>
+</div>
+
+<!-- FINAL CTA -->
+<div class="cta-final">
+  <div class="cta-c">
+    <div class="sec-tag cta-tag">DEMO</div>
+    <h2>გსურთ <em>ასეთი</em><br>ვებგვერდი?</h2>
+    <p>სადემონსტრაციო ვერსია. დაგვიკავშირდით და შევქმნით თქვენთვის.</p>
+    <div class="cta-acts">
+      <a href="tel:+995597060784" class="btn btn-red">დაგვირეკეთ</a>
+      <a href="mailto:sitelysitely@gmail.com" class="btn btn-ghost-w">sitelysitely@gmail.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING CTA -->
+{{#if phone}}
+<div class="float-cta">
+  <a href="tel:{{phone}}" class="float-btn" aria-label="Call">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0122 16.92z"/></svg>
+  </a>
+</div>
+{{/if}}
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-in">
+    <div><div class="footer-brand">{{company_name}}</div><div class="footer-copy">&copy; 2026 {{company_name}}</div></div>
+    <div class="footer-links">
+      {{#if (gt (len images) 0)}}<a href="#gallery">გალერეა</a>{{/if}}
+      <a href="#services">სერვისები</a>
+      <a href="#reviews">შეფასებები</a>
+      <a href="#info">კონტაქტი</a>
+      {{#if google_maps_url}}<a href="{{google_maps_url}}" target="_blank" rel="noopener">Google Maps</a>{{/if}}
+    </div>
+    <div class="footer-built">შექმნილია <a href="https://sitely.ge" target="_blank" rel="noopener">Sitely</a></div>
+  </div>
+</footer>
+
+<script>
+/* HELPERS */
+function TM(){var m=document.getElementById('mm'),h=document.getElementById('ham');m.classList.toggle('open');h.classList.toggle('open');document.body.style.overflow=m.classList.contains('open')?'hidden':''}
+
+/* CUSTOM CURSOR */
+var cur=document.getElementById('cursor');
+if(window.matchMedia('(pointer:fine)').matches){
+  document.addEventListener('mousemove',function(e){cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px'});
+  document.querySelectorAll('a,button,.svc-item,.faq-q').forEach(function(el){
+    el.addEventListener('mouseenter',function(){cur.classList.add('active')});
+    el.addEventListener('mouseleave',function(){cur.classList.remove('active')});
+  });
+}
+
+/* NAV SCROLL */
+window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>80)});
+
+/* GSAP */
+gsap.registerPlugin(ScrollTrigger);
+
+/* HERO — Text line reveals */
+var htl=gsap.timeline({delay:.2});
+htl.to('.hero-mega .line-in',{y:'0%',duration:1,stagger:.12,ease:'power3.out'})
+   .to('.hero-sub-line span',{y:'0%',duration:.7,ease:'power3.out'},'-=.5')
+   .to('.hero-acts',{y:'0%',duration:.6,ease:'power3.out'},'-=.3')
+   .to('#heroScroll',{opacity:1,duration:.5},'-=.2');
+
+/* Clip-path reveal on scroll — mask peels away to show image */
+gsap.to('#heroMask',{
+  clipPath:'polygon(0 0,100% 0,100% 0%,0 0%)',
+  ease:'none',
+  scrollTrigger:{trigger:'#heroSec',start:'top top',end:'80% top',scrub:.5}
+});
+
+/* Parallax hero image */
+if(document.getElementById('heroImg')&&document.getElementById('heroImg').tagName==='IMG'){
+  gsap.to('#heroImg',{yPercent:20,ease:'none',scrollTrigger:{trigger:'#heroSec',start:'top top',end:'bottom top',scrub:true}});
+}
+
+/* Fade out hero text on scroll */
+gsap.to('#heroTxt',{opacity:0,y:-60,ease:'none',scrollTrigger:{trigger:'#heroSec',start:'30% top',end:'70% top',scrub:true}});
+
+/* GALLERY — STACKING CARD REVEAL */
+var galStack=document.getElementById('galStack');
+var cards=galStack?gsap.utils.toArray('.gal-card'):[];
+if(cards.length>1){
+  cards.forEach(function(card,i){
+    var zIdx=cards.length-i;
+    gsap.set(card,{zIndex:zIdx});
+    if(i<cards.length-1){
+      ScrollTrigger.create({
+        trigger:'.gal-stack',
+        start:function(){return 'top+='+(i*(100/(cards.length)))+'% top'},
+        end:function(){return 'top+='+((i+1)*(100/(cards.length)))+'% top'},
+        scrub:.5,
+        animation:gsap.to(card,{yPercent:-120,rotate:-(4+i*2),scale:.9,opacity:0,ease:'none'})
+      });
+    }
+  });
+  ScrollTrigger.create({trigger:'.gal-stack',start:'top top',end:'bottom bottom',pin:true});
+  gsap.set('.gal',{paddingBottom:'100vh'});
+}
+
+/* STATS COUNTER */
+document.querySelectorAll('.stat-n[data-count]').forEach(function(el){
+  var t=parseInt(el.dataset.count);
+  var suf='+';
+  ScrollTrigger.create({
+    trigger:el,start:'top 85%',once:true,
+    onEnter:function(){
+      gsap.to(el,{duration:2,ease:'power2.out',
+        onUpdate:function(){var v=Math.floor(t*this.progress());el.textContent=v+suf}
+      });
+    }
+  });
+});
+
+/* SERVICE ITEMS — stagger in */
+if(document.getElementById('svcList')){
+  gsap.from('.svc-item',{y:40,opacity:0,duration:.7,stagger:.08,ease:'power3.out',scrollTrigger:{trigger:'#svcList',start:'top 85%'}});
+}
+
+/* REVIEW CARDS */
+if(document.getElementById('revGrid')){
+  gsap.from('#revGrid .rev-card',{y:60,opacity:0,duration:.8,stagger:.1,ease:'power3.out',scrollTrigger:{trigger:'#revGrid',start:'top 85%'}});
+}
+
+/* SERVICES ACCORDION */
+document.querySelectorAll('.svc-item').forEach(function(item){
+  item.addEventListener('click',function(){
+    var isActive=this.classList.contains('active');
+    document.querySelectorAll('.svc-item').forEach(function(i){i.classList.remove('active')});
+    if(!isActive) this.classList.add('active');
+  });
+});
+
+/* GENERAL SECTION reveals */
+gsap.utils.toArray('.sec-tag,.sec-t,.sec-sub,.info-grid,.c-stack,.hrs-table,.cta-c,.about-grid,.about-sec,.gal-single,.cat-tags,.about-quote,.gm-btn,.owner-resp,.svc-sec,.rev-sec-header,.rev-badge').forEach(function(el){
+  gsap.from(el,{y:40,opacity:0,duration:.8,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%'}});
+});
+</script>
+</body>
+</html>
