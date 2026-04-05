@@ -58,27 +58,45 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  // PostHog webhook payload structure
-  // Properties may arrive as a JSON string (from HTTP Webhook template) or as an object
-  const event = body.event as string | undefined;
+  // PostHog HTTP Webhook sends a nested structure:
+  // { event: { uuid, event, properties, timestamp, ... }, person: {...}, ... }
+  // Extract the actual event data from whichever format arrives
+  let eventName: string | undefined;
   let properties: Record<string, unknown> = {};
-  if (typeof body.properties === "string") {
-    try {
-      properties = JSON.parse(body.properties);
-    } catch {
-      properties = {};
+  let timestamp: string | undefined;
+  let eventUuid: string | undefined;
+
+  if (typeof body.event === "object" && body.event !== null) {
+    // Standard PostHog webhook payload (nested structure)
+    const eventObj = body.event as Record<string, unknown>;
+    eventName = eventObj.event as string | undefined;
+    timestamp = eventObj.timestamp as string | undefined;
+    eventUuid = eventObj.uuid as string | undefined;
+
+    if (typeof eventObj.properties === "string") {
+      try { properties = JSON.parse(eventObj.properties); } catch { properties = {}; }
+    } else {
+      properties = (eventObj.properties || {}) as Record<string, unknown>;
     }
   } else {
-    properties = (body.properties || {}) as Record<string, unknown>;
-  }
-  const timestamp = body.timestamp as string | undefined;
+    // Flat format (direct POST or simple template)
+    eventName = body.event as string | undefined;
+    timestamp = body.timestamp as string | undefined;
+    eventUuid = body.uuid as string | undefined;
 
-  if (!event) {
+    if (typeof body.properties === "string") {
+      try { properties = JSON.parse(body.properties); } catch { properties = {}; }
+    } else {
+      properties = (body.properties || {}) as Record<string, unknown>;
+    }
+  }
+
+  if (!eventName) {
     return NextResponse.json({ error: "Missing event" }, { status: 400 });
   }
 
   // Only process events we care about
-  const mappedType = EVENT_MAP[event];
+  const mappedType = EVENT_MAP[eventName];
   if (!mappedType) {
     return NextResponse.json({ ok: true, skipped: true });
   }
@@ -135,9 +153,9 @@ export async function POST(request: NextRequest) {
 
   // Idempotency: use PostHog's uuid to prevent duplicates
   const idempotencyKey =
-    (body.uuid as string) ||
+    eventUuid ||
     (properties.$event_uuid as string) ||
-    `ph_${demoId}_${event}_${timestamp || Date.now()}`;
+    `ph_${demoId}_${eventName}_${timestamp || Date.now()}`;
 
   const supabase = createServiceRoleClient();
 
