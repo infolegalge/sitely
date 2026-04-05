@@ -242,9 +242,9 @@ export async function GET(
   function flush(){
     if(!Q.length)return;
     var batch=Q.splice(0,50);
-    var b=JSON.stringify({events:batch});
+    var b=new Blob([JSON.stringify({events:batch})],{type:"application/json"});
     if(navigator.sendBeacon){navigator.sendBeacon("/api/tracking",b)}
-    else{fetch("/api/tracking",{method:"POST",body:b,keepalive:true,headers:{"Content-Type":"application/json"}})}
+    else{fetch("/api/tracking",{method:"POST",body:b,keepalive:true})}
   }
 
   // ── Cross-domain: tag sitely links with lead ref ──
@@ -286,6 +286,7 @@ export async function GET(
 
   // ── page_open ──
   E("page_open");
+  flush(); // Send page_open immediately — don't wait 15s
 
   // ── Scroll depth tracking ──
   var maxScroll=0;
@@ -374,8 +375,8 @@ export async function GET(
   // ── Flush every 15s ──
   setInterval(flush,15000);
 
-  // ── page_leave: final flush with totals ──
-  window.addEventListener("beforeunload",function(){
+  // ── page_leave helper ──
+  function doPageLeave(){
     sentOnce["page_leave"]=false;
     tick();
     flushSections();
@@ -388,7 +389,12 @@ export async function GET(
       viewport_h:window.innerHeight
     });
     flush();
-  });
+  }
+
+  // ── page_leave: final flush with totals ──
+  window.addEventListener("beforeunload",doPageLeave);
+  // pagehide is more reliable on iOS/mobile
+  window.addEventListener("pagehide",doPageLeave);
 
   // ── Form interaction tracking (abandonment detection) ──
   var formInteracted=false;

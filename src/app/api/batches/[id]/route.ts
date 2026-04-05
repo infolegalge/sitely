@@ -35,13 +35,27 @@ export async function GET(
 
   // 3. Fetch events for these demos
   const demoIds = demoList.map((d) => d.id);
-  let events: { demo_id: string; event_type: string; scroll_depth: number | null; duration_ms: number | null }[] = [];
+  const companyIds = [...new Set(demoList.map((d) => d.company_id).filter(Boolean))] as string[];
+  let events: { demo_id: string; event_type: string; scroll_depth: number | null; duration_ms: number | null; session_id: string | null; extra: Record<string, unknown> | null }[] = [];
   if (demoIds.length > 0) {
     const { data: evts } = await supabase
       .from("demo_events")
-      .select("demo_id, event_type, scroll_depth, duration_ms")
+      .select("demo_id, event_type, scroll_depth, duration_ms, session_id, extra")
       .in("demo_id", demoIds);
     events = evts || [];
+  }
+
+  // 3b. Fetch company_lead_scores for real momentum/alltime scores
+  type LeadScore = { company_id: string; momentum_score: number; alltime_score: number; total_sessions: number; total_active_s: number; visited_main_site: boolean; top_section: string | null; last_activity: string | null };
+  const scoresMap = new Map<string, LeadScore>();
+  if (companyIds.length > 0) {
+    const { data: scores } = await supabase
+      .from("company_lead_scores")
+      .select("company_id, momentum_score, alltime_score, total_sessions, total_active_s, visited_main_site, top_section, last_activity")
+      .in("company_id", companyIds);
+    for (const s of scores || []) {
+      scoresMap.set(s.company_id, s as LeadScore);
+    }
   }
 
   // 4. Build per-demo event aggregates
@@ -56,6 +70,7 @@ export async function GET(
   const companies = demoList.map((d) => {
     const c = d.companies as unknown as { id: string; name: string; category: string | null; email: string | null; phone: string | null; sales_status: string; is_favorite: boolean } | null;
     const evts = demoEvents.get(d.id) || [];
+    const cls = scoresMap.get(d.company_id);
 
     const ctaTypes = new Set(["click_cta", "click_phone", "click_email"]);
     const cta_clicks = evts.filter((e) => ctaTypes.has(e.event_type)).length;
@@ -65,6 +80,11 @@ export async function GET(
     const avg_session_s = pageLeaves.length > 0
       ? Math.round(pageLeaves.reduce((sum, e) => sum + (e.duration_ms || 0), 0) / pageLeaves.length / 100) / 10
       : null;
+    const sessions = new Set(evts.filter((e) => e.session_id).map((e) => e.session_id)).size;
+    const totalActiveS = pageLeaves.reduce((sum, e) => {
+      const extra = e.extra as Record<string, unknown> | null;
+      return sum + (Number(extra?.total_active_seconds) || 0);
+    }, 0);
 
     return {
       company_id: c?.id || d.company_id,
@@ -80,13 +100,13 @@ export async function GET(
       view_count: d.view_count,
       first_viewed_at: d.first_viewed_at,
       last_viewed_at: d.last_viewed_at,
-      momentum_score: 0,
-      alltime_score: 0,
-      total_sessions: 0,
-      total_active_s: 0,
-      last_activity: d.last_viewed_at,
-      visited_main_site: false,
-      top_section: null,
+      momentum_score: cls?.momentum_score ?? 0,
+      alltime_score: cls?.alltime_score ?? 0,
+      total_sessions: cls?.total_sessions ?? sessions,
+      total_active_s: cls?.total_active_s ?? totalActiveS,
+      last_activity: cls?.last_activity ?? d.last_viewed_at,
+      visited_main_site: cls?.visited_main_site ?? false,
+      top_section: cls?.top_section ?? null,
       cta_clicks,
       form_submits,
       max_scroll,
