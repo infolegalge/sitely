@@ -187,11 +187,16 @@ export async function POST(request: NextRequest) {
   // Use upsert with ignoreDuplicates to silently skip events with duplicate idempotency_key
   const { error } = await supabase
     .from("demo_events")
-    .upsert(rows, { onConflict: "idempotency_key", ignoreDuplicates: true });
+    .insert(rows);
 
   if (error) {
-    console.error("tracking insert error:", error);
-    return Response.json(ERR.SERVER_ERROR, { status: 500, headers: CORS_HEADERS });
+    // 23505 = unique_violation (duplicate idempotency_key) — silently ignore
+    if (error.code === "23505") {
+      // Duplicate event — expected, not an error
+    } else {
+      console.error("tracking insert error:", error);
+      return Response.json(ERR.SERVER_ERROR, { status: 500, headers: CORS_HEADERS });
+    }
   }
 
   // Weighted engagement scoring for qualifying events
