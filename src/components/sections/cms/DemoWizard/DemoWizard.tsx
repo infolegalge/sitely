@@ -305,6 +305,8 @@ function Step4Offer() {
     setOfferDraft,
     customEmailText,
     setCustomEmailText,
+    batchName,
+    setBatchName,
     generating,
     generate,
     selectedIds,
@@ -418,6 +420,19 @@ function Step4Offer() {
             </div>
           </div>
         )}
+      </div>
+
+      <div className={s.emailSection}>
+        <h3 className={s.sectionTitle}>ბაჩის სახელი</h3>
+        <p className={s.sectionHint}>
+          ეს ჯგუფი გამოჩნდება ბაჩების ანალიტიკაში. ცარიელი დატოვებისას ავტომატურად დაგენერირდება.
+        </p>
+        <input
+          className={s.offerInput}
+          placeholder="მაგ: სტომატოლოგიები — აპრილი 2026"
+          value={batchName}
+          onChange={(e) => setBatchName(e.target.value)}
+        />
       </div>
 
       <div className={s.emailSection}>

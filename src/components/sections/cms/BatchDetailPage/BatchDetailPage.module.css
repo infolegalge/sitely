@@ -1,0 +1,428 @@
+.page {
+  max-width: 1400px;
+}
+
+.loading,
+.empty {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+  padding: 2rem 0;
+}
+
+.error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  padding: 2rem 0;
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+  gap: 1rem;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.backLink {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  transition: color 160ms;
+}
+
+.backLink:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.2rem, 3vw, 1.7rem);
+  font-weight: 600;
+}
+
+.templateLabel {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.statusBadge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.18rem 0.5rem;
+  border-radius: 5px;
+}
+
+.st_active {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+.st_completed {
+  background: rgba(79, 110, 247, 0.12);
+  color: rgba(79, 110, 247, 0.85);
+}
+
+.st_archived {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.refreshBtn {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 7px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: background 160ms;
+}
+
+.refreshBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ── KPI Row ── */
+.kpiRow {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.2rem;
+  overflow-x: auto;
+}
+
+.kpi {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.8rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.kpiValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.kpiPct {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.kpiLabel {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kpiViewed {
+  color: #60a5fa;
+}
+
+.kpiEngaged {
+  color: #f59e0b;
+}
+
+.kpiConverted {
+  color: #10b981;
+}
+
+/* ── Funnel ── */
+.funnelWrap {
+  margin-bottom: 1.2rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.sectionTitle {
+  margin: 0 0 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.funnel {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  overflow-x: auto;
+}
+
+.funnelStep {
+  flex: 1;
+  min-width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.5rem 0.3rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.funnelCount {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.funnelLabel {
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+}
+
+.funnelPct {
+  font-size: 0.6rem;
+  color: rgba(79, 110, 247, 0.7);
+  font-weight: 600;
+}
+
+.funnelArrow {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+}
+
+/* ── Company Table ── */
+.tableSection {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  padding: 0.8rem 1rem 1rem;
+}
+
+.tableHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.tableControls {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.searchInput {
+  padding: 0.35rem 0.6rem;
+  font-size: 0.78rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  width: 140px;
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.filterSelect {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.78rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  cursor: pointer;
+}
+
+.sortDirBtn {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 7px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.5rem 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 0.5rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
+
+/* ── Row status colors ── */
+.rowNotViewed {
+  opacity: 0.5;
+}
+
+.rowViewed td:first-child {
+  border-left: 2px solid #60a5fa;
+}
+
+.rowEngaged td:first-child {
+  border-left: 2px solid #f59e0b;
+}
+
+.rowConverted td:first-child {
+  border-left: 2px solid #10b981;
+}
+
+/* ── Company cell ── */
+.companyCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.companyName {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.companyCategory {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* ── Company status badge ── */
+.csBadge {
+  display: inline-block;
+  font-size: 0.62rem;
+  font-weight: 600;
+  padding: 0.12rem 0.35rem;
+  border-radius: 4px;
+}
+
+.csNone {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.csViewed {
+  background: rgba(96, 165, 250, 0.12);
+  color: #60a5fa;
+}
+
+.csEngaged {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.csConverted {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+}
+
+/* ── CTA highlight ── */
+.ctaHighlight {
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+/* ── Score badge ── */
+.scoreBadge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.12rem 0.4rem;
+  border-radius: 4px;
+}
+
+.scoreHot {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+
+.scoreWarm {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+}
+
+.scoreCold {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Portal ── */
+.portalYes {
+  color: #10b981;
+  font-weight: 700;
+}
+
+.portalNo {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.dateCell {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+  }
+
+  .kpiRow {
+    flex-wrap: wrap;
+  }
+
+  .kpi {
+    min-width: 90px;
+  }
+
+  .tableControls {
+    flex-wrap: wrap;
+  }
+
+  .searchInput {
+    width: 100%;
+  }
+}

@@ -11,6 +11,7 @@ import {
   Play,
   Mail,
   BarChart3,
+  Layers,
   LogOut,
   Menu,
   X,
@@ -24,6 +25,7 @@ const NAV_ITEMS = [
   { href: "/secure-access/projects", label: "პროექტები", icon: FolderKanban },
   { href: "/secure-access/templates", label: "შაბლონები", icon: LayoutTemplate },
   { href: "/secure-access/demos", label: "დემოები", icon: Play },
+  { href: "/secure-access/batches", label: "ბაჩები", icon: Layers },
   { href: "/secure-access/queue", label: "რიგი", icon: Mail },
   { href: "/secure-access/analytics", label: "ანალიტიკა", icon: BarChart3 },
 ];

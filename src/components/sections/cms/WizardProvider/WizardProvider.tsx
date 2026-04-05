@@ -80,6 +80,10 @@ interface WizardContextValue {
   customEmailText: string;
   setCustomEmailText: (t: string) => void;
 
+  // Batch
+  batchName: string;
+  setBatchName: (n: string) => void;
+
   // Step 5: Generate
   generating: boolean;
   generated: GeneratedDemo[];
@@ -137,6 +141,9 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   // Step 4: Offer & Email
   const [offerDraft, setOfferDraft] = useState<OfferDraft | null>(null);
   const [customEmailText, setCustomEmailText] = useState("");
+
+  // Batch
+  const [batchName, setBatchName] = useState("");
 
   // Step 5
   const [generating, setGenerating] = useState(false);
@@ -248,6 +255,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       if (finalOffer) payload.offer_draft = finalOffer;
       if (finalEmail?.trim()) payload.custom_email_text = finalEmail.trim();
 
+      // Auto-generate batch name if not set
+      const effectiveBatchName = batchName.trim() || `${selectedTemplate.name} — ${new Date().toLocaleDateString("ka-GE")}`;
+      payload.batch_name = effectiveBatchName;
+
       const res = await fetch("/api/demos/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -262,7 +273,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     } finally {
       setGenerating(false);
     }
-  }, [selectedTemplate, selectedIds, offerDraft, customEmailText]);
+  }, [selectedTemplate, selectedIds, offerDraft, customEmailText, batchName]);
 
   return (
     <WizardContext.Provider
@@ -293,6 +304,8 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         setOfferDraft,
         customEmailText,
         setCustomEmailText,
+        batchName,
+        setBatchName,
         generating,
         generated,
         generate,

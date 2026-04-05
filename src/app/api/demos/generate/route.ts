@@ -18,6 +18,8 @@ export async function POST(request: NextRequest) {
     expires_days = 30,
     offer_draft,
     custom_email_text,
+    batch_name,
+    batch_id: existing_batch_id,
   } = body as {
     template_id?: string;
     company_ids?: string[];
@@ -25,6 +27,8 @@ export async function POST(request: NextRequest) {
     expires_days?: number;
     offer_draft?: Record<string, unknown>;
     custom_email_text?: string;
+    batch_name?: string;
+    batch_id?: string;
   };
 
   if (!template_id || !Array.isArray(company_ids) || company_ids.length === 0) {
@@ -67,6 +71,25 @@ export async function POST(request: NextRequest) {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + expires_days);
 
+  // ── Resolve or create batch ──
+  let batchId: string | null = existing_batch_id || null;
+
+  if (!batchId && batch_name) {
+    const { data: newBatch, error: batchErr } = await supabase
+      .from("batches")
+      .insert({
+        name: batch_name.trim().slice(0, 200),
+        template_id: template.id,
+      })
+      .select("id")
+      .single();
+
+    if (batchErr) {
+      return Response.json({ error: `Batch creation failed: ${batchErr.message}` }, { status: 500 });
+    }
+    batchId = newBatch.id;
+  }
+
   // Generate demos synchronously
   const demosToInsert = companies.map((company) => {
     const hash = crypto.randomBytes(12).toString("base64url");
@@ -78,6 +101,7 @@ export async function POST(request: NextRequest) {
       company_id: company.id,
       template_id: template.id,
       campaign_id: campaign_id || null,
+      batch_id: batchId,
       status: "generated" as const,
       html_snapshot: htmlSnapshot,
       expires_at: expiresAt.toISOString(),
@@ -111,6 +135,7 @@ export async function POST(request: NextRequest) {
     queued: false,
     count: demos.length,
     demos,
+    batch_id: batchId,
     message: `${demos.length} demos generated`,
   });
 }
