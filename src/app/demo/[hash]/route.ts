@@ -48,7 +48,7 @@ export async function GET(
   // Fetch demo by hash (anon client — RLS enforced, read-only)
   const { data: demo, error } = await supabase
     .from("demos")
-    .select("id, hash, company_id, template_id, status, html_snapshot, snapshot_url, expires_at, view_count, companies(secure_link_id)")
+    .select("id, hash, company_id, template_id, status, html_snapshot, snapshot_url, expires_at, view_count")
     .eq("hash", hash)
     .single();
 
@@ -173,346 +173,174 @@ export async function GET(
   მინდა ეს საიტი!
 </a>`;
 
-  // Inject tracking script (batched — collects events, sends every 15s or on page leave)
-  // Enhanced: Section Observer, 3D interaction, idle detection, cross-domain handoff
-  const secureLinkId = (demo.companies as { secure_link_id?: string } | null)?.secure_link_id || "";
+  // ── PostHog: full-featured analytics, session replay, heatmaps ──
+  const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY || "";
+  const posthogHost = process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com";
   const trackingScript = `<script>
-(function(){
-  var D="${demo.id}",H="${demo.hash}",REF="${secureLinkId}";
-  var sid=sessionStorage.getItem("dt_sid");
-  if(!sid){try{sid=crypto.randomUUID()}catch(e){sid="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,function(c){var r=Math.random()*16|0;return(c==="x"?r:r&0x3|0x8).toString(16)})}sessionStorage.setItem("dt_sid",sid)}
-  var Q=[];
-  var sentOnce={};
+!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset isFeatureEnabled onFeatureFlags getFeatureFlag getFeatureFlagPayload reloadFeatureFlags group updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures getActiveMatchingSurveys getSurveys onSessionId setPersonProperties".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+posthog.init("${posthogKey}",{
+  api_host:"${posthogHost}",
+  person_profiles:"identified_only",
+  capture_pageview:true,
+  capture_pageleave:true,
+  autocapture:true,
+  enable_recording_console_log:true,
+  enable_heatmaps:true,
+  capture_dead_clicks:true,
+  capture_performance:true,
+  session_recording:{recordCrossOriginIframes:true}
+});
 
-  // ── Parse UTM parameters ──
-  var params=new URLSearchParams(location.search);
+// ── Register demo metadata on every event ──
+posthog.register({
+  demo_id:"${demo.id}",
+  demo_hash:"${demo.hash}",
+  source:"demo_page"
+});
+
+// ── Identify lead group for this demo ──
+posthog.group("demo","${demo.id}",{
+  hash:"${demo.hash}",
+  company_id:"${demo.company_id || ""}",
+  template_id:"${demo.template_id || ""}"
+});
+
+// ── UTM capture (PostHog does this automatically, but we also register for grouping) ──
+(function(){
+  var p=new URLSearchParams(location.search);
   var utm={};
   ["utm_source","utm_medium","utm_campaign","utm_content","utm_term"].forEach(function(k){
-    var v=params.get(k);if(v)utm[k]=v;
+    var v=p.get(k);if(v)utm[k]=v;
   });
-
-  // ── Device & browser info ──
-  var ua=navigator.userAgent;
-  var deviceInfo={
-    screen_w:screen.width,screen_h:screen.height,
-    viewport_w:window.innerWidth,viewport_h:window.innerHeight,
-    pixel_ratio:window.devicePixelRatio||1,
-    language:navigator.language||"",
-    timezone:Intl.DateTimeFormat?Intl.DateTimeFormat().resolvedOptions().timeZone:"",
-    touch:"ontouchstart" in window||navigator.maxTouchPoints>0,
-    connection:(navigator.connection||{}).effectiveType||""
-  };
-  // Simple device type detection
-  var isMobile=/Mobi|Android|iPhone|iPad|iPod/i.test(ua);
-  var isTablet=/iPad|Android(?!.*Mobi)/i.test(ua);
-  deviceInfo.device_type=isTablet?"tablet":isMobile?"mobile":"desktop";
-
-  // ── Core: queue event ──
-  function E(ev,extra,allowRepeat){
-    if(!allowRepeat&&sentOnce[ev])return;
-    if(!allowRepeat)sentOnce[ev]=true;
-    // Generate idempotency key: session_id + event_type + timestamp (prevents duplicate inserts on retry)
-    var idk=sid+"_"+ev+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,6);
-    var ex=Object.assign({},extra||{});
-    // Promote DB-column fields from extra to top-level payload
-    var dur=ex.duration_ms;delete ex.duration_ms;
-    var sd=ex.scroll_depth;delete ex.scroll_depth;
-    var payload={
-      demo_id:D,hash:H,event_type:ev,session_id:sid,
-      idempotency_key:idk,
-      page_url:location.href,referrer:document.referrer,
-      user_agent:ua,
-      section_name:(extra&&extra.section)||null,
-      interaction_type:(extra&&extra.interaction_type)||null,
-      extra:ex
-    };
-    if(typeof dur==="number")payload.duration_ms=dur;
-    if(typeof sd==="number")payload.scroll_depth=sd;
-    // Attach UTM + device on page_open
-    if(ev==="page_open"){
-      if(Object.keys(utm).length)payload.extra.utm=utm;
-      payload.extra.device=deviceInfo;
-      // Parse referrer domain
-      if(document.referrer){try{payload.extra.referrer_domain=new URL(document.referrer).hostname}catch(e){}}
-    }
-    Q.push(payload);
+  if(Object.keys(utm).length){
+    posthog.register(utm);
+    posthog.capture("demo_opened_from_campaign",utm);
   }
+})();
 
-  // ── Core: flush batch via Beacon API ──
-  function flush(){
-    if(!Q.length)return;
-    var batch=Q.splice(0,50);
-    var b=new Blob([JSON.stringify({events:batch})],{type:"application/json"});
-    if(navigator.sendBeacon){navigator.sendBeacon("/api/tracking",b)}
-    else{fetch("/api/tracking",{method:"POST",body:b,keepalive:true})}
-  }
-
-  // ── Cross-domain: tag sitely links with lead ref ──
-  if(REF){
-    document.querySelectorAll('a[href*="sitely"]').forEach(function(a){
-      var u=new URL(a.href,location.href);
-      if(!u.searchParams.has("ref")){u.searchParams.set("ref",REF);a.href=u.toString()}
-    });
-  }
-
-  // ── Active time tracking with idle detection ──
-  var start=Date.now();
-  var activeMs=0,lastTick=Date.now();
-  var paused=document.hidden;
-  var idleTimer,IDLE_THRESHOLD=30000; // 30s no interaction = idle
-  var idle=false;
-
-  function tick(){
-    if(!paused&&!idle){var now=Date.now();activeMs+=now-lastTick;lastTick=now}
-    else{lastTick=Date.now()}
-  }
-  function resetIdle(){
-    if(idle){idle=false;lastTick=Date.now()}
-    clearTimeout(idleTimer);
-    idleTimer=setTimeout(function(){idle=true;tick()},IDLE_THRESHOLD);
-  }
-  // User activity resets idle
-  ["mousemove","keydown","scroll","touchstart","click"].forEach(function(evt){
-    document.addEventListener(evt,resetIdle,{passive:true})
-  });
-  resetIdle();
-  setInterval(tick,1000);
-
-  document.addEventListener("visibilitychange",function(){
-    if(document.hidden){tick();paused=true}
-    else{lastTick=Date.now();paused=false;resetIdle()}
-    if(document.visibilityState==="hidden")flush();
-  });
-
-  // ── page_open ──
-  E("page_open");
-  flush(); // Send page_open immediately — don't wait 15s
-
-  // ── Scroll depth tracking ──
-  var maxScroll=0;
+// ── Scroll depth milestones ──
+(function(){
+  var fired={};
   window.addEventListener("scroll",function(){
     var h=document.documentElement;
     var pct=Math.round(h.scrollTop/(h.scrollHeight-h.clientHeight)*100);
-    if(pct>maxScroll)maxScroll=pct;
     [25,50,75,100].forEach(function(m){
-      if(pct>=m&&!sentOnce["scroll_"+m]){sentOnce["scroll_"+m]=true;E("scroll_"+m,{scroll_depth:m})}
+      if(pct>=m&&!fired[m]){
+        fired[m]=true;
+        posthog.capture("scroll_depth",{depth_percent:m,page_url:location.href});
+      }
     });
   },{passive:true});
+})();
 
-  // ── Active time milestones ──
+// ── Section visibility tracking ──
+(function(){
+  var timers={},starts={};
+  function startS(n){if(!starts[n])starts[n]=Date.now()}
+  function stopS(n){if(starts[n]){timers[n]=(timers[n]||0)+(Date.now()-starts[n]);delete starts[n]}}
+  function flushS(){
+    for(var n in starts)stopS(n);
+    for(var name in timers){
+      if(timers[name]>=2000){
+        posthog.capture("section_viewed",{section_name:name,time_spent_seconds:Math.round(timers[name]/1000)});
+      }
+    }
+    timers={};
+  }
+  setTimeout(function(){
+    var secs=document.querySelectorAll("section[id],div[id],[data-section]");
+    if(!secs.length)return;
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        var name=e.target.getAttribute("data-section")||e.target.id||"unknown";
+        if(e.isIntersecting&&e.intersectionRatio>=0.5)startS(name);
+        else stopS(name);
+      });
+    },{threshold:[0,0.5]});
+    secs.forEach(function(el){io.observe(el)});
+  },1500);
+  setInterval(function(){
+    for(var n in starts){
+      var elapsed=Date.now()-starts[n];
+      if(elapsed>=2000){
+        posthog.capture("section_viewed",{section_name:n,time_spent_seconds:Math.round(elapsed/1000)});
+        starts[n]=Date.now();
+      }
+    }
+  },30000);
+  window.addEventListener("pagehide",flushS);
+  window.addEventListener("beforeunload",flushS);
+})();
+
+// ── 3D Canvas interaction tracking ──
+setTimeout(function(){
+  var canvases=document.querySelectorAll("canvas");
+  canvases.forEach(function(c){
+    var dragging=false;
+    c.addEventListener("pointerdown",function(){dragging=true},{passive:true});
+    c.addEventListener("pointerup",function(){
+      if(dragging){posthog.capture("3d_interaction",{type:"rotate"});dragging=false}
+    },{passive:true});
+    c.addEventListener("wheel",function(){
+      posthog.capture("3d_interaction",{type:"zoom"});
+    },{passive:true});
+  });
+},2000);
+
+// ── CTA click tracking (specific to demo templates) ──
+document.addEventListener("click",function(ev){
+  var a=ev.target.closest("a[href],button");
+  if(!a)return;
+  var href=a.getAttribute("href")||"";
+  if(href.startsWith("tel:"))posthog.capture("click_phone",{href:href});
+  else if(href.startsWith("mailto:"))posthog.capture("click_email",{href:href});
+  else if(a.classList.contains("sitely-btn-primary")||a.classList.contains("sitely-float"))posthog.capture("click_cta",{href:href,text:a.innerText.trim().slice(0,50)});
+  else if(href.includes("sitely"))posthog.capture("click_sitely_link",{href:href});
+});
+
+// ── Form tracking (start + abandon) ──
+(function(){
+  var started=false;
+  document.addEventListener("focusin",function(ev){
+    var el=ev.target;
+    if(el&&(el.tagName==="INPUT"||el.tagName==="TEXTAREA"||el.tagName==="SELECT")){
+      if(el.closest("form")&&!started){
+        started=true;
+        posthog.capture("form_interaction_started",{field:el.name||el.type||"unknown"});
+      }
+    }
+  });
+  document.addEventListener("submit",function(){started=false});
+  window.addEventListener("beforeunload",function(){
+    if(started)posthog.capture("form_abandoned");
+  });
+})();
+
+// ── Active time tracking with idle detection ──
+(function(){
+  var start=Date.now(),activeMs=0,lastTick=Date.now(),idle=false,paused=document.hidden;
+  var idleTimer,IDLE=30000;
+  function tick(){if(!paused&&!idle){var n=Date.now();activeMs+=n-lastTick;lastTick=n}else{lastTick=Date.now()}}
+  function resetIdle(){if(idle){idle=false;lastTick=Date.now()}clearTimeout(idleTimer);idleTimer=setTimeout(function(){idle=true;tick()},IDLE)}
+  ["mousemove","keydown","scroll","touchstart","click"].forEach(function(e){document.addEventListener(e,resetIdle,{passive:true})});
+  resetIdle();
+  setInterval(tick,1000);
+  document.addEventListener("visibilitychange",function(){if(document.hidden){tick();paused=true}else{lastTick=Date.now();paused=false;resetIdle()}});
+  var milestones={};
   [10,30,60,180,300].forEach(function(s){
     var ms=s*1000;
-    (function check(){tick();if(activeMs>=ms)E("active_time_"+s+"s",{active_seconds:s});else setTimeout(check,1000)})();
+    (function check(){tick();if(activeMs>=ms&&!milestones[s]){milestones[s]=true;posthog.capture("active_time_milestone",{seconds:s})}else if(!milestones[s])setTimeout(check,1000)})();
   });
-
-  // ── Click tracking (phone, email, CTA, sitely) ──
-  document.addEventListener("click",function(e){
-    var a=e.target.closest("a[href],button");
-    if(!a)return;
-    var href=a.getAttribute("href")||"";
-    if(href.startsWith("tel:"))E("click_phone",{href:href});
-    else if(href.startsWith("mailto:"))E("click_email",{href:href});
-    else if(a.classList.contains("sitely-cta-btn")||a.classList.contains("float-btn")||a.classList.contains("btn-red")||a.classList.contains("sitely-btn-primary")||a.classList.contains("sitely-float"))E("click_cta",{href:href});
-    else if(href.includes("sitely"))E("click_sitely",{href:href});
-  });
-
-  // ── Section Observer: track time spent per visible section ──
-  var sectionTimers={};
-  var sectionStart={};
-  function startSection(name){
-    if(sectionStart[name])return;
-    sectionStart[name]=Date.now();
-  }
-  function stopSection(name){
-    if(!sectionStart[name])return;
-    var elapsed=Date.now()-sectionStart[name];
-    sectionTimers[name]=(sectionTimers[name]||0)+elapsed;
-    delete sectionStart[name];
-  }
-  function flushSections(){
-    // Stop any running timers
-    for(var n in sectionStart)stopSection(n);
-    // Send accumulated time for each section
-    for(var name in sectionTimers){
-      if(sectionTimers[name]>=2000){ // only report >=2s viewing
-        E("section_view",{section:name,duration_s:Math.round(sectionTimers[name]/1000)},true);
-      }
-    }
-    sectionTimers={};
-  }
-  // Detect sections — any element with id or data-section attribute
-  setTimeout(function(){
-    var sections=document.querySelectorAll("section[id],div[id],[data-section]");
-    if(!sections.length)return;
-    var io=new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        var name=entry.target.getAttribute("data-section")||entry.target.id||"unknown";
-        if(entry.isIntersecting&&entry.intersectionRatio>=0.5&&!document.hidden&&!idle){
-          startSection(name);
-        } else {
-          stopSection(name);
-        }
-      });
-    },{threshold:[0,0.5],rootMargin:"0px"});
-    sections.forEach(function(el){io.observe(el)});
-  },1500); // wait for DOM paint
-
-  // ── 3D / Canvas interaction tracking ──
-  setTimeout(function(){
-    var canvases=document.querySelectorAll("canvas");
-    canvases.forEach(function(c){
-      var dragging=false;
-      c.addEventListener("pointerdown",function(){dragging=true},{passive:true});
-      c.addEventListener("pointerup",function(){
-        if(dragging){E("interaction_3d",{interaction_type:"3d_rotate",target:"canvas"},true);dragging=false}
-      },{passive:true});
-      c.addEventListener("wheel",function(){
-        E("interaction_3d",{interaction_type:"3d_zoom",target:"canvas"},true);
-      },{passive:true});
-    });
-  },2000);
-
-  // ── Flush every 15s ──
-  setInterval(flush,15000);
-
-  // ── page_leave helper ──
-  function doPageLeave(){
-    sentOnce["page_leave"]=false;
+  function sendPageLeave(){
     tick();
-    flushSections();
-    E("page_leave",{
-      duration_ms:Date.now()-start,
-      total_active_seconds:Math.round(activeMs/1000),
-      scroll_depth:maxScroll,
-      device_type:deviceInfo.device_type,
-      viewport_w:window.innerWidth,
-      viewport_h:window.innerHeight
+    posthog.capture("demo_session_summary",{
+      total_duration_ms:Date.now()-start,
+      active_seconds:Math.round(activeMs/1000),
+      max_scroll:Math.round((document.documentElement.scrollTop/(document.documentElement.scrollHeight-document.documentElement.clientHeight))*100)||0
     });
-    flush();
   }
-
-  // ── page_leave: final flush with totals ──
-  window.addEventListener("beforeunload",doPageLeave);
-  // pagehide is more reliable on iOS/mobile
-  window.addEventListener("pagehide",doPageLeave);
-
-  // ── Form interaction tracking (abandonment detection) ──
-  var formInteracted=false;
-  document.addEventListener("focusin",function(e){
-    var el=e.target;
-    if(el&&(el.tagName==="INPUT"||el.tagName==="TEXTAREA"||el.tagName==="SELECT")){
-      if(el.closest("form")&&!formInteracted){
-        formInteracted=true;
-        E("form_start",{field:el.name||el.type||"unknown"},false);
-      }
-    }
-  });
-  // Detect form_submit to mark completed (already tracked by click handler above)
-  document.addEventListener("submit",function(e){
-    formInteracted=false; // reset — submitted successfully
-  });
-  // On beforeunload, if formInteracted is still true → form_abandon
-  window.addEventListener("beforeunload",function(){
-    if(formInteracted){
-      E("form_abandon",{},false);
-    }
-  });
-
-  // ── Rage click detection (3+ clicks within 1s on same area) ──
-  var clickLog=[];
-  document.addEventListener("click",function(e){
-    var now=Date.now();
-    clickLog.push({t:now,x:e.clientX,y:e.clientY});
-    // Keep only last 1s of clicks
-    clickLog=clickLog.filter(function(c){return now-c.t<1000});
-    if(clickLog.length>=3){
-      // Check if clicks are in similar position (within 30px)
-      var last=clickLog[clickLog.length-1];
-      var nearby=clickLog.filter(function(c){
-        return Math.abs(c.x-last.x)<30&&Math.abs(c.y-last.y)<30;
-      });
-      if(nearby.length>=3){
-        var target=e.target;
-        var tag=target?target.tagName:"unknown";
-        var cls=target&&target.className?String(target.className).slice(0,50):"";
-        E("rage_click",{x:last.x,y:last.y,tag:tag,cls:cls},true);
-        clickLog=[];
-      }
-    }
-  });
-
-  // Also flush sections periodically (every 30s) in case of long visits
-  setInterval(function(){
-    flushSections();
-    // Re-snapshot running timers (don't clear sectionStart here)
-  },30000);
-
-  // ── Web Vitals tracking (LCP, CLS, FID, TTFB) ──
-  try{
-    // Largest Contentful Paint
-    new PerformanceObserver(function(list){
-      var entries=list.getEntries();
-      var last=entries[entries.length-1];
-      if(last){
-        E("web_vital",{metric:"LCP",value:Math.round(last.startTime),unit:"ms"},false);
-      }
-    }).observe({type:"largest-contentful-paint",buffered:true});
-  }catch(e){}
-
-  try{
-    // First Input Delay
-    new PerformanceObserver(function(list){
-      var entries=list.getEntries();
-      if(entries.length){
-        E("web_vital",{metric:"FID",value:Math.round(entries[0].processingStart-entries[0].startTime),unit:"ms"},false);
-      }
-    }).observe({type:"first-input",buffered:true});
-  }catch(e){}
-
-  try{
-    // Cumulative Layout Shift
-    var clsScore=0;
-    new PerformanceObserver(function(list){
-      list.getEntries().forEach(function(entry){
-        if(!entry.hadRecentInput)clsScore+=entry.value;
-      });
-    }).observe({type:"layout-shift",buffered:true});
-    // Report CLS on page leave (captured via beforeunload above, but also on visibility hidden)
-    document.addEventListener("visibilitychange",function(){
-      if(document.visibilityState==="hidden"&&clsScore>0){
-        E("web_vital",{metric:"CLS",value:Math.round(clsScore*1000)/1000,unit:"score"},false);
-      }
-    });
-  }catch(e){}
-
-  // TTFB (Time to First Byte)
-  try{
-    var navEntry=performance.getEntriesByType("navigation")[0];
-    if(navEntry&&navEntry.responseStart>0){
-      E("web_vital",{metric:"TTFB",value:Math.round(navEntry.responseStart),unit:"ms"},false);
-    }
-  }catch(e){}
-
-  // ── JS Error tracking ──
-  var errCount=0;
-  window.addEventListener("error",function(ev){
-    if(errCount>=5)return;
-    errCount++;
-    E("js_error",{
-      message:String(ev.message||"").slice(0,200),
-      source:String(ev.filename||"").slice(0,150),
-      line:ev.lineno||0,
-      col:ev.colno||0,
-      type:"runtime"
-    },true);
-  });
-  window.addEventListener("unhandledrejection",function(ev){
-    if(errCount>=5)return;
-    errCount++;
-    var msg="";
-    try{msg=ev.reason?String(ev.reason.message||ev.reason).slice(0,200):"Unknown"}catch(e2){msg="Unknown"}
-    E("js_error",{message:msg,type:"promise"},true);
-  });
+  window.addEventListener("pagehide",sendPageLeave);
+  window.addEventListener("beforeunload",sendPageLeave);
 })();
 </script>`;
 
