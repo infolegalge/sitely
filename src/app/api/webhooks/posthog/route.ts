@@ -59,8 +59,18 @@ export async function POST(request: NextRequest) {
   }
 
   // PostHog webhook payload structure
+  // Properties may arrive as a JSON string (from HTTP Webhook template) or as an object
   const event = body.event as string | undefined;
-  const properties = (body.properties || {}) as Record<string, unknown>;
+  let properties: Record<string, unknown> = {};
+  if (typeof body.properties === "string") {
+    try {
+      properties = JSON.parse(body.properties);
+    } catch {
+      properties = {};
+    }
+  } else {
+    properties = (body.properties || {}) as Record<string, unknown>;
+  }
   const timestamp = body.timestamp as string | undefined;
 
   if (!event) {
