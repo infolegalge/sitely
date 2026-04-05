@@ -213,6 +213,10 @@ export async function GET(
     if(!allowRepeat)sentOnce[ev]=true;
     // Generate idempotency key: session_id + event_type + timestamp (prevents duplicate inserts on retry)
     var idk=sid+"_"+ev+"_"+Date.now()+"_"+Math.random().toString(36).slice(2,6);
+    var ex=Object.assign({},extra||{});
+    // Promote DB-column fields from extra to top-level payload
+    var dur=ex.duration_ms;delete ex.duration_ms;
+    var sd=ex.scroll_depth;delete ex.scroll_depth;
     var payload={
       demo_id:D,hash:H,event_type:ev,session_id:sid,
       idempotency_key:idk,
@@ -220,7 +224,9 @@ export async function GET(
       user_agent:ua,
       section_name:(extra&&extra.section)||null,
       interaction_type:(extra&&extra.interaction_type)||null,
-      extra:Object.assign({},extra||{})
+      duration_ms:typeof dur==="number"?dur:null,
+      scroll_depth:typeof sd==="number"?sd:null,
+      extra:ex
     };
     // Attach UTM + device on page_open
     if(ev==="page_open"){

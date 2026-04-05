@@ -141,6 +141,7 @@ interface ProjectsContextValue {
   saveSteps: (steps: { step_order: number; title: string; description: string | null; status: string }[]) => Promise<void>;
   updateStepStatus: (stepId: string, status: string) => Promise<void>;
   uploadFile: (file: File) => Promise<UploadedFile>;
+  deleteProject: () => Promise<void>;
   refresh: () => void;
 }
 
@@ -298,6 +299,17 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
     },
   });
 
+  const deleteProjectMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/projects/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete project");
+    },
+    onSuccess: () => {
+      setSelectedId(null);
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+    },
+  });
+
   // ── Public API ───────────────────────────────────────────────────────────────
 
   const selectProject = useCallback((id: string) => {
@@ -371,6 +383,11 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
     [selectedId]
   );
 
+  const deleteProject = useCallback(async () => {
+    if (!selectedId) return;
+    await deleteProjectMutation.mutateAsync(selectedId);
+  }, [selectedId, deleteProjectMutation]);
+
   const refresh = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ["projects"] });
     if (selectedId) queryClient.invalidateQueries({ queryKey: ["project-detail", selectedId] });
@@ -398,6 +415,7 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
         saveSteps,
         updateStepStatus,
         uploadFile,
+        deleteProject,
         refresh,
       }}
     >

@@ -178,3 +178,81 @@ export async function PATCH(
 
   return Response.json({ success: true });
 }
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const user = await assertAdmin();
+  if (!user) return Response.json({ error: "Forbidden" }, { status: 403 });
+
+  const { id } = await params;
+  const admin = createServiceRoleClient();
+
+  // 1. Fetch project to get client_user_id
+  const { data: project, error: fetchErr } = await admin
+    .from("projects")
+    .select("id, client_user_id, company_id")
+    .eq("id", id)
+    .single();
+
+  if (fetchErr || !project) {
+    return Response.json({ error: "Project not found" }, { status: 404 });
+  }
+
+  // 2. Invalidate all onboard tokens for this project
+  await admin
+    .from("onboard_tokens")
+    .update({ used_at: new Date().toISOString() })
+    .eq("project_id", id);
+
+  // 3. Remove client auth user's project_id from metadata
+  //    and revoke their session so magic links stop working
+  if (project.client_user_id) {
+    // Check if user has other projects
+    const { count } = await admin
+      .from("projects")
+      .select("id", { count: "exact", head: true })
+      .eq("client_user_id", project.client_user_id)
+      .neq("id", id);
+
+    if (!count || count === 0) {
+      // No other projects — remove client role entirely
+      await admin.auth.admin.updateUserById(project.client_user_id, {
+        app_metadata: { role: null, project_id: null, company_id: null },
+      });
+    }
+  }
+
+  // 4. Delete project files from storage
+  const { data: files } = await admin
+    .from("project_files")
+    .select("file_url")
+    .eq("project_id", id);
+
+  if (files && files.length > 0) {
+    const paths = files
+      .map((f) => {
+        // Extract storage path from full URL
+        const match = f.file_url?.match(/project-assets\/(.+)/);
+        return match?.[1];
+      })
+      .filter(Boolean) as string[];
+
+    if (paths.length > 0) {
+      await admin.storage.from("project-assets").remove(paths);
+    }
+  }
+
+  // 5. Delete the project (cascades: messages, proposals, steps, files)
+  const { error: deleteErr } = await admin
+    .from("projects")
+    .delete()
+    .eq("id", id);
+
+  if (deleteErr) {
+    return Response.json({ error: deleteErr.message }, { status: 500 });
+  }
+
+  return Response.json({ success: true });
+}

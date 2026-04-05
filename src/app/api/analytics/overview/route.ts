@@ -25,8 +25,8 @@ export async function GET(request: NextRequest) {
 
   const supabase = createServiceRoleClient();
   const { data, error } = await supabase.rpc("get_analytics_overview", {
-    p_from: dateResult.from,
-    p_to: dateResult.to,
+    ...(dateResult.from && { p_from: dateResult.from }),
+    ...(dateResult.to && { p_to: dateResult.to }),
   });
 
   if (error) {

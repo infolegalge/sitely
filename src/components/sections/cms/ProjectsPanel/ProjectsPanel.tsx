@@ -493,6 +493,65 @@ function TimelineSection() {
   );
 }
 
+// ─── Delete Section ────────────────────────────────────────────────────────────
+
+function DeleteSection() {
+  const { detail, deleteProject } = useProjects();
+  const [confirming, setConfirming] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  if (!detail) return null;
+
+  async function handleDelete() {
+    setDeleting(true);
+    try {
+      await deleteProject();
+    } finally {
+      setDeleting(false);
+      setConfirming(false);
+    }
+  }
+
+  return (
+    <section className={s.section}>
+      <h3 className={s.sectionTitle}>საშიში ზონა</h3>
+      {!confirming ? (
+        <button
+          type="button"
+          className={s.btnDanger}
+          onClick={() => setConfirming(true)}
+        >
+          კაბინეტის წაშლა
+        </button>
+      ) : (
+        <div className={s.confirmDelete}>
+          <p className={s.confirmText}>
+            წაიშლება კაბინეტი, მესიჯები, ფაილები და Proposal. კლიენტს აღარ ექნება წვდომა. გაგრძელება?
+          </p>
+          <div className={s.confirmBtns}>
+            <button
+              type="button"
+              className={s.btnDanger}
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting ? "…" : "დიახ, წაშლა"}
+            </button>
+            <button
+              type="button"
+              className={s.btnSecondary}
+              onClick={() => setConfirming(false)}
+              disabled={deleting}
+            >
+              გაუქმება
+            </button>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
 // ─── Main Panel ────────────────────────────────────────────────────────────────
 
 const TABS = [
@@ -531,6 +590,7 @@ export default function ProjectsPanel() {
           <>
             <StatusSection />
             <ClientInfoSection />
+            <DeleteSection />
           </>
         )}
         {tab === "proposal" && <ProposalSection />}

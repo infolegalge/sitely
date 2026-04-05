@@ -322,6 +322,57 @@
   cursor: not-allowed;
 }
 
+/* Delete / Danger */
+
+.btnDanger {
+  background: rgba(239, 68, 68, 0.12);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 7px 14px;
+  border-radius: var(--cms-radius-sm, 8px);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  width: 100%;
+}
+
+.btnDanger:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.btnDanger:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.confirmDelete {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.confirmText {
+  font-size: 0.75rem;
+  color: #ef4444;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.confirmBtns {
+  display: flex;
+  gap: 8px;
+}
+
+.confirmBtns .btnDanger {
+  flex: 1;
+}
+
+.confirmBtns .btnSecondary {
+  flex: 1;
+}
+
 .editLink {
   font-size: 0.72rem;
   color: var(--cms-blue, #4f6ef7);
