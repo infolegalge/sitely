@@ -180,7 +180,7 @@ export async function GET(
 (function(){
   var D="${demo.id}",H="${demo.hash}",REF="${secureLinkId}";
   var sid=sessionStorage.getItem("dt_sid");
-  if(!sid){sid=crypto.randomUUID();sessionStorage.setItem("dt_sid",sid)}
+  if(!sid){try{sid=crypto.randomUUID()}catch(e){sid="xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,function(c){var r=Math.random()*16|0;return(c==="x"?r:r&0x3|0x8).toString(16)})}sessionStorage.setItem("dt_sid",sid)}
   var Q=[];
   var sentOnce={};
 
@@ -224,10 +224,10 @@ export async function GET(
       user_agent:ua,
       section_name:(extra&&extra.section)||null,
       interaction_type:(extra&&extra.interaction_type)||null,
-      duration_ms:typeof dur==="number"?dur:null,
-      scroll_depth:typeof sd==="number"?sd:null,
       extra:ex
     };
+    if(typeof dur==="number")payload.duration_ms=dur;
+    if(typeof sd==="number")payload.scroll_depth=sd;
     // Attach UTM + device on page_open
     if(ev==="page_open"){
       if(Object.keys(utm).length)payload.extra.utm=utm;
@@ -295,7 +295,7 @@ export async function GET(
     var pct=Math.round(h.scrollTop/(h.scrollHeight-h.clientHeight)*100);
     if(pct>maxScroll)maxScroll=pct;
     [25,50,75,100].forEach(function(m){
-      if(pct>=m&&!sentOnce["scroll_"+m]){sentOnce["scroll_"+m]=true;E("scroll_"+m,{depth:m})}
+      if(pct>=m&&!sentOnce["scroll_"+m]){sentOnce["scroll_"+m]=true;E("scroll_"+m,{scroll_depth:m})}
     });
   },{passive:true});
 
