@@ -1,5 +1,6 @@
 import { inngest } from "./client";
 import { createServiceRoleClient } from "@/lib/supabase/server";
+import { sendEmail, buildDemoEmailHtml } from "@/lib/email";
 
 export const batchSendEmails = inngest.createFunction(
   {
@@ -80,9 +81,10 @@ export const batchSendEmails = inngest.createFunction(
           return; // Stop sending
         }
 
-        // TODO: Replace with actual Zoho SMTP integration
-        // const demoUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/demo/${demo.hash}`;
-        // await sendEmail({ to: company.email, subject, html: emailTemplate(demoUrl) });
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sitely.ge";
+        const demoUrl = `${siteUrl}/demo/${demo.hash}`;
+        const html = buildDemoEmailHtml({ companyName: company.name, demoUrl });
+        await sendEmail({ to: company.email!, subject, html });
 
         // Mark demo as sent
         await supabase

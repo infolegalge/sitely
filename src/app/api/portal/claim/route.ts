@@ -165,7 +165,7 @@ export async function POST(request: NextRequest) {
       expires_at: expires,
     });
 
-    const verifyUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/verify?token=${newToken}`;
+    const verifyUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://sitely.ge"}/auth/verify?token=${newToken}`;
     try {
       await sendEmail({
         to: email,

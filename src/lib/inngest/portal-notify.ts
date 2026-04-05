@@ -17,8 +17,8 @@ export const notifyAdminOnClientMessage = inngest.createFunction(
       sender_name: string;
     };
 
-    // Wait 10 seconds before checking (Temporary for testing)
-    await step.sleep("wait-10-sec", "10s");
+    // Wait 10 minutes before checking — gives admin time to see the message naturally
+    await step.sleep("wait-before-notify", "10m");
 
     // Check if the message is still unread
     const isUnread = await step.run("check-unread", async () => {
