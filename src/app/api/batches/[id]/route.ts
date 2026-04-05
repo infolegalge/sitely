@@ -54,8 +54,7 @@ export async function GET(
 
   // 5. Build company list
   const companies = demoList.map((d) => {
-    const cArr = d.companies as unknown as { id: string; name: string; category: string | null; email: string | null; phone: string | null; sales_status: string; is_favorite: boolean }[] | null;
-    const c = cArr?.[0] ?? null;
+    const c = d.companies as unknown as { id: string; name: string; category: string | null; email: string | null; phone: string | null; sales_status: string; is_favorite: boolean } | null;
     const evts = demoEvents.get(d.id) || [];
 
     const ctaTypes = new Set(["click_cta", "click_phone", "click_email"]);
@@ -122,8 +121,7 @@ export async function GET(
     ? Math.round(allScrolls.reduce((s, v) => s + v, 0) / allScrolls.length * 10) / 10
     : null;
 
-  const tplArr = batch.templates as unknown as { name: string }[] | null;
-  const tpl = tplArr?.[0] ?? null;
+  const tpl = batch.templates as unknown as { name: string } | null;
 
   return Response.json({
     data: {
