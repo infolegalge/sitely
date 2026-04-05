@@ -315,14 +315,25 @@ Handlebars.registerHelper("subtract", (a: number, b: number) => a - b);
 export function compileTemplate(
   htmlTemplate: string,
   data: CompanyData,
-  trackingScript?: string
 ): string {
   const template = Handlebars.compile(htmlTemplate);
-  let html = template(data);
+  return template(data);
+}
 
-  if (trackingScript) {
-    html = html.replace("</body>", `${trackingScript}\n</body>`);
-  }
+/**
+ * Safely inject trusted HTML (tracking scripts, CTA) before </body>.
+ * Uses lastIndexOf to find the real closing tag, avoiding XSS if
+ * escaped data accidentally contains </body> strings.
+ *
+ * IMPORTANT: `injections` must be trusted server-side strings, never user input.
+ */
+export function injectBeforeBodyClose(html: string, ...injections: string[]): string {
+  const combined = injections.filter(Boolean).join("\n");
+  if (!combined) return html;
 
-  return html;
+  const closingTag = "</body>";
+  const idx = html.lastIndexOf(closingTag);
+  if (idx === -1) return html + combined;
+
+  return html.slice(0, idx) + combined + "\n" + html.slice(idx);
 }

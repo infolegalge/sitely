@@ -1,0 +1,193 @@
+@import "../../../../styles/cms-vars.css";
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card {
+  background: var(--cms-surface);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  padding: 1rem 1.2rem;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all var(--cms-duration) var(--cms-ease);
+  user-select: none;
+}
+
+.card:hover {
+  border-color: var(--cms-brd-2);
+  background: rgba(8, 8, 16, 0.92);
+}
+
+.cardActive {
+  composes: card;
+  border-color: var(--cms-blue);
+  box-shadow: 0 0 0 1px rgba(79, 110, 247, 0.2);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cms-blue), var(--cms-violet));
+  opacity: 0.6;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.icon {
+  font-size: 0.9rem;
+}
+
+.label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--cms-tx-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cms-tx);
+  line-height: 1.2;
+}
+
+.trendUp {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cms-cyan);
+  margin-top: 0.3rem;
+}
+
+.trendDown {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cms-red);
+  margin-top: 0.3rem;
+}
+
+.prevValue {
+  font-size: 0.68rem;
+  color: var(--cms-tx-3);
+  margin-top: 0.2rem;
+  padding-top: 0.2rem;
+  border-top: 1px dashed var(--cms-brd-2);
+}
+
+/* ── Target progress ── */
+.targetEditBtn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.65rem;
+  padding: 0;
+  opacity: 0;
+  transition: opacity var(--cms-duration) var(--cms-ease);
+}
+
+.card:hover .targetEditBtn,
+.cardActive:hover .targetEditBtn {
+  opacity: 0.6;
+}
+
+.targetEditBtn:hover {
+  opacity: 1 !important;
+}
+
+.targetRow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+
+.targetBarTrack {
+  flex: 1;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.targetBar {
+  height: 100%;
+  background: var(--cms-blue);
+  border-radius: 2px;
+  transition: width 0.6s var(--cms-ease);
+}
+
+.targetBarMet {
+  composes: targetBar;
+  background: var(--cms-green);
+}
+
+.targetPct {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--cms-tx-3);
+  min-width: 28px;
+  text-align: right;
+}
+
+.targetPctMet {
+  composes: targetPct;
+  color: var(--cms-green);
+}
+
+.targetEdit {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.3rem;
+  padding: 0.3rem 0;
+  border-top: 1px dashed var(--cms-brd);
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.targetLabel {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--cms-tx-3);
+}
+
+.targetInput {
+  width: 70px;
+  padding: 0.2rem 0.35rem;
+  font-size: 0.72rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--cms-brd-2);
+  border-radius: var(--cms-radius-sm);
+  color: var(--cms-tx);
+  outline: none;
+}
+
+.targetInput:focus {
+  border-color: var(--cms-blue);
+}

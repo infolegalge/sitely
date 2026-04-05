@@ -1,126 +1,256 @@
 "use client";
 
 import { useAnalytics } from "../AnalyticsProvider/AnalyticsProvider";
+import DateRangePicker from "../DateRangePicker/DateRangePicker";
+import KpiCards from "../KpiCards/KpiCards";
+import FunnelChart from "../FunnelChart/FunnelChart";
+import TimeSeriesChart from "../TimeSeriesChart/TimeSeriesChart";
+import ActivityHeatmap from "../ActivityHeatmap/ActivityHeatmap";
+import EventsGrid from "../EventsGrid/EventsGrid";
+import BehavioralPanels from "../BehavioralPanels/BehavioralPanels";
+import LeadGrid from "../LeadGrid/LeadGrid";
+import JourneyDrawer from "../JourneyDrawer/JourneyDrawer";
+import GeoBreakdown from "../GeoBreakdown/GeoBreakdown";
+import DeviceBreakdown from "../DeviceBreakdown/DeviceBreakdown";
+import UtmBreakdown from "../UtmBreakdown/UtmBreakdown";
+import TopSections from "../TopSections/TopSections";
+import FunnelAbandonment from "../FunnelAbandonment/FunnelAbandonment";
+import BrowserBreakdown from "../BrowserBreakdown/BrowserBreakdown";
+import WebVitals from "../WebVitals/WebVitals";
+import ActiveVisitors from "../ActiveVisitors/ActiveVisitors";
+import ConversionTrends from "../ConversionTrends/ConversionTrends";
+import TemplatePerformance from "../TemplatePerformance/TemplatePerformance";
+import CampaignComparison from "../CampaignComparison/CampaignComparison";
+import SessionPercentiles from "../SessionPercentiles/SessionPercentiles";
+import ScrollDepthHistogram from "../ScrollDepthHistogram/ScrollDepthHistogram";
+import AnalyticsErrorBoundary from "../AnalyticsErrorBoundary/AnalyticsErrorBoundary";
+import {
+  KpiSkeleton,
+  ChartSkeleton,
+  CardSkeleton,
+  BreakdownSkeleton,
+  BehavioralSkeleton,
+  TableSkeleton,
+} from "../AnalyticsSkeleton/AnalyticsSkeleton";
 import s from "./AnalyticsPage.module.css";
 
-const FUNNEL_LABELS: { key: string; label: string }[] = [
-  { key: "sent", label: "გაგზავნილი" },
-  { key: "viewed", label: "გახსნილი" },
-  { key: "scrolled", label: "სქროლი 100%" },
-  { key: "cta", label: "CTA კლიკი" },
-  { key: "converted", label: "კონვერსია" },
-];
-
-const EVENT_LABELS: Record<string, string> = {
-  page_open: "გვერდის გახსნა",
-  page_leave: "გვერდის დატოვება",
-  scroll_25: "სქროლი 25%",
-  scroll_50: "სქროლი 50%",
-  scroll_75: "სქროლი 75%",
-  scroll_100: "სქროლი 100%",
-  time_10s: "10 წამი",
-  time_30s: "30 წამი",
-  time_60s: "1 წუთი",
-  time_180s: "3 წუთი",
-  time_300s: "5 წუთი",
-  click_phone: "ტელეფონზე კლიკი",
-  click_email: "ემაილზე კლიკი",
-  click_cta: "CTA კლიკი",
-  click_sitely: "Sitely კლიკი",
-  form_submit: "ფორმის გაგზავნა",
-};
-
 export default function AnalyticsPage() {
-  const { funnel, eventCounts, leads, loading } = useAnalytics();
+  const { loading, error, refresh, autoRefresh, setAutoRefresh, showComparison, setShowComparison, dateRange } = useAnalytics();
 
-  if (loading) {
-    return <div className={s.page}><p className={s.loading}>იტვირთება...</p></div>;
+  function exportCsv(type: "leads" | "events") {
+    const params = new URLSearchParams({ type });
+    if (dateRange.from) params.set("from", dateRange.from);
+    if (dateRange.to) params.set("to", dateRange.to);
+    window.open(`/api/analytics/export?${params}`, "_blank");
   }
 
-  const funnelMax = funnel ? Math.max(funnel.sent, 1) : 1;
+  if (loading) {
+    return (
+      <div className={s.page}>
+        {/* Header */}
+        <div className={s.headerRow}>
+          <h1 className={s.title}>Sales Intelligence</h1>
+          <div className={s.headerActions}>
+            <DateRangePicker />
+          </div>
+        </div>
+        <KpiSkeleton />
+        <section className={s.section}><ChartSkeleton /></section>
+        <div className={s.splitRow}>
+          <section className={s.halfSection}><CardSkeleton rows={5} /></section>
+          <section className={s.halfSection}><CardSkeleton rows={7} /></section>
+        </div>
+        <section className={s.section}><CardSkeleton rows={6} /></section>
+        <div className={s.quadRow}>
+          <section className={s.quarterSection}><BreakdownSkeleton rows={4} /></section>
+          <section className={s.quarterSection}><BreakdownSkeleton rows={3} /></section>
+          <section className={s.quarterSection}><BreakdownSkeleton rows={4} /></section>
+          <section className={s.quarterSection}><BreakdownSkeleton rows={4} /></section>
+        </div>
+        <div className={s.splitRow}>
+          <section className={s.halfSection}><CardSkeleton rows={6} /></section>
+          <section className={s.halfSection}><CardSkeleton rows={5} /></section>
+        </div>
+        <section className={s.section}><BehavioralSkeleton /></section>
+        <section className={s.section}><TableSkeleton rows={8} /></section>
+      </div>
+    );
+  }
 
   return (
     <div className={s.page}>
-      <h1 className={s.title}>ანალიტიკა</h1>
-
-      {/* Funnel Section */}
-      <section className={s.section}>
-        <h2 className={s.sectionTitle}>ფუნელი</h2>
-        {funnel ? (
-          <div className={s.funnel}>
-            {FUNNEL_LABELS.map(({ key, label }) => {
-              const val = funnel[key as keyof typeof funnel] ?? 0;
-              const pct = funnelMax > 0 ? (val / funnelMax) * 100 : 0;
-              return (
-                <div key={key} className={s.funnelStep}>
-                  <div className={s.funnelLabel}>{label}</div>
-                  <div className={s.funnelBarTrack}>
-                    <div
-                      className={s.funnelBarFill}
-                      style={{ width: `${Math.max(pct, 2)}%` }}
-                    />
-                  </div>
-                  <div className={s.funnelValue}>{val}</div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          <p className={s.empty}>მონაცემები არ არის</p>
-        )}
-      </section>
-
-      {/* Event Breakdown */}
-      <section className={s.section}>
-        <h2 className={s.sectionTitle}>ივენთების განაწილება</h2>
-        <div className={s.eventsGrid}>
-          {Object.entries(EVENT_LABELS).map(([key, label]) => (
-            <div key={key} className={s.eventCard}>
-              <div className={s.eventCount}>{eventCounts[key] ?? 0}</div>
-              <div className={s.eventLabel}>{label}</div>
-            </div>
-          ))}
+      {/* Header */}
+      <div className={s.headerRow}>
+        <div className={s.titleGroup}>
+          <h1 className={s.title}>Sales Intelligence</h1>
+          <ActiveVisitors />
         </div>
+        <div className={s.headerActions}>
+          <DateRangePicker />
+          <button
+            className={showComparison ? s.compareActive : s.compareBtn}
+            onClick={() => setShowComparison(!showComparison)}
+            aria-pressed={showComparison}
+            aria-label={showComparison ? "შედარება ჩართულია" : "შედარება გამორთულია"}
+          >
+            ⇆ შედარება
+          </button>
+          <button
+            className={autoRefresh ? s.autoRefreshActive : s.autoRefreshBtn}
+            onClick={() => setAutoRefresh(!autoRefresh)}
+            aria-pressed={autoRefresh}
+            aria-label={autoRefresh ? "ავტო-განახლება ჩართულია" : "ავტო-განახლება გამორთულია"}
+          >
+            {autoRefresh ? "⏸ Auto" : "▶ Auto"}
+          </button>
+          <button className={s.refreshBtn} onClick={refresh} aria-label="მონაცემების განახლება">
+            ↻
+          </button>
+          <div className={s.exportGroup}>
+            <button className={s.exportBtn} onClick={() => exportCsv("leads")} aria-label="ლიდების ექსპორტი CSV">
+              ⬇ ლიდები
+            </button>
+            <button className={s.exportBtn} onClick={() => exportCsv("events")} aria-label="ივენთების ექსპორტი CSV">
+              ⬇ ივენთები
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Error banner */}
+      {error && <div className={s.errorBanner} role="alert">{error}</div>}
+
+      {/* KPI Cards */}
+      <AnalyticsErrorBoundary name="KPI">
+        <KpiCards />
+      </AnalyticsErrorBoundary>
+
+      {/* Time Series Chart */}
+      <section className={s.section}>
+        <AnalyticsErrorBoundary name="ტრენდები">
+          <TimeSeriesChart />
+        </AnalyticsErrorBoundary>
       </section>
 
-      {/* Hot Leads */}
+      {/* Conversion Rate Trends */}
       <section className={s.section}>
-        <h2 className={s.sectionTitle}>Hot Leads (ტოპ 20)</h2>
-        {leads.length > 0 ? (
-          <table className={s.table}>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>კომპანია</th>
-                <th>კატეგორია</th>
-                <th>ნახვები</th>
-                <th>Score</th>
-                <th>სტატუსი</th>
-                <th>ბოლო ნახვა</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leads.map((lead, i) => (
-                <tr key={lead.demo_id}>
-                  <td>{i + 1}</td>
-                  <td>{lead.company?.name ?? "—"}</td>
-                  <td>{lead.company?.category ?? "—"}</td>
-                  <td>{lead.view_count}</td>
-                  <td className={s.score}>{lead.score}</td>
-                  <td>{lead.status}</td>
-                  <td>
-                    {lead.last_viewed_at
-                      ? new Date(lead.last_viewed_at).toLocaleDateString("ka-GE")
-                      : "—"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p className={s.empty}>ჯერ არ არის მონაცემები</p>
-        )}
+        <AnalyticsErrorBoundary name="კონვერსიის ტრენდი">
+          <ConversionTrends />
+        </AnalyticsErrorBoundary>
       </section>
+
+      {/* Funnel + Heatmap side-by-side */}
+      <div className={s.splitRow}>
+        <section className={s.halfSection}>
+          <AnalyticsErrorBoundary name="ფუნელი">
+            <FunnelChart />
+          </AnalyticsErrorBoundary>
+        </section>
+        <section className={s.halfSection}>
+          <AnalyticsErrorBoundary name="აქტივობის რუკა">
+            <ActivityHeatmap />
+          </AnalyticsErrorBoundary>
+        </section>
+      </div>
+
+      {/* Funnel Abandonment — drop-off analysis */}
+      <section className={s.section}>
+        <AnalyticsErrorBoundary name="Funnel Abandonment">
+          <FunnelAbandonment />
+        </AnalyticsErrorBoundary>
+      </section>
+
+      {/* Geo + Device + Browser + Traffic sources */}
+      <div className={s.quadRow}>
+        <section className={s.quarterSection}>
+          <AnalyticsErrorBoundary name="გეოგრაფია">
+            <GeoBreakdown />
+          </AnalyticsErrorBoundary>
+        </section>
+        <section className={s.quarterSection}>
+          <AnalyticsErrorBoundary name="მოწყობილობები">
+            <DeviceBreakdown />
+          </AnalyticsErrorBoundary>
+        </section>
+        <section className={s.quarterSection}>
+          <AnalyticsErrorBoundary name="ბრაუზერი/OS">
+            <BrowserBreakdown />
+          </AnalyticsErrorBoundary>
+        </section>
+        <section className={s.quarterSection}>
+          <AnalyticsErrorBoundary name="ტრაფიკი">
+            <UtmBreakdown />
+          </AnalyticsErrorBoundary>
+        </section>
+      </div>
+
+      {/* Events Grid + Top Sections side-by-side */}
+      <div className={s.splitRow}>
+        <section className={s.halfSection}>
+          <AnalyticsErrorBoundary name="ივენთები">
+            <EventsGrid />
+          </AnalyticsErrorBoundary>
+        </section>
+        <section className={s.halfSection}>
+          <AnalyticsErrorBoundary name="ტოპ სექციები">
+            <TopSections />
+          </AnalyticsErrorBoundary>
+        </section>
+      </div>
+
+      {/* Web Vitals + Template Performance */}
+      <div className={s.splitRow}>
+        <section className={s.halfSection}>
+          <AnalyticsErrorBoundary name="Web Vitals">
+            <WebVitals />
+          </AnalyticsErrorBoundary>
+        </section>
+        <section className={s.halfSection}>
+          <AnalyticsErrorBoundary name="შაბლონების შედარება">
+            <TemplatePerformance />
+          </AnalyticsErrorBoundary>
+        </section>
+      </div>
+
+      {/* Campaign Comparison */}
+      <section className={s.section}>
+        <AnalyticsErrorBoundary name="კამპანიების შედარება">
+          <CampaignComparison />
+        </AnalyticsErrorBoundary>
+      </section>
+
+      {/* Session Duration + Scroll Depth */}
+      <div className={s.splitRow}>
+        <section className={s.halfSection}>
+          <AnalyticsErrorBoundary name="სესიის ხანგრძლივობა">
+            <SessionPercentiles />
+          </AnalyticsErrorBoundary>
+        </section>
+        <section className={s.halfSection}>
+          <AnalyticsErrorBoundary name="Scroll Depth">
+            <ScrollDepthHistogram />
+          </AnalyticsErrorBoundary>
+        </section>
+      </div>
+
+      {/* Behavioral Panels */}
+      <section className={s.section}>
+        <h2 className={s.sectionTitle}>ლიდერბორდი</h2>
+        <AnalyticsErrorBoundary name="ლიდერბორდი">
+          <BehavioralPanels />
+        </AnalyticsErrorBoundary>
+      </section>
+
+      {/* Lead Grid */}
+      <section className={s.section}>
+        <h2 className={s.sectionTitle}>ლიდები</h2>
+        <AnalyticsErrorBoundary name="ლიდები">
+          <LeadGrid />
+        </AnalyticsErrorBoundary>
+      </section>
+
+      {/* Journey Drawer */}
+      <JourneyDrawer />
     </div>
   );
 }

@@ -441,7 +441,43 @@
   background: #4f6ef7;
   color: #fff;
   cursor: pointer;
+}
+
+.resultActions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   margin-bottom: 1rem;
+}
+
+.sendAllBtn {
+  padding: 0.45rem 1rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  background: #10b981;
+  color: #fff;
+  cursor: pointer;
+  transition: opacity 160ms ease;
+}
+
+.sendAllBtn:hover {
+  opacity: 0.88;
+}
+
+.sendAllBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sentBadge {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #10b981;
+  padding: 0.4rem 0.8rem;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 6px;
 }
 
 .resultList {
@@ -487,4 +523,124 @@
     width: 100%;
     max-height: 200px;
   }
+}
+
+/* Step 4: Offer & Email */
+.stepDesc {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: -0.5rem 0 1.2rem;
+}
+
+.offerSection {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.offerToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.offerToggle input {
+  accent-color: #4f6ef7;
+}
+
+.offerFields {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.offerRow {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.offerField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.offerField label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.offerInput {
+  padding: 0.45rem 0.6rem;
+  font-size: 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+}
+
+.offerInput:focus {
+  outline: none;
+  border-color: rgba(79, 110, 247, 0.5);
+}
+
+.offerTextarea {
+  padding: 0.45rem 0.6rem;
+  font-size: 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.offerTextarea:focus {
+  outline: none;
+  border-color: rgba(79, 110, 247, 0.5);
+}
+
+.emailSection {
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin: 0 0 0.3rem;
+}
+
+.sectionHint {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+  margin: 0 0 0.6rem;
+}
+
+.emailTextarea {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.82rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+.emailTextarea:focus {
+  outline: none;
+  border-color: rgba(79, 110, 247, 0.5);
 }

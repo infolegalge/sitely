@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
@@ -15,6 +16,7 @@ import ScrollToTop from "@/components/layout/ScrollToTop/ScrollToTop";
 import SoundToggle from "@/components/layout/SoundToggle/SoundToggle";
 import SideNav from "@/components/layout/SideNav/SideNav";
 import SceneCanvasLoader from "@/components/three/SceneCanvasLoader";
+import LeadReceiver from "@/components/layout/LeadReceiver/LeadReceiver";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -101,6 +103,9 @@ export default function RootLayout({
               </ContentWrapper>
               <HideOnCms>
                 <ScrollToTop />
+                <Suspense fallback={null}>
+                  <LeadReceiver />
+                </Suspense>
               </HideOnCms>
             </SceneProvider>
           </LenisProvider>

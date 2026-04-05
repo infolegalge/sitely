@@ -8,37 +8,12 @@ export async function GET() {
   }
 
   const supabase = createServiceRoleClient();
+  const { data, error } = await supabase.rpc("get_company_categories");
 
-  // Fetch all records but only the category columns — Supabase doesn't support DISTINCT
-  // Use pagination to avoid the 1000 row default limit
-  const allCategories = new Set<string>();
-  const allSourceCategories = new Set<string>();
-  let from = 0;
-  const step = 1000;
-  let done = false;
-
-  while (!done) {
-    const { data } = await supabase
-      .from("companies")
-      .select("category, source_category")
-      .range(from, from + step - 1);
-
-    if (!data || data.length === 0) {
-      done = true;
-      break;
-    }
-
-    for (const row of data) {
-      if (row.category) allCategories.add(row.category);
-      if (row.source_category) allSourceCategories.add(row.source_category);
-    }
-
-    if (data.length < step) done = true;
-    from += step;
+  if (error) {
+    console.error("get_company_categories:", error);
+    return Response.json({ error: "Failed to fetch categories" }, { status: 500 });
   }
 
-  return Response.json({
-    categories: [...allCategories].sort(),
-    source_categories: [...allSourceCategories].sort(),
-  });
+  return Response.json(data);
 }

@@ -1,0 +1,386 @@
+.chat {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 300px;
+  position: relative;
+}
+
+.chatDragOver {
+  outline: 2px dashed var(--blue, #4f6ef7);
+  outline-offset: -4px;
+  border-radius: 16px;
+}
+
+/* Drop overlay */
+
+.dropOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(79, 110, 247, 0.12);
+  backdrop-filter: blur(4px);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.dropOverlayText {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(79, 110, 247, 0.85);
+  padding: 14px 32px;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(79, 110, 247, 0.25);
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 255, 0.1) transparent;
+}
+
+.dateDivider {
+  display: flex;
+  justify-content: center;
+  margin: 16px 0 8px;
+}
+
+.dateDividerLabel {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--tx-3, #4a4a6a);
+  background: rgba(148, 163, 255, 0.04);
+  padding: 3px 14px;
+  border-radius: 100px;
+  border: 1px solid rgba(148, 163, 255, 0.06);
+  font-family: "JetBrains Mono", monospace;
+}
+
+.systemPill {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--tx-3, #4a4a6a);
+  background: rgba(148, 163, 255, 0.03);
+  border-radius: 100px;
+  padding: 4px 18px;
+  display: inline-block;
+  align-self: center;
+  margin: 4px auto;
+  border: 1px solid rgba(148, 163, 255, 0.06);
+}
+
+/* ── Bubble rows ── */
+.bubbleRow {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  max-width: 80%;
+}
+
+.bubbleRowClient {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.bubbleRowAdmin {
+  align-self: flex-start;
+}
+
+.adminAvatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--blue, #4f6ef7), var(--violet, #8b5cf6));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.adminAvatarLetter {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.adminName {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--blue, #4f6ef7);
+  letter-spacing: 0.02em;
+}
+
+/* ── Bubbles ── */
+.bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  position: relative;
+}
+
+.bubbleClient {
+  background: linear-gradient(135deg, var(--blue, #4f6ef7), rgba(79, 110, 247, 0.85));
+  color: #fff;
+  border-bottom-right-radius: 6px;
+}
+
+.bubbleAdmin {
+  background: rgba(148, 163, 255, 0.05);
+  color: var(--tx, #eaeaff);
+  border: 1px solid rgba(148, 163, 255, 0.08);
+  border-bottom-left-radius: 6px;
+}
+
+.bubbleText {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.fileLink {
+  font-size: 0.82rem;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.fileLink:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.fileSize {
+  font-size: 0.72rem;
+  opacity: 0.6;
+}
+
+.time {
+  font-size: 0.65rem;
+  opacity: 0.4;
+  align-self: flex-end;
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* ── Empty chat ── */
+.emptyChat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.emptyChatAvatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--blue, #4f6ef7), var(--violet, #8b5cf6));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.emptyChatLetter {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.emptyChatTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--tx, #eaeaff);
+}
+
+.emptyChatText {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--tx-2, #8a8aad);
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+/* ── Composer ── */
+.composer {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  padding-top: 14px;
+  border-top: 1px solid rgba(148, 163, 255, 0.06);
+  margin-top: 8px;
+}
+
+.textarea {
+  flex: 1;
+  background: rgba(148, 163, 255, 0.04);
+  border: 1px solid rgba(148, 163, 255, 0.08);
+  border-radius: 14px;
+  padding: 11px 14px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  color: var(--tx, #eaeaff);
+  resize: none;
+  line-height: 1.45;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.textarea::placeholder {
+  color: var(--tx-3, #4a4a6a);
+}
+
+.textarea:focus {
+  border-color: rgba(79, 110, 247, 0.4);
+  box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.06);
+}
+
+.sendBtn {
+  background: linear-gradient(135deg, var(--blue, #4f6ef7), var(--violet, #8b5cf6));
+  color: #fff;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.sendBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(79, 110, 247, 0.3);
+}
+
+.sendBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Attach button */
+.attachBtn {
+  background: none;
+  border: 1px solid rgba(148, 163, 255, 0.08);
+  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.5;
+  transition: opacity 0.15s, border-color 0.15s;
+}
+
+.attachBtn:hover:not(:disabled) {
+  opacity: 1;
+  border-color: rgba(148, 163, 255, 0.15);
+}
+
+.attachBtn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.hiddenInput {
+  display: none;
+}
+
+/* Pending file preview */
+.pendingFile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(79, 110, 247, 0.08);
+  border: 1px solid rgba(79, 110, 247, 0.15);
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+
+.pendingFileIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.pendingFileName {
+  font-size: 0.78rem;
+  color: var(--tx, #eaeaff);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pendingFileSize {
+  font-size: 0.68rem;
+  color: var(--tx-3, #4a4a6a);
+  flex-shrink: 0;
+  font-family: "JetBrains Mono", monospace;
+}
+
+.pendingFileRemove {
+  background: none;
+  border: none;
+  color: var(--tx-3, #4a4a6a);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.pendingFileRemove:hover {
+  color: #ef4444;
+}
+
+/* Loading */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 200px;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(148, 163, 255, 0.08);
+  border-top-color: var(--blue, #4f6ef7);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

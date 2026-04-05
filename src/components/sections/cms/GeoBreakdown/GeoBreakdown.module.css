@@ -1,0 +1,93 @@
+@import "../../../../styles/cms-vars.css";
+
+.wrap {
+  background: var(--cms-surface);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  padding: 1rem 1.2rem;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.8rem 0;
+  color: var(--cms-tx);
+}
+
+.empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--cms-tx-3);
+  font-size: 0.82rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 140px 1fr 80px;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+@media (max-width: 500px) {
+  .row {
+    grid-template-columns: 100px 1fr 60px;
+  }
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--cms-tx);
+  min-width: 0;
+}
+
+.flag {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barWrap {
+  height: 6px;
+  background: var(--cms-brd-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  background: var(--cms-blue);
+  border-radius: 3px;
+  transition: width var(--cms-duration) var(--cms-ease);
+  min-width: 2px;
+}
+
+.stats {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  font-size: 0.72rem;
+}
+
+.sessions {
+  color: var(--cms-tx);
+  font-weight: 600;
+}
+
+.events {
+  color: var(--cms-tx-3);
+}

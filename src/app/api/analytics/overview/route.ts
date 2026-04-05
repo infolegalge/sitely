@@ -1,49 +1,39 @@
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { verifyAdmin } from "@/lib/auth";
+import { validateDateRange } from "@/lib/validate-date-range";
+import { cacheGet, cacheSet, cacheKey } from "@/lib/api-cache";
+import { NextRequest } from "next/server";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const admin = await verifyAdmin();
   if (!admin) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = createServiceRoleClient();
+  const key = cacheKey(request);
+  const cached = cacheGet(key);
+  if (cached) return Response.json(cached);
 
-  const [demosRes, eventsRes] = await Promise.all([
-    supabase
-      .from("demos")
-      .select("status, view_count", { count: "exact" }),
-    supabase
-      .from("demo_events")
-      .select("event_type"),
-  ]);
-
-  const demos = demosRes.data ?? [];
-  const events = eventsRes.data ?? [];
-
-  const totalSent = demos.length;
-  const totalViewed = demos.filter((d) => (d.view_count ?? 0) > 0).length;
-
-  const eventCounts: Record<string, number> = {};
-  for (const e of events) {
-    eventCounts[e.event_type] = (eventCounts[e.event_type] ?? 0) + 1;
+  const url = request.nextUrl;
+  const dateResult = validateDateRange(
+    url.searchParams.get("from"),
+    url.searchParams.get("to")
+  );
+  if (!dateResult.valid) {
+    return Response.json({ error: dateResult.error }, { status: 400 });
   }
 
-  const scrollComplete = eventCounts["scroll_100"] ?? 0;
-  const ctaClicks =
-    (eventCounts["click_cta"] ?? 0) +
-    (eventCounts["click_phone"] ?? 0) +
-    (eventCounts["click_email"] ?? 0);
-  const formSubmits = eventCounts["form_submit"] ?? 0;
-
-  return Response.json({
-    funnel: {
-      sent: totalSent,
-      viewed: totalViewed,
-      scrolled: scrollComplete,
-      cta: ctaClicks,
-      converted: formSubmits,
-    },
-    eventCounts,
+  const supabase = createServiceRoleClient();
+  const { data, error } = await supabase.rpc("get_analytics_overview", {
+    p_from: dateResult.from,
+    p_to: dateResult.to,
   });
+
+  if (error) {
+    console.error("get_analytics_overview:", error);
+    return Response.json({ error: "Failed to fetch overview" }, { status: 500 });
+  }
+
+  cacheSet(key, data);
+  return Response.json(data);
 }

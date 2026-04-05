@@ -11,11 +11,20 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { template_id, company_ids, campaign_id, expires_days = 30 } = body as {
+  const {
+    template_id,
+    company_ids,
+    campaign_id,
+    expires_days = 30,
+    offer_draft,
+    custom_email_text,
+  } = body as {
     template_id?: string;
     company_ids?: string[];
     campaign_id?: string;
     expires_days?: number;
+    offer_draft?: Record<string, unknown>;
+    custom_email_text?: string;
   };
 
   if (!template_id || !Array.isArray(company_ids) || company_ids.length === 0) {
@@ -51,20 +60,20 @@ export async function POST(request: NextRequest) {
     .select("*")
     .in("id", company_ids);
 
-  if (cErr || !companies) {
+  if (cErr || !companies || companies.length === 0) {
     return Response.json({ error: "Companies not found" }, { status: 404 });
   }
 
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + expires_days);
 
-  // Generate demos
-  const demos = companies.map((company) => {
+  // Generate demos synchronously
+  const demosToInsert = companies.map((company) => {
     const hash = crypto.randomBytes(12).toString("base64url");
     const companyData = buildCompanyData(company, template.fallback_images || []);
     const htmlSnapshot = compileTemplate(template.html_content, companyData);
 
-    return {
+    const row: Record<string, unknown> = {
       hash,
       company_id: company.id,
       template_id: template.id,
@@ -73,31 +82,35 @@ export async function POST(request: NextRequest) {
       html_snapshot: htmlSnapshot,
       expires_at: expiresAt.toISOString(),
     };
+    if (offer_draft) row.offer_draft = offer_draft;
+    if (custom_email_text?.trim()) row.custom_email_text = custom_email_text.slice(0, 5000);
+    return row;
   });
 
-  // Batch insert
-  const { data: inserted, error: iErr } = await supabase
+  const { data: inserted, error: insertErr } = await supabase
     .from("demos")
-    .insert(demos)
-    .select("id, hash, company_id");
+    .insert(demosToInsert)
+    .select("id, hash");
 
-  if (iErr) {
-    return Response.json({ error: iErr.message }, { status: 500 });
+  if (insertErr) {
+    return Response.json({ error: insertErr.message }, { status: 500 });
   }
 
-  // Update company statuses to 'demo_generated'
+  // Update company statuses to demo_ready
   await supabase
     .from("companies")
-    .update({ status: "demo_generated" })
-    .in("id", company_ids);
+    .update({ status: "demo_ready" })
+    .in("id", companies.map((c) => c.id));
+
+  const demos = (inserted || []).map((d) => ({
+    id: d.id,
+    url: `/demo/${d.hash}`,
+  }));
 
   return Response.json({
-    generated: inserted?.length || 0,
-    demos: inserted?.map((d) => ({
-      id: d.id,
-      hash: d.hash,
-      company_id: d.company_id,
-      url: `/demo/${d.hash}`,
-    })),
+    queued: false,
+    count: demos.length,
+    demos,
+    message: `${demos.length} demos generated`,
   });
 }

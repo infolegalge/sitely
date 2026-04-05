@@ -2,6 +2,8 @@
 
 import { useCompanies } from "@/components/sections/cms/CompaniesProvider/CompaniesProvider";
 import CompanyRow from "@/components/sections/cms/CompanyRow/CompanyRow";
+import CmsEmptyState from "@/components/ui/CmsEmptyState/CmsEmptyState";
+import { Building2 } from "lucide-react";
 import s from "./CompaniesTable.module.css";
 
 const COLUMNS = [
@@ -9,12 +11,10 @@ const COLUMNS = [
   { key: "category", label: "კატეგორია" },
   { key: "tier", label: "Tier" },
   { key: "score", label: "Score" },
-  { key: "email", label: "Email" },
-  { key: "rating", label: "რეიტინგი" },
   { key: "status", label: "სტატუსი" },
 ];
 
-const SORTABLE = new Set(["name", "tier", "score", "rating", "status"]);
+const SORTABLE = new Set(["name", "tier", "score", "status"]);
 
 export default function CompaniesTable() {
   const { companies, sort, loading, setSort } = useCompanies();
@@ -46,15 +46,26 @@ export default function CompaniesTable() {
         </thead>
         <tbody>
           {loading ? (
-            <tr>
-              <td colSpan={7} className={s.loading}>
-                იტვირთება...
-              </td>
-            </tr>
+            Array.from({ length: 8 }).map((_, i) => (
+              <tr key={i} className={s.skelRow}>
+                {COLUMNS.map((_, ci) => (
+                  <td key={ci} className={s.skelCell}>
+                    <div
+                      className={s.skelBar}
+                      style={{ width: `${50 + ((i + ci) % 4) * 14}%` }}
+                    />
+                  </td>
+                ))}
+              </tr>
+            ))
           ) : companies.length === 0 ? (
             <tr>
-              <td colSpan={7} className={s.empty}>
-                კომპანიები ვერ მოიძებნა
+              <td colSpan={5}>
+                <CmsEmptyState
+                  icon={<Building2 size={40} />}
+                  title="კომპანიები ვერ მოიძებნა"
+                  description="სცადეთ ფილტრების შეცვლა ან ძებნის ტექსტის შემოწმება"
+                />
               </td>
             </tr>
           ) : (

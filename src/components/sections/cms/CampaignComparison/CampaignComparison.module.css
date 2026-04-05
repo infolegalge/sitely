@@ -1,0 +1,191 @@
+@import "../../../../styles/cms-vars.css";
+
+.wrap {
+  padding: 1.25rem;
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  background: var(--cms-card);
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--cms-tx);
+  margin: 0 0 0.25rem;
+}
+
+.clearBtn {
+  margin-left: auto;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  border: 1px solid var(--cms-brd-2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cms-tx-3);
+  cursor: pointer;
+  transition: all var(--cms-duration) var(--cms-ease);
+}
+
+.clearBtn:hover {
+  border-color: var(--cms-red);
+  color: var(--cms-red);
+}
+
+.hint {
+  font-size: 0.68rem;
+  color: var(--cms-tx-3);
+  margin: 0 0 0.75rem;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.table th {
+  text-align: left;
+  padding: 0.45rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--cms-tx-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--cms-brd-2);
+  white-space: nowrap;
+}
+
+.thCheck {
+  width: 28px;
+}
+
+.row {
+  cursor: pointer;
+  transition: background var(--cms-duration) var(--cms-ease);
+}
+
+.row:hover {
+  background: rgba(79, 110, 247, 0.04);
+}
+
+.row td {
+  padding: 0.45rem 0.5rem;
+  border-bottom: 1px solid var(--cms-brd);
+  color: var(--cms-tx-2);
+  vertical-align: middle;
+}
+
+.rowSelected {
+  composes: row;
+  background: rgba(79, 110, 247, 0.08);
+}
+
+.rowSelected td {
+  border-bottom-color: rgba(79, 110, 247, 0.15);
+}
+
+.checkbox {
+  accent-color: var(--cms-blue);
+  cursor: pointer;
+  width: 14px;
+  height: 14px;
+}
+
+.campaignName {
+  font-weight: 600;
+  color: var(--cms-tx);
+}
+
+.medium {
+  font-weight: 400;
+  color: var(--cms-tx-3);
+}
+
+.campaignTag {
+  font-size: 0.65rem;
+  color: var(--cms-violet);
+  margin-top: 0.1rem;
+}
+
+.barCell {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.barTrack {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  background: var(--cms-blue);
+  border-radius: 3px;
+  transition: width 0.4s var(--cms-ease);
+}
+
+.num {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--cms-tx-2);
+}
+
+.time {
+  font-size: 0.72rem;
+  color: var(--cms-tx-3);
+}
+
+.convHigh {
+  font-weight: 700;
+  color: var(--cms-green);
+}
+
+.convMid {
+  font-weight: 700;
+  color: var(--cms-gold);
+}
+
+.convLow {
+  font-weight: 700;
+  color: var(--cms-tx-3);
+}
+
+.empty {
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--cms-tx-3);
+  font-size: 0.8rem;
+}
+
+.skeleton {
+  height: 180px;
+  border-radius: var(--cms-radius-sm);
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (max-width: 768px) {
+  .tableWrap {
+    margin: 0 -0.75rem;
+    padding: 0 0.75rem;
+  }
+}

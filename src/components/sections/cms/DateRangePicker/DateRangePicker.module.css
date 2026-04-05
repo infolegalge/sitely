@@ -1,0 +1,97 @@
+@import "../../../../styles/cms-vars.css";
+
+.wrap {
+  display: flex;
+  gap: 0.3rem;
+  position: relative;
+}
+
+.btn {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid var(--cms-brd-2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cms-tx-2);
+  cursor: pointer;
+  transition: all var(--cms-duration) var(--cms-ease);
+  white-space: nowrap;
+}
+
+.btn:hover {
+  border-color: var(--cms-blue);
+  color: var(--cms-tx);
+}
+
+.btnActive {
+  composes: btn;
+  background: rgba(79, 110, 247, 0.15);
+  border-color: var(--cms-blue);
+  color: var(--cms-blue);
+}
+
+/* ── Custom date dropdown ── */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.8rem;
+  background: var(--cms-bg-3);
+  border: 1px solid var(--cms-brd-2);
+  border-radius: var(--cms-radius);
+  box-shadow: var(--cms-shadow);
+  min-width: 200px;
+}
+
+.fieldLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--cms-tx-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dateInput {
+  padding: 0.35rem 0.5rem;
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius-sm);
+  color: var(--cms-tx);
+  outline: none;
+  color-scheme: dark;
+  transition: border var(--cms-duration) var(--cms-ease);
+}
+
+.dateInput:focus {
+  border-color: var(--cms-blue);
+}
+
+.applyBtn {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--cms-radius-sm);
+  background: var(--cms-blue);
+  color: #fff;
+  cursor: pointer;
+  transition: opacity var(--cms-duration) var(--cms-ease);
+}
+
+.applyBtn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.applyBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}

@@ -1,0 +1,114 @@
+@import "../../../../styles/cms-vars.css";
+
+.wrap {
+  background: var(--cms-surface);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  padding: 1rem 1.2rem;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.8rem 0;
+  color: var(--cms-tx);
+}
+
+.subtitle {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cms-tx-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.5rem 0;
+}
+
+.empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--cms-tx-3);
+  font-size: 0.82rem;
+}
+
+.section {
+  padding: 0.25rem 0;
+}
+
+.divider {
+  height: 1px;
+  background: var(--cms-brd);
+  margin: 0.6rem 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 20px 70px 1fr 36px 40px;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.icon {
+  font-size: 0.8rem;
+}
+
+.name {
+  font-size: 0.75rem;
+  color: var(--cms-tx-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barTrack {
+  height: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barFill {
+  width: var(--w, 0%);
+  height: 100%;
+  background: linear-gradient(90deg, var(--cms-blue), #6b8cff);
+  border-radius: 4px;
+  transition: width 400ms var(--cms-ease);
+}
+
+.barFillOs {
+  width: var(--w, 0%);
+  height: 100%;
+  background: linear-gradient(90deg, var(--cms-violet), #a78bfa);
+  border-radius: 4px;
+  transition: width 400ms var(--cms-ease);
+}
+
+.pct {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--cms-tx-3);
+  text-align: right;
+}
+
+.count {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--cms-tx);
+  text-align: right;
+}
+
+@media (max-width: 500px) {
+  .row {
+    grid-template-columns: 20px 60px 1fr 30px 35px;
+    gap: 0.25rem;
+  }
+
+  .name {
+    font-size: 0.68rem;
+  }
+}

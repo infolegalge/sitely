@@ -1,29 +1,23 @@
 "use client";
 
 import { useCompanies } from "@/components/sections/cms/CompaniesProvider/CompaniesProvider";
+import CmsBadge from "@/components/ui/CmsBadge/CmsBadge";
+import CmsSkeleton from "@/components/ui/CmsSkeleton/CmsSkeleton";
 import s from "./CompanyRow.module.css";
 
-const STATUS_COLORS: Record<string, string> = {
-  new: "#888",
-  contacted: "#4f6ef7",
-  viewed: "#f0c040",
-  interested: "#f59e0b",
-  negotiating: "#a855f7",
-  converted: "#22c55e",
-  rejected: "#ef4444",
-  not_relevant: "#555",
+const STATUS_MAP: Record<string, { label: string; color: "gray" | "blue" | "violet" | "gold" | "green" | "red" | "cyan" }> = {
+  lead: { label: "ახალი", color: "gray" },
+  locked: { label: "მუშავდება", color: "violet" },
+  demo_ready: { label: "დემო მზადაა", color: "gold" },
+  contacted: { label: "კონტაქტირებული", color: "blue" },
+  engaged: { label: "ჩართული", color: "cyan" },
+  converted: { label: "კონვერტირებული", color: "green" },
+  dnc: { label: "DNC", color: "red" },
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  new: "ახალი",
-  contacted: "კონტაქტირებული",
-  viewed: "ნანახი",
-  interested: "დაინტერესებული",
-  negotiating: "მოლაპარაკება",
-  converted: "კონვერტირებული",
-  rejected: "უარყოფილი",
-  not_relevant: "არარელევანტური",
-};
+const STATUS_LABELS: Record<string, string> = Object.fromEntries(
+  Object.entries(STATUS_MAP).map(([k, v]) => [k, v.label]),
+);
 
 interface CompanyRowData {
   id: string;
@@ -59,6 +53,7 @@ export default function CompanyRow({ company }: Props) {
   const social = meta?.social as Record<string, string> | undefined;
   const yell = meta?.yell as Record<string, string> | undefined;
   const imageUrls = (gm?.image_urls as string[]) || [];
+  const statusInfo = STATUS_MAP[company.status];
 
   return (
     <>
@@ -72,36 +67,32 @@ export default function CompanyRow({ company }: Props) {
         <td className={s.cell}>{company.category || "—"}</td>
         <td className={s.cell}>
           {company.tier != null && (
-            <span className={`${s.tierBadge} ${company.tier === 1 ? s.tierHot : ""}`}>
+            <CmsBadge color={company.tier === 1 ? "red" : "gray"}>
               T{company.tier}
-            </span>
+            </CmsBadge>
           )}
         </td>
-        <td className={s.cell}>{company.score ?? "—"}</td>
         <td className={s.cell}>
-          {company.email ? (
-            <span className={s.hasValue}>✓</span>
+          {company.score != null ? (
+            <span className={s.score}>{company.score}</span>
           ) : (
-            <span className={s.noValue}>✗</span>
+            "—"
           )}
         </td>
         <td className={s.cell}>
-          {company.rating != null ? `${company.rating}★` : "—"}
-        </td>
-        <td className={s.cell}>
-          <span
-            className={s.statusDot}
-            style={{ background: STATUS_COLORS[company.status] || "#888" }}
-          />
-          {STATUS_LABELS[company.status] || company.status}
+          <CmsBadge color={statusInfo?.color ?? "gray"} dot>
+            {statusInfo?.label ?? company.status}
+          </CmsBadge>
         </td>
       </tr>
 
       {isExpanded && (
         <tr className={s.expandedRow}>
-          <td colSpan={7} className={s.expandedCell}>
+          <td colSpan={5} className={s.expandedCell}>
             {expandedLoading ? (
-              <div className={s.loadingDetail}>იტვირთება...</div>
+              <div className={s.loadingDetail}>
+                <CmsSkeleton count={3} width="80%" height={14} gap="0.6rem" />
+              </div>
             ) : (
               <div className={s.detail}>
                 <div className={s.detailGrid}>

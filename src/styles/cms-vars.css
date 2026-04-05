@@ -1,0 +1,46 @@
+/* ═══════════════════════════════════════════════════════
+   DIMENSION Design System — CMS Admin Tokens
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Background ── */
+  --cms-bg:      #06060b;
+  --cms-bg-2:    #0a0a14;
+  --cms-bg-3:    #0e0e1a;
+  --cms-surface: rgba(8, 8, 16, 0.82);
+  --cms-glass:   rgba(8, 8, 15, 0.92);
+
+  /* ── Text ── */
+  --cms-tx:      #eaeaff;
+  --cms-tx-2:    #8a8aad;
+  --cms-tx-3:    #4a4a6a;
+
+  /* ── Accent ── */
+  --cms-blue:    #4f6ef7;
+  --cms-violet:  #8b5cf6;
+  --cms-cyan:    #06d6a0;
+  --cms-gold:    #f7c34f;
+  --cms-red:     #f44;
+
+  /* ── Border ── */
+  --cms-brd:     rgba(148, 163, 255, 0.06);
+  --cms-brd-2:   rgba(148, 163, 255, 0.12);
+
+  /* ── Radius ── */
+  --cms-radius:     12px;
+  --cms-radius-sm:  8px;
+  --cms-radius-lg:  20px;
+  --cms-radius-xl:  24px;
+
+  /* ── Transitions ── */
+  --cms-ease:       cubic-bezier(0.22, 1, 0.36, 1);
+  --cms-duration:   0.25s;
+
+  /* ── Sidebar ── */
+  --cms-sidebar-w:  240px;
+
+  /* ── Shadows ── */
+  --cms-shadow:     0 4px 24px rgba(0, 0, 0, 0.3);
+  --cms-glow-blue:  0 0 12px rgba(79, 110, 247, 0.4);
+  --cms-glow-gold:  0 0 10px rgba(247, 195, 79, 0.5);
+}

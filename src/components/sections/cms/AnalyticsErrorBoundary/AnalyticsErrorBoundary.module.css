@@ -1,0 +1,55 @@
+@import "../../../../styles/cms-vars.css";
+
+.wrap {
+  background: var(--cms-surface);
+  border: 1px solid rgba(255, 68, 68, 0.15);
+  border-radius: var(--cms-radius);
+  padding: 1.2rem;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.icon {
+  font-size: 1.5rem;
+  color: var(--cms-gold);
+}
+
+.text {
+  font-size: 0.82rem;
+  color: var(--cms-tx-2);
+  margin: 0;
+}
+
+.text strong {
+  color: var(--cms-tx);
+}
+
+.detail {
+  font-size: 0.7rem;
+  color: var(--cms-tx-3);
+  margin: 0;
+}
+
+.retry {
+  margin-top: 0.3rem;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid var(--cms-brd-2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cms-blue);
+  cursor: pointer;
+  transition: all var(--cms-duration) var(--cms-ease);
+}
+
+.retry:hover {
+  background: rgba(79, 110, 247, 0.1);
+  border-color: var(--cms-blue);
+}

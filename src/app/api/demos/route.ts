@@ -38,3 +38,58 @@ export async function GET(request: NextRequest) {
 
   return Response.json({ data, total: count, page, per_page });
 }
+
+export async function DELETE(request: NextRequest) {
+  const admin = await verifyAdmin();
+  if (!admin) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const body = await request.json();
+  const ids: string[] = body.ids;
+
+  if (!Array.isArray(ids) || ids.length === 0 || ids.length > 200) {
+    return Response.json({ error: "ids must be an array (1-200)" }, { status: 400 });
+  }
+
+  const supabase = createServiceRoleClient();
+
+  // Get demos with company_id for cleanup
+  const { data: demos } = await supabase
+    .from("demos")
+    .select("id, hash, company_id")
+    .in("id", ids);
+
+  if (demos && demos.length > 0) {
+    // Delete storage files
+    const paths = demos.map((d) => `${d.hash}.html`);
+    await supabase.storage.from("demo-snapshots").remove(paths);
+
+    // Reset company status & last_contacted_at for companies
+    // that have no other remaining demos
+    const companyIds = [...new Set(demos.map((d) => d.company_id))];
+    for (const companyId of companyIds) {
+      const { count } = await supabase
+        .from("demos")
+        .select("id", { count: "exact", head: true })
+        .eq("company_id", companyId)
+        .not("id", "in", `(${ids.join(",")})`);
+
+      if (count === 0) {
+        await supabase
+          .from("companies")
+          .update({ status: "new", last_contacted_at: null })
+          .eq("id", companyId);
+      }
+    }
+  }
+
+  // Delete demo records
+  const { error } = await supabase.from("demos").delete().in("id", ids);
+
+  if (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+
+  return Response.json({ deleted: ids.length });
+}

@@ -47,10 +47,10 @@ export async function POST(request: NextRequest) {
     .update({ status: "form_submitted" })
     .eq("id", demoId);
 
-  // Update company status to interested
+  // Update company status to engaged (form submitted = high engagement)
   await supabase
     .from("companies")
-    .update({ status: "interested" })
+    .update({ status: "engaged" })
     .eq("id", demo.company_id);
 
   return Response.json({ success: true }, { status: 200 });

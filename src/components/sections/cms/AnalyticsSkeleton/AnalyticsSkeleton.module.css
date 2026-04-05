@@ -1,0 +1,253 @@
+@import "../../../../styles/cms-vars.css";
+
+/* ── Pulse animation ── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.pulse {
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 255, 0.04) 25%,
+    rgba(148, 163, 255, 0.08) 50%,
+    rgba(148, 163, 255, 0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease infinite;
+  border-radius: var(--cms-radius-sm);
+}
+
+/* ── KPI Grid ── */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.kpiCard {
+  background: var(--cms-surface);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  padding: 1rem 1.2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpiCard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cms-blue), var(--cms-violet));
+  opacity: 0.2;
+}
+
+.kpiHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+
+.labelBar {
+  width: 70%;
+  height: 10px;
+}
+
+.valueBar {
+  width: 50%;
+  height: 24px;
+  margin-bottom: 0.3rem;
+}
+
+.trendBar {
+  width: 35%;
+  height: 12px;
+}
+
+/* ── Chart ── */
+.chartWrap {
+  background: var(--cms-surface);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  padding: 1rem 1.2rem;
+}
+
+.chartHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.titleBar {
+  width: 120px;
+  height: 16px;
+  margin-bottom: 0.8rem;
+}
+
+.toggleRow {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.togglePill {
+  width: 60px;
+  height: 24px;
+  border-radius: 999px;
+}
+
+.chartBody {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 300px;
+  padding-top: 1rem;
+}
+
+.chartBar {
+  flex: 1;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(
+    90deg,
+    rgba(148, 163, 255, 0.04) 25%,
+    rgba(148, 163, 255, 0.08) 50%,
+    rgba(148, 163, 255, 0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease infinite;
+}
+
+/* ── Card (generic) ── */
+.card {
+  background: var(--cms-surface);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  padding: 1rem 1.2rem;
+}
+
+.cardRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.rowLabel {
+  width: 35%;
+  height: 12px;
+}
+
+.rowBar {
+  flex: 1;
+  height: 8px;
+}
+
+.rowValue {
+  width: 40px;
+  height: 14px;
+}
+
+.rankDot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+
+/* ── Breakdown ── */
+.breakdownRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.breakdownIcon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.breakdownLabel {
+  width: 80px;
+  height: 12px;
+}
+
+.breakdownBar {
+  flex: 1;
+  height: 6px;
+}
+
+/* ── Behavioral grid ── */
+.behavioralGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .behavioralGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Table ── */
+.tableWrap {
+  width: 100%;
+}
+
+.tableFilterRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.searchBar {
+  width: 160px;
+  height: 28px;
+  margin-left: auto;
+  border-radius: var(--cms-radius-sm);
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 30px 1fr 50px 60px 60px 80px 70px;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--cms-brd-2);
+}
+
+.thCell {
+  height: 10px;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 30px 1fr 50px 60px 60px 80px 70px;
+  gap: 0.5rem;
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--cms-brd);
+}
+
+.tdCell {
+  height: 14px;
+}

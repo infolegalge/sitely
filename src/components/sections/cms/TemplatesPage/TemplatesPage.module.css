@@ -1,9 +1,30 @@
+@import "../../../../styles/cms-vars.css";
+
 .page {
   max-width: 1400px;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
 .title {
-  margin: 0 0 1rem;
+  margin: 0;
   font-size: clamp(1.3rem, 3vw, 1.8rem);
   font-weight: 600;
+  color: var(--cms-tx);
+}
+
+.countBadge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--cms-tx-3);
+  background: var(--cms-bg-3);
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--cms-brd-2);
 }

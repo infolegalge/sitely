@@ -25,6 +25,8 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
+  // Use getUser() instead of getSession() — getSession() trusts the JWT
+  // which may be expired or tampered. getUser() validates against Supabase.
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -33,18 +35,32 @@ export async function updateSession(request: NextRequest) {
   const isSecureRoute = pathname.startsWith("/secure-access");
   const isLoginPage = pathname === "/secure-access/login";
 
-  // Not authenticated and trying to access protected CMS routes
+  // Not authenticated — block all secure routes except login
   if (!user && isSecureRoute && !isLoginPage) {
     const url = request.nextUrl.clone();
     url.pathname = "/secure-access/login";
     return NextResponse.redirect(url);
   }
 
-  // Already authenticated and on login page — redirect to dashboard
+  // Authenticated but NOT super_admin via app_metadata — sign out and block
+  // app_metadata cannot be modified by the user (unlike user_metadata)
+  if (user && isSecureRoute && !isLoginPage) {
+    const role = user.app_metadata?.role;
+    if (role !== "super_admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/secure-access/login";
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // Already authenticated admin on login page — redirect to dashboard
   if (user && isLoginPage) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/secure-access/dashboard";
-    return NextResponse.redirect(url);
+    const role = user.app_metadata?.role;
+    if (role === "super_admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/secure-access/dashboard";
+      return NextResponse.redirect(url);
+    }
   }
 
   return supabaseResponse;

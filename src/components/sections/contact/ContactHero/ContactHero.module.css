@@ -1,7 +1,10 @@
 .page {
+  position: relative;
+  z-index: 1;
   min-height: 100vh;
   padding-top: clamp(80px, 15vh, 120px);
   padding-inline: clamp(16px, 5vw, 24px);
+  padding-bottom: 80px;
 }
 
 .title {
@@ -9,4 +12,11 @@
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 700;
   text-align: center;
+}
+
+.subtitle {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 1rem;
+  margin: 12px 0 40px;
 }

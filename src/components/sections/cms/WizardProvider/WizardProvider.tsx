@@ -34,6 +34,16 @@ interface GeneratedDemo {
   url: string;
 }
 
+interface OfferDraft {
+  package_id?: string;
+  price: number;
+  currency: string;
+  title: string;
+  included: string[];
+  excluded: string[];
+  notes: string;
+}
+
 interface WizardContextValue {
   step: number;
   setStep: (s: number) => void;
@@ -64,10 +74,16 @@ interface WizardContextValue {
   setPreviewCompanyId: (id: string | null) => void;
   excludeCompany: (id: string) => void;
 
-  // Step 4: Generate
+  // Step 4: Offer & Email
+  offerDraft: OfferDraft | null;
+  setOfferDraft: (o: OfferDraft | null) => void;
+  customEmailText: string;
+  setCustomEmailText: (t: string) => void;
+
+  // Step 5: Generate
   generating: boolean;
   generated: GeneratedDemo[];
-  generate: () => Promise<void>;
+  generate: (overrides?: { offer?: OfferDraft | null; emailText?: string }) => Promise<void>;
 }
 
 interface CompanyFilters {
@@ -118,7 +134,11 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   // Step 3
   const [previewCompanyId, setPreviewCompanyId] = useState<string | null>(null);
 
-  // Step 4
+  // Step 4: Offer & Email
+  const [offerDraft, setOfferDraft] = useState<OfferDraft | null>(null);
+  const [customEmailText, setCustomEmailText] = useState("");
+
+  // Step 5
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState<GeneratedDemo[]>([]);
 
@@ -214,28 +234,35 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const generate = useCallback(async () => {
+  const generate = useCallback(async (overrides?: { offer?: OfferDraft | null; emailText?: string }) => {
     if (!selectedTemplate || selectedIds.size === 0) return;
     setGenerating(true);
     try {
+      const finalOffer = overrides ? overrides.offer : offerDraft;
+      const finalEmail = overrides?.emailText ?? customEmailText;
+
+      const payload: Record<string, unknown> = {
+        template_id: selectedTemplate.id,
+        company_ids: Array.from(selectedIds),
+      };
+      if (finalOffer) payload.offer_draft = finalOffer;
+      if (finalEmail?.trim()) payload.custom_email_text = finalEmail.trim();
+
       const res = await fetch("/api/demos/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          template_id: selectedTemplate.id,
-          company_ids: Array.from(selectedIds),
-        }),
+        body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("generate failed");
       const result = await res.json();
       setGenerated(result.demos || []);
-      setStep(4);
+      setStep(5);
     } catch {
-      /* stay on step 3 */
+      /* stay on step 4 */
     } finally {
       setGenerating(false);
     }
-  }, [selectedTemplate, selectedIds]);
+  }, [selectedTemplate, selectedIds, offerDraft, customEmailText]);
 
   return (
     <WizardContext.Provider
@@ -262,6 +289,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         previewCompanyId,
         setPreviewCompanyId,
         excludeCompany,
+        offerDraft,
+        setOfferDraft,
+        customEmailText,
+        setCustomEmailText,
         generating,
         generated,
         generate,

@@ -1,0 +1,83 @@
+@import "../../../../styles/cms-vars.css";
+
+.wrap {
+  background: var(--cms-surface);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  padding: 1rem 1.2rem;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.8rem 0;
+  color: var(--cms-tx);
+}
+
+.empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--cms-tx-3);
+  font-size: 0.82rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0.8rem 0.6rem;
+  background: var(--cms-bg-2);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius-sm);
+  position: relative;
+}
+
+.icon {
+  font-size: 1.4rem;
+}
+
+.label {
+  font-size: 0.72rem;
+  color: var(--cms-tx-2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pct {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--cms-tx);
+}
+
+.count {
+  font-size: 0.68rem;
+  color: var(--cms-tx-3);
+}
+
+.ringWrap {
+  width: 48px;
+  height: 48px;
+  margin-top: 4px;
+}
+
+.ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ringBg {
+  stroke: var(--cms-brd-2);
+}
+
+.ringFg {
+  stroke-linecap: round;
+  transition: stroke-dasharray var(--cms-duration) var(--cms-ease);
+}

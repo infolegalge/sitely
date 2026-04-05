@@ -10,5 +10,6 @@
       }
     }
   },
-  "terminal.integrated.defaultProfile.windows": "PowerShell"
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "css.lint.unknownProperties": "ignore"
 }

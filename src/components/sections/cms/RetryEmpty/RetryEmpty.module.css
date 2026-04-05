@@ -1,0 +1,32 @@
+@import "../../../../styles/cms-vars.css";
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+}
+
+.text {
+  font-size: 0.78rem;
+  color: var(--cms-tx-3);
+  margin: 0;
+}
+
+.btn {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid var(--cms-brd-2);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cms-tx-2);
+  cursor: pointer;
+  transition: all var(--cms-duration) var(--cms-ease);
+}
+
+.btn:hover {
+  border-color: var(--cms-blue);
+  color: var(--cms-blue);
+}

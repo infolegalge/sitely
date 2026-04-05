@@ -1,0 +1,136 @@
+@import "../../../../styles/cms-vars.css";
+
+.wrap {
+  background: var(--cms-surface);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  padding: 1rem 1.2rem;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.4rem 0;
+  color: var(--cms-tx);
+}
+
+.empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--cms-tx-3);
+  font-size: 0.82rem;
+}
+
+.section {
+  margin-top: 0.6rem;
+}
+
+.subtitle {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--cms-tx-2);
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── Referrer bar list ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 120px 1fr 40px;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 500px) {
+  .row {
+    grid-template-columns: 80px 1fr 36px;
+  }
+}
+
+.source {
+  font-size: 0.76rem;
+  color: var(--cms-tx);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barWrap {
+  height: 5px;
+  background: var(--cms-brd-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  background: var(--cms-violet);
+  border-radius: 3px;
+  transition: width var(--cms-duration) var(--cms-ease);
+  min-width: 2px;
+}
+
+.count {
+  font-size: 0.72rem;
+  color: var(--cms-tx-2);
+  text-align: right;
+  font-weight: 600;
+}
+
+/* ── UTM table ── */
+.tableWrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 0.72rem;
+  min-width: 300px;
+}
+
+.thead {
+  color: var(--cms-tx-3);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.64rem;
+}
+
+.thead th {
+  padding: 4px 6px;
+  text-align: left;
+  border-bottom: 1px solid var(--cms-brd);
+  font-weight: 500;
+}
+
+.trow td {
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--cms-brd);
+}
+
+.trow:last-child td {
+  border-bottom: none;
+}
+
+.tcell {
+  color: var(--cms-tx);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tcellNum {
+  color: var(--cms-tx);
+  font-weight: 600;
+  text-align: right;
+}

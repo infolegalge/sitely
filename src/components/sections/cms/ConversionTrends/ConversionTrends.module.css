@@ -1,0 +1,64 @@
+.wrap {
+  background: var(--cms-surface);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  padding: 1.25rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cms-tx-1);
+  margin: 0 0 1rem;
+}
+
+.empty {
+  color: var(--cms-tx-3);
+  font-size: 0.85rem;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.chartWrap {
+  width: 100%;
+  min-height: 280px;
+}
+
+/* Tooltip */
+.tooltip {
+  background: var(--cms-bg);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.tooltipDate {
+  font-weight: 600;
+  color: var(--cms-tx-1);
+  margin-bottom: 0.35rem;
+}
+
+.tooltipRow {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0;
+}
+
+.tooltipDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tooltipLabel {
+  color: var(--cms-tx-2);
+  flex: 1;
+}
+
+.tooltipVal {
+  font-weight: 600;
+  color: var(--cms-tx-1);
+}

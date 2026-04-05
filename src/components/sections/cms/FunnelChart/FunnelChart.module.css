@@ -1,0 +1,132 @@
+@import "../../../../styles/cms-vars.css";
+
+.wrap {
+  background: var(--cms-surface);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  padding: 1rem 1.2rem;
+}
+
+.emptyState {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--cms-tx-3);
+  font-size: 0.82rem;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.8rem 0;
+  color: var(--cms-tx);
+}
+
+.funnel {
+  display: flex;
+  flex-direction: column;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 100px 1fr 50px;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: var(--cms-tx-2);
+  text-align: right;
+}
+
+.barTrack {
+  height: 24px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.barFillPrev {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--w, 0%);
+  height: 100%;
+  background: linear-gradient(90deg, rgba(139, 92, 246, 0.25), rgba(139, 92, 246, 0.12));
+  border-radius: 6px;
+  transition: width 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.barFill {
+  width: var(--w, 0%);
+  height: 100%;
+  background: linear-gradient(90deg, var(--cms-blue), #6b8cff);
+  border-radius: 6px;
+  transition: width 600ms cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+}
+
+.value {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--cms-tx);
+}
+
+.convRow {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1rem 0 0.1rem 100px;
+  margin-left: 0.5rem;
+}
+
+.convArrow {
+  font-size: 0.6rem;
+  color: var(--cms-tx-3);
+}
+
+.convRate {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--cms-cyan);
+}
+
+.prevVal {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--cms-tx-3);
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--cms-brd);
+  font-size: 0.68rem;
+  color: var(--cms-tx-3);
+}
+
+.legendCurrent {
+  display: inline-block;
+  width: 12px;
+  height: 8px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--cms-blue), #6b8cff);
+}
+
+.legendPrev {
+  display: inline-block;
+  width: 12px;
+  height: 8px;
+  border-radius: 2px;
+  background: rgba(139, 92, 246, 0.3);
+  margin-left: 0.5rem;
+}

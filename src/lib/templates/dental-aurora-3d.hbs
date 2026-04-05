@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
 <title>{{default company_name "სტომატოლოგიური კლინიკა"}} — {{default category "სტომატოლოგია"}}</title>
 <meta name="description" content="{{default description "თანამედროვე სტომატოლოგიური კლინიკა — პროფესიონალური მომსახურება, უახლესი ტექნოლოგიები, კომფორტული გარემო"}}">
 {{#if (gt (len images) 0)}}<meta property="og:image" content="{{images.[0]}}">{{/if}}
@@ -733,7 +734,7 @@ h1,h2,h3,h4{font-family:'Sora','Noto Sans Georgian',sans-serif;font-weight:700;l
       </div>
       <div class="contact-map reveal-el">
         {{#if map_embed_url}}
-        <iframe src="{{map_embed_url}}" width="100%" height="100%" style="border:0" allowfullscreen loading="lazy" title="რუკა"></iframe>
+        <iframe src="{{map_embed_url}}" width="100%" height="100%" style="border:0" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="რუკა"></iframe>
         {{else}}
         <div class="map-placeholder">
           <span>📍</span>

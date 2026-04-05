@@ -26,9 +26,15 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
   const rafCallbackRef = useRef<((time: number) => void) | null>(null);
   const pathname = usePathname();
 
+  const isCmsRoute =
+    pathname.startsWith("/secure-access") || pathname.startsWith("/portal");
+
   useEffect(() => {
     // Skip Lenis on touch/mobile — native inertial scrolling is better
     if (isTouchDevice()) return;
+    // Skip Lenis on CMS/portal routes — they use overflow:auto on a child div,
+    // not window scroll. Lenis intercepts wheel events globally and blocks scrolling.
+    if (isCmsRoute) return;
 
     const instance = new Lenis({
       duration: 1.2,
@@ -53,7 +59,7 @@ export default function LenisProvider({ children }: { children: ReactNode }) {
       setLenis(null);
       rafCallbackRef.current = null;
     };
-  }, []);
+  }, [isCmsRoute]);
 
   // Route change: scroll to top after exit, refresh after full transition
   const prevPathRef = useRef(pathname);

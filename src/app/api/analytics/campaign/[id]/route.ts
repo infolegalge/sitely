@@ -1,9 +1,13 @@
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { verifyAdmin } from "@/lib/auth";
+import { cacheGet, cacheSet, cacheKey } from "@/lib/api-cache";
 import { NextRequest } from "next/server";
+import { z } from "zod";
+
+const UUIDParam = z.string().uuid();
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const admin = await verifyAdmin();
@@ -11,7 +15,17 @@ export async function GET(
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await params;
+  const { id: rawId } = await params;
+  const parsed = UUIDParam.safeParse(rawId);
+  if (!parsed.success) {
+    return Response.json({ error: "Invalid campaign ID" }, { status: 400 });
+  }
+  const id = parsed.data;
+
+  const key = cacheKey(request);
+  const cached = cacheGet(key);
+  if (cached) return Response.json(cached);
+
   const supabase = createServiceRoleClient();
 
   const { data: campaign, error: campaignErr } = await supabase
@@ -24,41 +38,17 @@ export async function GET(
     return Response.json({ error: "Campaign not found" }, { status: 404 });
   }
 
-  const { data: demos } = await supabase
-    .from("demos")
-    .select("id, status, view_count, first_viewed_at")
-    .eq("campaign_id", id);
+  // Single RPC call replaces N+1 pattern (was fetching all events into memory)
+  const { data: stats, error: statsErr } = await supabase.rpc("get_campaign_stats", {
+    p_campaign_id: id,
+  });
 
-  const demosList = demos ?? [];
-  const totalSent = demosList.length;
-  const totalViewed = demosList.filter((d) => (d.view_count ?? 0) > 0).length;
-
-  const demoIds = demosList.map((d) => d.id);
-
-  let eventCounts: Record<string, number> = {};
-  if (demoIds.length > 0) {
-    const { data: events } = await supabase
-      .from("demo_events")
-      .select("event_type")
-      .in("demo_id", demoIds);
-
-    for (const e of events ?? []) {
-      eventCounts[e.event_type] = (eventCounts[e.event_type] ?? 0) + 1;
-    }
+  if (statsErr) {
+    console.error("get_campaign_stats:", statsErr);
+    return Response.json({ error: "Failed to fetch stats" }, { status: 500 });
   }
 
-  return Response.json({
-    campaign,
-    stats: {
-      sent: totalSent,
-      viewed: totalViewed,
-      scrollComplete: eventCounts["scroll_100"] ?? 0,
-      ctaClicks:
-        (eventCounts["click_cta"] ?? 0) +
-        (eventCounts["click_phone"] ?? 0) +
-        (eventCounts["click_email"] ?? 0),
-      formSubmits: eventCounts["form_submit"] ?? 0,
-    },
-    eventCounts,
-  });
+  const result = { campaign, ...stats };
+  cacheSet(key, result, 15_000);
+  return Response.json(result);
 }

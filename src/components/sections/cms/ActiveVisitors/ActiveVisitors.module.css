@@ -1,0 +1,50 @@
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  background: rgba(6, 214, 160, 0.08);
+  border: 1px solid rgba(6, 214, 160, 0.2);
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.pulseRing {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #06d6a0;
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(6, 214, 160, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(6, 214, 160, 0);
+  }
+}
+
+.count {
+  font-weight: 700;
+  color: #06d6a0;
+  font-size: 0.9rem;
+}
+
+.label {
+  color: var(--cms-tx-2);
+  font-weight: 500;
+}
+
+.demos {
+  color: var(--cms-tx-3);
+  font-size: 0.7rem;
+  padding-left: 0.25rem;
+  border-left: 1px solid var(--cms-brd);
+}

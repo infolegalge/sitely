@@ -1,0 +1,18 @@
+.layout {
+  display: flex;
+  height: 100%;
+  margin: calc(-1 * clamp(1rem, 3vw, 2rem));
+  overflow: hidden;
+}
+
+@media (max-width: 1023px) {
+  .layout {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 767px) {
+  .layout {
+    margin: calc(-1 * clamp(0.75rem, 2vw, 1rem));
+  }
+}

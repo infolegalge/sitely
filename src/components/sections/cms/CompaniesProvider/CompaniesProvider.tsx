@@ -8,6 +8,14 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData,
+} from "@tanstack/react-query";
+import { useSearchParams, useRouter } from "next/navigation";
+import { createBrowserClient } from "@supabase/ssr";
 
 interface Company {
   id: string;
@@ -84,6 +92,8 @@ const defaultFilters: Filters = {
   q: "",
 };
 
+const FILTER_KEYS = Object.keys(defaultFilters) as (keyof Filters)[];
+
 const CompaniesContext = createContext<CompaniesContextValue | null>(null);
 
 export function useCompanies() {
@@ -92,109 +102,122 @@ export function useCompanies() {
   return ctx;
 }
 
+async function fetchCompanies(
+  params: {
+    page: number;
+    limit: number;
+    sort: string;
+    order: string;
+    filters: Filters;
+  },
+  signal?: AbortSignal
+) {
+  const sp = new URLSearchParams();
+  sp.set("page", String(params.page));
+  sp.set("limit", String(params.limit));
+  sp.set("sort", params.sort);
+  sp.set("order", params.order);
+
+  for (const [key, val] of Object.entries(params.filters)) {
+    if (val) sp.set(key, val);
+  }
+
+  const res = await fetch(`/api/companies?${sp}`, { signal });
+  if (!res.ok) throw new Error("Failed to fetch companies");
+  return res.json();
+}
+
 export function CompaniesProvider({ children }: { children: ReactNode }) {
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [pagination, setPagination] = useState<Pagination>({
-    page: 1,
-    limit: 50,
-    total: 0,
-    totalPages: 0,
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  // Read initial state from URL
+  const filtersFromUrl: Filters = {
+    tier: searchParams.get("tier") || "",
+    status: searchParams.get("status") || "",
+    category: searchParams.get("category") || "",
+    source_category: searchParams.get("source_category") || "",
+    has_email: searchParams.get("has_email") || "",
+    has_website: searchParams.get("has_website") || "",
+    rating_min: searchParams.get("rating_min") || "",
+    rating_max: searchParams.get("rating_max") || "",
+    q: searchParams.get("q") || "",
+  };
+
+  const [filters, setFiltersState] = useState<Filters>(filtersFromUrl);
+  const [page, setPageState] = useState(
+    Number(searchParams.get("page")) || 1
+  );
+  const [sort, setSortState] = useState<{
+    column: string;
+    order: "asc" | "desc";
+  }>({
+    column: searchParams.get("sort") || "score",
+    order: (searchParams.get("order") as "asc" | "desc") || "desc",
   });
-  const [filters, setFilters] = useState<Filters>(defaultFilters);
-  const [sort, setSortState] = useState<{ column: string; order: "asc" | "desc" }>({ column: "score", order: "desc" });
-  const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [expandedCompany, setExpandedCompany] = useState<Company | null>(null);
-  const [expandedLoading, setExpandedLoading] = useState(false);
-  const [categories, setCategories] = useState<string[]>([]);
-  const [sourceCategories, setSourceCategories] = useState<string[]>([]);
-  const [refreshFlag, setRefreshFlag] = useState(0);
+  const limit = 50;
 
-  // Load categories once
-  useEffect(() => {
-    fetch("/api/companies/categories")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.categories) setCategories(data.categories);
-        if (data.source_categories) setSourceCategories(data.source_categories);
-      })
-      .catch(() => {});
-  }, []);
+  // Sync state → URL
+  const syncUrl = useCallback(
+    (f: Filters, p: number, s: { column: string; order: string }) => {
+      const sp = new URLSearchParams();
+      for (const key of FILTER_KEYS) {
+        if (f[key]) sp.set(key, f[key]);
+      }
+      if (p > 1) sp.set("page", String(p));
+      if (s.column !== "score") sp.set("sort", s.column);
+      if (s.order !== "desc") sp.set("order", s.order);
 
-  // Fetch companies
-  useEffect(() => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    params.set("page", String(pagination.page));
-    params.set("limit", String(pagination.limit));
-    params.set("sort", sort.column);
-    params.set("order", sort.order);
+      const qs = sp.toString();
+      router.replace(qs ? `?${qs}` : "?", { scroll: false });
+    },
+    [router]
+  );
 
-    for (const [key, val] of Object.entries(filters)) {
-      if (val) params.set(key, val);
-    }
+  // React Query — companies list
+  const companiesQuery = useQuery({
+    queryKey: ["companies", { page, limit, sort, filters }],
+    queryFn: ({ signal }) =>
+      fetchCompanies({ page, limit, sort: sort.column, order: sort.order, filters }, signal),
+    placeholderData: keepPreviousData,
+  });
 
-    fetch(`/api/companies?${params}`)
-      .then((r) => r.json())
-      .then((res) => {
-        if (res.data) {
-          setCompanies(res.data);
-          setPagination((prev) => ({
-            ...prev,
-            total: res.pagination.total,
-            totalPages: res.pagination.totalPages,
-          }));
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [pagination.page, pagination.limit, sort, filters, refreshFlag]);
+  // React Query — categories (loaded once)
+  const categoriesQuery = useQuery({
+    queryKey: ["companies-categories"],
+    queryFn: async () => {
+      const res = await fetch("/api/companies/categories");
+      if (!res.ok) throw new Error("Failed");
+      return res.json();
+    },
+    staleTime: Infinity,
+  });
 
-  // Fetch expanded company detail
-  useEffect(() => {
-    if (!expandedId) {
-      setExpandedCompany(null);
-      return;
-    }
-    setExpandedLoading(true);
-    fetch(`/api/companies/${expandedId}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.id) setExpandedCompany(data);
-      })
-      .catch(() => {})
-      .finally(() => setExpandedLoading(false));
-  }, [expandedId]);
+  // React Query — expanded company detail
+  const expandedQuery = useQuery({
+    queryKey: ["company-detail", expandedId],
+    queryFn: async () => {
+      if (!expandedId) return null;
+      const res = await fetch(`/api/companies/${expandedId}`);
+      if (!res.ok) throw new Error("Failed");
+      return res.json();
+    },
+    enabled: !!expandedId,
+  });
 
-  const setFilter = useCallback((key: keyof Filters, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-    setPagination((prev) => ({ ...prev, page: 1 }));
-  }, []);
-
-  const resetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-    setPagination((prev) => ({ ...prev, page: 1 }));
-  }, []);
-
-  const setPage = useCallback((page: number) => {
-    setPagination((prev) => ({ ...prev, page }));
-    setExpandedId(null);
-  }, []);
-
-  const setSort = useCallback((column: string) => {
-    setSortState((prev) => ({
-      column,
-      order: prev.column === column && prev.order === "desc" ? "asc" : "desc",
-    }));
-    setPagination((prev) => ({ ...prev, page: 1 }));
-  }, []);
-
-  const toggleExpanded = useCallback((id: string) => {
-    setExpandedId((prev) => (prev === id ? null : id));
-  }, []);
-
-  const updateCompanyStatus = useCallback(
-    async (id: string, status: string, notes?: string) => {
+  // React Query — status update mutation
+  const statusMutation = useMutation({
+    mutationFn: async ({
+      id,
+      status,
+      notes,
+    }: {
+      id: string;
+      status: string;
+      notes?: string;
+    }) => {
       const body: Record<string, string> = { status };
       if (notes !== undefined) body.notes = notes;
 
@@ -203,18 +226,114 @@ export function CompaniesProvider({ children }: { children: ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (res.ok) {
-        const updated = await res.json();
-        setCompanies((prev) =>
-          prev.map((c) => (c.id === id ? { ...c, ...updated } : c))
-        );
-        if (expandedId === id) setExpandedCompany(updated);
+      if (!res.ok) throw new Error("Failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
+      if (expandedId) {
+        queryClient.invalidateQueries({
+          queryKey: ["company-detail", expandedId],
+        });
       }
     },
-    [expandedId]
+  });
+
+  // Supabase Realtime — live company updates
+  useEffect(() => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+    );
+
+    const channel = supabase
+      .channel("company-updates")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "companies" },
+        () => {
+          queryClient.invalidateQueries({ queryKey: ["companies"] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
+
+  const companies = companiesQuery.data?.data || [];
+  const paginationData = companiesQuery.data?.pagination || {
+    total: 0,
+    totalPages: 0,
+  };
+
+  const pagination: Pagination = {
+    page,
+    limit,
+    total: paginationData.total,
+    totalPages: paginationData.totalPages,
+  };
+
+  const setFilter = useCallback(
+    (key: keyof Filters, value: string) => {
+      setFiltersState((prev) => {
+        const next = { ...prev, [key]: value };
+        setPageState(1);
+        syncUrl(next, 1, sort);
+        return next;
+      });
+    },
+    [sort, syncUrl]
   );
 
-  const refresh = useCallback(() => setRefreshFlag((f) => f + 1), []);
+  const resetFilters = useCallback(() => {
+    setFiltersState(defaultFilters);
+    setPageState(1);
+    syncUrl(defaultFilters, 1, sort);
+  }, [sort, syncUrl]);
+
+  const setPage = useCallback(
+    (p: number) => {
+      setPageState(p);
+      setExpandedId(null);
+      syncUrl(filters, p, sort);
+    },
+    [filters, sort, syncUrl]
+  );
+
+  const setSort = useCallback(
+    (column: string) => {
+      setSortState((prev) => {
+        const next = {
+          column,
+          order:
+            prev.column === column && prev.order === "desc"
+              ? ("asc" as const)
+              : ("desc" as const),
+        };
+        setPageState(1);
+        syncUrl(filters, 1, next);
+        return next;
+      });
+    },
+    [filters, syncUrl]
+  );
+
+  const toggleExpanded = useCallback((id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+  }, []);
+
+  const updateCompanyStatus = useCallback(
+    async (id: string, status: string, notes?: string) => {
+      await statusMutation.mutateAsync({ id, status, notes });
+    },
+    [statusMutation]
+  );
+
+  const refresh = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: ["companies"] });
+  }, [queryClient]);
 
   return (
     <CompaniesContext.Provider
@@ -223,12 +342,12 @@ export function CompaniesProvider({ children }: { children: ReactNode }) {
         pagination,
         filters,
         sort,
-        loading,
+        loading: companiesQuery.isLoading,
         expandedId,
-        expandedCompany,
-        expandedLoading,
-        categories,
-        sourceCategories,
+        expandedCompany: expandedQuery.data || null,
+        expandedLoading: expandedQuery.isLoading,
+        categories: categoriesQuery.data?.categories || [],
+        sourceCategories: categoriesQuery.data?.source_categories || [],
         setFilter,
         resetFilters,
         setPage,

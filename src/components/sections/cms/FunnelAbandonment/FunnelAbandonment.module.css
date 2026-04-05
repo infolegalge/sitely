@@ -1,0 +1,138 @@
+@import "../../../../styles/cms-vars.css";
+
+.wrap {
+  background: var(--cms-surface);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius);
+  padding: 1rem 1.2rem;
+}
+
+.title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0 0 0.8rem 0;
+  color: var(--cms-tx);
+}
+
+.empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--cms-tx-3);
+  font-size: 0.82rem;
+}
+
+/* ── Funnel steps ── */
+.funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+}
+
+.stepIcon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.stepLabel {
+  color: var(--cms-tx-2);
+  flex: 1;
+}
+
+.stepValue {
+  font-weight: 700;
+  color: var(--cms-tx);
+  min-width: 36px;
+  text-align: right;
+}
+
+.convRate {
+  font-size: 0.64rem;
+  color: var(--cms-cyan);
+  min-width: 40px;
+  text-align: right;
+}
+
+.stepBarWrap {
+  height: 6px;
+  background: var(--cms-brd-2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.stepBar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cms-blue), var(--cms-violet));
+  border-radius: 3px;
+  transition: width var(--cms-duration) var(--cms-ease);
+  min-width: 2px;
+}
+
+/* ── Drop-off cards ── */
+.dropoffs {
+  margin-top: 1rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--cms-brd);
+}
+
+.dropoffTitle {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--cms-tx-3);
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dropoffGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.dropoffCard {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  background: var(--cms-bg-2);
+  border: 1px solid var(--cms-brd);
+  border-radius: var(--cms-radius-sm);
+}
+
+.dropoffLabel {
+  font-size: 0.64rem;
+  color: var(--cms-tx-3);
+}
+
+.dropoffValue {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cms-gold);
+}
+
+.dropoffValueHigh {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cms-red);
+}
+
+/* ── Average session ── */
+.avgSession {
+  margin-top: 0.8rem;
+  font-size: 0.72rem;
+  color: var(--cms-tx-3);
+  text-align: center;
+}

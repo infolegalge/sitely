@@ -1,6 +1,9 @@
 import { createServiceRoleClient } from "@/lib/supabase/server";
 import { verifyAdmin } from "@/lib/auth";
 import { NextRequest } from "next/server";
+import { z } from "zod";
+
+const UUIDParam = z.string().uuid();
 
 export async function GET(
   _request: NextRequest,
@@ -11,7 +14,12 @@ export async function GET(
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await params;
+  const { id: rawId } = await params;
+  const parsed = UUIDParam.safeParse(rawId);
+  if (!parsed.success) {
+    return Response.json({ error: "Invalid demo ID" }, { status: 400 });
+  }
+  const id = parsed.data;
   const supabase = createServiceRoleClient();
 
   const { data: demo, error: demoErr } = await supabase

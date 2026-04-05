@@ -1,0 +1,75 @@
+@import "../../../../styles/cms-vars.css";
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.searchWrap {
+  position: relative;
+  flex: 1;
+  min-width: 180px;
+  max-width: 320px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cms-tx-3);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.42rem 0.6rem 0.42rem 2rem;
+  font-size: 0.78rem;
+  border-radius: var(--cms-radius-sm);
+  border: 1px solid var(--cms-brd-2);
+  background: var(--cms-bg-3);
+  color: var(--cms-tx);
+  transition: border-color var(--cms-duration) var(--cms-ease);
+}
+
+.searchInput::placeholder {
+  color: var(--cms-tx-3);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--cms-blue);
+}
+
+.sortWrap {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: auto;
+}
+
+.sortLabel {
+  font-size: 0.68rem;
+  color: var(--cms-tx-3);
+  white-space: nowrap;
+}
+
+.resetBtn {
+  font-size: 0.7rem;
+  color: var(--cms-tx-3);
+  background: none;
+  border: 1px solid var(--cms-brd-2);
+  border-radius: var(--cms-radius-sm);
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  transition: color var(--cms-duration) var(--cms-ease),
+              border-color var(--cms-duration) var(--cms-ease);
+}
+
+.resetBtn:hover {
+  color: var(--cms-tx);
+  border-color: var(--cms-blue);
+}
