@@ -11,10 +11,11 @@ import { createServiceRoleClient } from "@/lib/supabase/server";
  */
 
 // Map PostHog event names → demo_events event_type
+// Note: scroll_depth and active_time_milestone are handled dynamically below
 const EVENT_MAP: Record<string, string> = {
   $pageview: "page_open",
   $pageleave: "page_leave",
-  scroll_depth: "scroll_depth",
+  scroll_depth: "__scroll_dynamic__",
   section_viewed: "section_view",
   "3d_interaction": "interaction_3d",
   click_phone: "click_phone",
@@ -23,7 +24,7 @@ const EVENT_MAP: Record<string, string> = {
   click_sitely_link: "click_sitely",
   form_interaction_started: "form_start",
   form_abandoned: "form_abandon",
-  active_time_milestone: "active_time",
+  active_time_milestone: "__active_time_dynamic__",
   demo_session_summary: "page_leave",
   demo_opened_from_campaign: "page_open",
 };
@@ -31,17 +32,25 @@ const EVENT_MAP: Record<string, string> = {
 // Engagement score weights per event type
 const SCORE_WEIGHTS: Record<string, number> = {
   page_open: 1,
-  scroll_depth: 1,
-  section_view: 1,
-  click_cta: 5,
-  click_phone: 10,
-  click_email: 8,
+  scroll_25: 1,
+  scroll_50: 2,
+  scroll_75: 3,
+  scroll_100: 5,
+  section_view: 2,
+  click_cta: 20,
+  click_phone: 15,
+  click_email: 15,
   form_start: 3,
-  interaction_3d: 2,
+  form_submit: 50,
+  interaction_3d: 5,
   page_leave: 0,
   form_abandon: 0,
-  click_sitely: 2,
-  active_time: 1,
+  click_sitely: 10,
+  active_time_10s: 1,
+  active_time_30s: 2,
+  active_time_60s: 4,
+  active_time_180s: 8,
+  active_time_300s: 12,
 };
 
 export async function POST(request: NextRequest) {
@@ -96,9 +105,28 @@ export async function POST(request: NextRequest) {
   }
 
   // Only process events we care about
-  const mappedType = EVENT_MAP[eventName];
+  let mappedType = EVENT_MAP[eventName];
   if (!mappedType) {
     return NextResponse.json({ ok: true, skipped: true });
+  }
+
+  // Dynamic mapping: scroll_depth → scroll_25/50/75/100
+  if (mappedType === "__scroll_dynamic__") {
+    const depth = Number(properties.depth_percent) || 0;
+    if (depth >= 100) mappedType = "scroll_100";
+    else if (depth >= 75) mappedType = "scroll_75";
+    else if (depth >= 50) mappedType = "scroll_50";
+    else if (depth >= 25) mappedType = "scroll_25";
+    else return NextResponse.json({ ok: true, skipped: true });
+  }
+
+  // Dynamic mapping: active_time_milestone → active_time_10s/30s/60s/180s/300s
+  if (mappedType === "__active_time_dynamic__") {
+    const seconds = Number(properties.seconds) || 0;
+    const validMilestones = [300, 180, 60, 30, 10];
+    const milestone = validMilestones.find((m) => seconds >= m);
+    if (milestone) mappedType = `active_time_${milestone}s`;
+    else return NextResponse.json({ ok: true, skipped: true });
   }
 
   // Extract demo_id from registered properties
@@ -134,22 +162,41 @@ export async function POST(request: NextRequest) {
     (properties.distinct_id as string) ||
     null;
 
-  // Build extra JSONB — include useful PostHog properties
+  // Build extra JSONB — structure must match what dashboard SQL expects
   const extra: Record<string, unknown> = {};
   if (properties.active_seconds != null) extra.active_seconds = properties.active_seconds;
   if (properties.seconds != null) extra.milestone_seconds = properties.seconds;
-  if (properties.time_spent_seconds != null) extra.time_spent_seconds = properties.time_spent_seconds;
+  if (properties.time_spent_seconds != null) extra.duration_s = properties.time_spent_seconds;
   if (properties.href) extra.href = properties.href;
   if (properties.text) extra.text = properties.text;
   if (properties.field) extra.field = properties.field;
-  if (properties.$browser) extra.browser = properties.$browser;
-  if (properties.$os) extra.os = properties.$os;
-  if (properties.$device_type) extra.device_type = properties.$device_type;
+
+  // Device info — dashboard reads extra->'device'->>'device_type'
+  const deviceType = properties.$device_type as string | undefined;
+  const browser = properties.$browser as string | undefined;
+  const os = properties.$os as string | undefined;
+  if (deviceType || browser || os) {
+    extra.device = {
+      ...(deviceType ? { device_type: deviceType } : {}),
+      ...(browser ? { browser } : {}),
+      ...(os ? { os } : {}),
+    };
+  }
+
+  // UTM params — dashboard reads extra->'utm'->>'utm_source'
+  const utmSource = properties.utm_source as string | undefined;
+  const utmMedium = properties.utm_medium as string | undefined;
+  const utmCampaign = properties.utm_campaign as string | undefined;
+  if (utmSource || utmMedium || utmCampaign) {
+    extra.utm = {
+      ...(utmSource ? { utm_source: utmSource } : {}),
+      ...(utmMedium ? { utm_medium: utmMedium } : {}),
+      ...(utmCampaign ? { utm_campaign: utmCampaign } : {}),
+    };
+  }
+
   if (properties.$current_url) extra.current_url = properties.$current_url;
   if (properties.$referrer) extra.referrer_url = properties.$referrer;
-  if (properties.utm_source) extra.utm_source = properties.utm_source;
-  if (properties.utm_medium) extra.utm_medium = properties.utm_medium;
-  if (properties.utm_campaign) extra.utm_campaign = properties.utm_campaign;
 
   // Idempotency: use PostHog's uuid to prevent duplicates
   const idempotencyKey =
