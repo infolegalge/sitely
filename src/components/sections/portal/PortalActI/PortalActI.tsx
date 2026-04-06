@@ -5,6 +5,7 @@ import { usePortal } from "@/components/sections/portal/PortalProvider/PortalPro
 import type { TimelineStep } from "@/components/sections/portal/PortalProvider/PortalProvider";
 import PortalChat from "@/components/sections/portal/PortalChat/PortalChat";
 import OfferPanel from "@/components/sections/portal/OfferPanel/OfferPanel";
+import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import s from "./PortalActI.module.css";
 
 const PortalCanvas = lazy(() => import("@/components/portal/PortalCanvas/PortalCanvas"));
@@ -150,6 +151,17 @@ export default function PortalActI() {
   // When proposal_sent/accepted + demo exists → merge proposal+demo into one "offer" tab
   const showSplitView = hasProposal && !!project.demo_hash;
 
+  // Default to offer tab when split view is available
+  const [hasNavigated, setHasNavigated] = useState(false);
+  useEffect(() => {
+    if (showSplitView && !hasNavigated) setActiveNav("offer");
+  }, [showSplitView, hasNavigated]);
+
+  const handleNavClick = (key: NavKey) => {
+    setHasNavigated(true);
+    setActiveNav(key);
+  };
+
   const buildNav = (): NavItem[] => {
     if (showSplitView) {
       // Replace separate proposal & demo tabs with a single "offer" tab
@@ -240,7 +252,7 @@ export default function PortalActI() {
                 key={item.key}
                 type="button"
                 className={`${s.navItem} ${activeNav === item.key ? s.navItemActive : ""}`}
-                onClick={() => setActiveNav(item.key)}
+                onClick={() => handleNavClick(item.key)}
               >
                 <span className={s.navIcon} aria-hidden="true">{item.icon}</span>
                 <span className={s.navLabel}>{item.label}</span>
@@ -260,6 +272,17 @@ export default function PortalActI() {
               {company?.name || project.client_name}
             </span>
           </div>
+          <button
+            type="button"
+            className={s.logoutBtn}
+            onClick={async () => {
+              await createBrowserSupabaseClient().auth.signOut();
+              window.location.href = "/portal/login";
+            }}
+          >
+            <span aria-hidden="true">⏻</span>
+            <span>გასვლა</span>
+          </button>
         </div>
       </aside>
 
@@ -270,7 +293,7 @@ export default function PortalActI() {
             key={item.key}
             type="button"
             className={`${s.mobileTab} ${activeNav === item.key ? s.mobileTabActive : ""}`}
-            onClick={() => setActiveNav(item.key)}
+            onClick={() => handleNavClick(item.key)}
           >
             <span className={s.mobileTabIcon} aria-hidden="true">{item.icon}</span>
             <span className={s.mobileTabLabel}>{item.label}</span>
@@ -359,7 +382,7 @@ export default function PortalActI() {
               {/* Quick actions */}
               <div className={s.quickGrid} data-rv="fade" data-d="2">
                 {hasProposal && canRespond && (
-                  <button className={s.actionCard} onClick={() => setActiveNav(showSplitView ? "offer" : "proposal")}>
+                  <button className={s.actionCard} onClick={() => handleNavClick(showSplitView ? "offer" : "proposal")}>
                     <div className={s.actionCardInner}>
                       <span className={s.actionIconWrap} data-color="gold">◆</span>
                       <div className={s.actionTextWrap}>
@@ -370,7 +393,7 @@ export default function PortalActI() {
                     </div>
                   </button>
                 )}
-                <button className={s.actionCard} onClick={() => setActiveNav("chat")}>
+                <button className={s.actionCard} onClick={() => handleNavClick("chat")}>
                   <div className={s.actionCardInner}>
                     <span className={s.actionIconWrap} data-color="blue">◈</span>
                     <div className={s.actionTextWrap}>
@@ -381,7 +404,7 @@ export default function PortalActI() {
                   </div>
                 </button>
                 {project.demo_hash && !showSplitView && (
-                  <button className={s.actionCard} onClick={() => setActiveNav("demo")}>
+                  <button className={s.actionCard} onClick={() => handleNavClick("demo")}>
                     <div className={s.actionCardInner}>
                       <span className={s.actionIconWrap} data-color="cyan">◎</span>
                       <div className={s.actionTextWrap}>
@@ -639,7 +662,7 @@ export default function PortalActI() {
                       <button
                         type="button"
                         className={s.proposalSideBtn}
-                        onClick={() => setActiveNav("chat")}
+                        onClick={() => handleNavClick("chat")}
                       >
                         ◈ ჩატში დაწერა
                       </button>

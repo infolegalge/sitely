@@ -76,6 +76,7 @@ interface PortalContextValue {
   project: Project | null;
   proposal: Proposal | null;
   steps: TimelineStep[];
+  hasCustomizeRequest: boolean;
   loading: boolean;
   error: string | null;
   refetch: () => void;
@@ -89,6 +90,7 @@ const PortalContext = createContext<PortalContextValue>({
   project: null,
   proposal: null,
   steps: [],
+  hasCustomizeRequest: false,
   loading: true,
   error: null,
   refetch: () => {},
@@ -106,6 +108,7 @@ export default function PortalProvider({ children }: { children: ReactNode }) {
   const [project, setProject] = useState<Project | null>(null);
   const [proposal, setProposal] = useState<Proposal | null>(null);
   const [steps, setSteps] = useState<TimelineStep[]>([]);
+  const [hasCustomizeRequest, setHasCustomizeRequest] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -127,6 +130,7 @@ export default function PortalProvider({ children }: { children: ReactNode }) {
       setProject(projectData.project ?? null);
       setProposal(projectData.proposal ?? null);
       setSteps(projectData.steps ?? []);
+      setHasCustomizeRequest(projectData.hasCustomizeRequest ?? false);
       setError(null);
     } catch (err: unknown) {
       setError((err as Error).message);
@@ -142,7 +146,7 @@ export default function PortalProvider({ children }: { children: ReactNode }) {
   }, [fetchData]);
 
   return (
-    <PortalContext.Provider value={{ company, demos, project, proposal, steps, loading, error, refetch: fetchData }}>
+    <PortalContext.Provider value={{ company, demos, project, proposal, steps, hasCustomizeRequest, loading, error, refetch: fetchData }}>
       {children}
     </PortalContext.Provider>
   );

@@ -70,9 +70,18 @@ export async function GET() {
     demoHash = demo?.hash ?? null;
   }
 
+  // Check if client has sent a customize request (system message)
+  const { count: customizeCount } = await supabase
+    .from("messages")
+    .select("id", { count: "exact", head: true })
+    .eq("project_id", project.id)
+    .eq("is_system", true)
+    .eq("sender_role", "client");
+
   return Response.json({
     project: { ...project, demo_hash: demoHash },
     proposal: activeProposal ?? null,
     steps: steps ?? [],
+    hasCustomizeRequest: (customizeCount ?? 0) > 0,
   });
 }
