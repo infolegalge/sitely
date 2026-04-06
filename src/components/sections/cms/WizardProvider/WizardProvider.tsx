@@ -69,6 +69,10 @@ interface WizardContextValue {
   categories: string[];
   sourceCategories: string[];
 
+  // Step 2b: Batch import
+  importingBatch: boolean;
+  importFromBatch: (batchId: string) => Promise<void>;
+
   // Step 3: Preview
   previewCompanyId: string | null;
   setPreviewCompanyId: (id: string | null) => void;
@@ -138,6 +142,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   // Step 3
   const [previewCompanyId, setPreviewCompanyId] = useState<string | null>(null);
 
+  // Step 2b: Batch import
+  const [importingBatch, setImportingBatch] = useState(false);
+  const [batchImported, setBatchImported] = useState(false);
+
   // Step 4: Offer & Email
   const [offerDraft, setOfferDraft] = useState<OfferDraft | null>(null);
   const [customEmailText, setCustomEmailText] = useState("");
@@ -170,6 +178,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   // Fetch companies when filters/page change
   useEffect(() => {
     if (step < 2) return;
+    if (batchImported) return;
     setCompaniesLoading(true);
     const params = new URLSearchParams();
     if (filters.q) params.set("q", filters.q);
@@ -194,7 +203,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       })
       .catch(() => {})
       .finally(() => setCompaniesLoading(false));
-  }, [step, filters, companiesPage]);
+  }, [step, filters, companiesPage, batchImported]);
 
   const selectTemplate = useCallback((t: Template) => {
     setSelectedTemplate(t);
@@ -231,7 +240,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     });
   }, [companies]);
 
-  const clearSelection = useCallback(() => setSelectedIds(new Set()), []);
+  const clearSelection = useCallback(() => {
+    setSelectedIds(new Set());
+    setBatchImported(false);
+  }, []);
 
   const excludeCompany = useCallback((id: string) => {
     setSelectedIds((prev) => {
@@ -239,6 +251,43 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       next.delete(id);
       return next;
     });
+  }, []);
+
+  const importFromBatch = useCallback(async (batchId: string) => {
+    setImportingBatch(true);
+    try {
+      const res = await fetch(`/api/batches/${batchId}`);
+      if (!res.ok) throw new Error("Failed to load batch");
+      const json = await res.json();
+      const list: { company_id: string; name: string; email: string | null; phone: string | null; category: string | null; rating: number | null; tier: number | null; score: number | null }[] = json.data?.companies || [];
+      const batchCompanies: Company[] = [];
+      const ids = new Set<string>();
+      for (const c of list) {
+        if (!c.company_id) continue;
+        if (!ids.has(c.company_id)) {
+          ids.add(c.company_id);
+          batchCompanies.push({
+            id: c.company_id,
+            name: c.name,
+            email: c.email,
+            phone: c.phone,
+            category: c.category,
+            rating: c.rating,
+            tier: typeof c.tier === "string" ? Number(c.tier) || null : c.tier,
+            score: typeof c.score === "string" ? Number(c.score) || null : c.score,
+          });
+        }
+      }
+      // Replace companies list with batch companies and select all
+      setBatchImported(true);
+      setCompanies(batchCompanies);
+      setSelectedIds(ids);
+      setCompaniesTotal(batchCompanies.length);
+    } catch {
+      /* silent */
+    } finally {
+      setImportingBatch(false);
+    }
   }, []);
 
   const generate = useCallback(async (overrides?: { offer?: OfferDraft | null; emailText?: string }) => {
@@ -300,6 +349,8 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         previewCompanyId,
         setPreviewCompanyId,
         excludeCompany,
+        importingBatch,
+        importFromBatch,
         offerDraft,
         setOfferDraft,
         customEmailText,

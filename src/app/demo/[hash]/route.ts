@@ -182,7 +182,7 @@ posthog.init("${posthogKey}",{
   api_host:"${posthogHost}",
   person_profiles:"identified_only",
   capture_pageview:true,
-  capture_pageleave:true,
+  capture_pageleave:false,
   autocapture:true,
   enable_recording_console_log:true,
   enable_heatmaps:true,
@@ -259,15 +259,6 @@ posthog.group("demo","${demo.id}",{
     },{threshold:[0,0.5]});
     secs.forEach(function(el){io.observe(el)});
   },1500);
-  setInterval(function(){
-    for(var n in starts){
-      var elapsed=Date.now()-starts[n];
-      if(elapsed>=2000){
-        posthog.capture("section_viewed",{section_name:n,time_spent_seconds:Math.round(elapsed/1000)});
-        starts[n]=Date.now();
-      }
-    }
-  },30000);
   window.addEventListener("pagehide",flushS);
   window.addEventListener("beforeunload",flushS);
 })();
@@ -275,6 +266,7 @@ posthog.group("demo","${demo.id}",{
 // ── 3D Canvas interaction tracking ──
 setTimeout(function(){
   var canvases=document.querySelectorAll("canvas");
+  var lastWheel=0;
   canvases.forEach(function(c){
     var dragging=false;
     c.addEventListener("pointerdown",function(){dragging=true},{passive:true});
@@ -282,6 +274,7 @@ setTimeout(function(){
       if(dragging){posthog.capture("3d_interaction",{type:"rotate"});dragging=false}
     },{passive:true});
     c.addEventListener("wheel",function(){
+      var now=Date.now();if(now-lastWheel<10000)return;lastWheel=now;
       posthog.capture("3d_interaction",{type:"zoom"});
     },{passive:true});
   });
@@ -310,7 +303,7 @@ document.addEventListener("click",function(ev){
       }
     }
   });
-  document.addEventListener("submit",function(){started=false});
+  document.addEventListener("submit",function(ev){started=false;posthog.capture("form_submit",{form_id:ev.target.id||"unknown"})});
   window.addEventListener("beforeunload",function(){
     if(started)posthog.capture("form_abandoned");
   });

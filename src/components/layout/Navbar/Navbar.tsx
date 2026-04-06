@@ -34,6 +34,13 @@ export default function Navbar() {
 
         <div className={s["right-group"]}>
           <Link
+            href="/portal/login"
+            className={`${s.login} ${s["hidden-mobile"]}`}
+          >
+            Log In
+          </Link>
+
+          <Link
             href="/contact"
             className={`${s.cta} ${s["hidden-mobile"]}`}
           >
@@ -64,6 +71,16 @@ export default function Navbar() {
             {item.label}
           </Link>
         ))}
+
+        <Link
+          href="/portal/login"
+          onClick={() => setMobileOpen(false)}
+          className={s["mobile-login"]}
+          data-open={String(mobileOpen)}
+          style={{ '--i': NAV_ITEMS.length } as React.CSSProperties}
+        >
+          Log In
+        </Link>
       </div>
     </>
   );

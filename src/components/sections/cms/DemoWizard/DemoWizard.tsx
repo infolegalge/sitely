@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useWizard } from "@/components/sections/cms/WizardProvider/WizardProvider";
 import s from "./DemoWizard.module.css";
 
@@ -93,7 +93,104 @@ const TOGGLE_OPTIONS = [
   { value: "false", label: "არ აქვს" },
 ];
 
+const SECTION_LABELS: Record<string, string> = {
+  clients: "კლიენტები 1",
+  offers: "შეთავაზება 2",
+  marketing: "მარკეტინგი 3",
+};
+
+/* ── Batch Picker (inline in Step 2) ── */
+interface SectionBatch {
+  id: string;
+  name: string;
+  status: string;
+  created_at: string;
+}
+
+function BatchPicker() {
+  const { importFromBatch, importingBatch, selectedIds, clearSelection, setStep } = useWizard();
+
+  const [sections, setSections] = useState<Record<string, { name: string; categories: SectionBatch[] }>>({});
+  const [loading, setLoading] = useState(true);
+  const [selectedSection, setSelectedSection] = useState("");
+  const [selectedBatch, setSelectedBatch] = useState("");
+
+  useEffect(() => {
+    setLoading(true);
+    fetch("/api/batches/sections")
+      .then((r) => r.json())
+      .then((res) => setSections(res.data || {}))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleImport = useCallback(() => {
+    if (!selectedBatch) return;
+    importFromBatch(selectedBatch);
+  }, [selectedBatch, importFromBatch]);
+
+  const sectionKeys = Object.keys(sections);
+  const batches = selectedSection ? sections[selectedSection]?.categories || [] : [];
+
+  if (loading) return <div className={s.loading}>სექციები იტვირთება...</div>;
+  if (sectionKeys.length === 0) return <p className={s.empty}>სექციები ცარიელია. ჯერ გადაიტანეთ ბაჩები სექციებში.</p>;
+
+  return (
+    <div className={s.batchPicker}>
+      <div className={s.batchPickerRow}>
+        <select
+          className={s.filterSelect}
+          value={selectedSection}
+          onChange={(e) => {
+            setSelectedSection(e.target.value);
+            setSelectedBatch("");
+          }}
+        >
+          <option value="">აირჩიეთ სექცია</option>
+          {sectionKeys.map((key) => (
+            <option key={key} value={key}>
+              {SECTION_LABELS[key] || key}
+            </option>
+          ))}
+        </select>
+
+        <select
+          className={s.filterSelect}
+          value={selectedBatch}
+          disabled={!selectedSection}
+          onChange={(e) => setSelectedBatch(e.target.value)}
+        >
+          <option value="">აირჩიეთ ბაჩი</option>
+          {batches.map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.name}
+            </option>
+          ))}
+        </select>
+
+        <button
+          className={s.importBtn}
+          disabled={!selectedBatch || importingBatch}
+          onClick={handleImport}
+        >
+          {importingBatch ? "იტვირთება..." : "იმპორტი"}
+        </button>
+      </div>
+
+      {selectedIds.size > 0 && (
+        <div className={s.batchPickerStatus}>
+          <span className={s.selCount}>{selectedIds.size} კომპანია მონიშნულია</span>
+          <button className={s.selBtn} onClick={clearSelection}>გაუქმება</button>
+          <button className={s.nextBtn} onClick={() => setStep(3)}>შემდეგი →</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Step2() {
+  const [mode, setMode] = useState<"manual" | "batch">("manual");
+
   const {
     companies,
     companiesLoading,
@@ -119,14 +216,33 @@ function Step2() {
     <div>
       <h2 className={s.stepTitle}>აირჩიეთ კომპანიები</h2>
 
-      <div className={s.filterBar}>
-        <input
-          className={s.filterInput}
-          placeholder="ძებნა... (სახელი, მისამართი, კატეგორია)"
-          value={filters.q}
-          onChange={(e) => setFilter("q", e.target.value)}
-        />
+      <div className={s.modeToggle}>
+        <button
+          className={`${s.modeBtn} ${mode === "manual" ? s.modeBtnActive : ""}`}
+          onClick={() => setMode("manual")}
+        >
+          ფილტრით არჩევა
+        </button>
+        <button
+          className={`${s.modeBtn} ${mode === "batch" ? s.modeBtnActive : ""}`}
+          onClick={() => setMode("batch")}
+        >
+          ბაჩიდან იმპორტი
+        </button>
       </div>
+
+      {mode === "batch" ? (
+        <BatchPicker />
+      ) : (
+        <>
+          <div className={s.filterBar}>
+            <input
+              className={s.filterInput}
+              placeholder="ძებნა... (სახელი, მისამართი, კატეგორია)"
+              value={filters.q}
+              onChange={(e) => setFilter("q", e.target.value)}
+            />
+          </div>
 
       <div className={s.filterBar}>
         <select className={s.filterSelect} value={filters.tier} onChange={(e) => setFilter("tier", e.target.value)}>
@@ -223,6 +339,8 @@ function Step2() {
           <span>{companiesPage} / {totalPages}</span>
           <button disabled={companiesPage >= totalPages} onClick={() => setCompaniesPage(companiesPage + 1)}>→</button>
         </div>
+      )}
+        </>
       )}
     </div>
   );

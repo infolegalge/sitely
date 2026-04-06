@@ -2,6 +2,13 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function updatePortalSession(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Allow login and forgot-password pages without auth
+  if (pathname === "/portal/login" || pathname === "/portal/forgot-password") {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -29,10 +36,10 @@ export async function updatePortalSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Not authenticated — redirect to home
+  // Not authenticated — redirect to portal login
   if (!user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = "/portal/login";
     return NextResponse.redirect(url);
   }
 
@@ -40,7 +47,7 @@ export async function updatePortalSession(request: NextRequest) {
   const role = user.app_metadata?.role;
   if (role !== "client" && role !== "super_admin") {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = "/portal/login";
     return NextResponse.redirect(url);
   }
 

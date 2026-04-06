@@ -23,6 +23,7 @@ const EVENT_MAP: Record<string, string> = {
   click_cta: "click_cta",
   click_sitely_link: "click_sitely",
   form_interaction_started: "form_start",
+  form_submit: "form_submit",
   form_abandoned: "form_abandon",
   active_time_milestone: "__active_time_dynamic__",
   demo_session_summary: "page_leave",
@@ -164,7 +165,7 @@ export async function POST(request: NextRequest) {
 
   // Build extra JSONB — structure must match what dashboard SQL expects
   const extra: Record<string, unknown> = {};
-  if (properties.active_seconds != null) extra.active_seconds = properties.active_seconds;
+  if (properties.active_seconds != null) extra.total_active_seconds = properties.active_seconds;
   if (properties.seconds != null) extra.milestone_seconds = properties.seconds;
   if (properties.time_spent_seconds != null) extra.duration_s = properties.time_spent_seconds;
   if (properties.href) extra.href = properties.href;
@@ -206,13 +207,18 @@ export async function POST(request: NextRequest) {
 
   const supabase = createServiceRoleClient();
 
+  // Detect main-site visit: if user has demo_id cookie but is browsing
+  // a non-demo URL, this is a main-site visit by a demo viewer
+  const currentUrl = (properties.$current_url as string) || "";
+  const isMainSite = !!currentUrl && !currentUrl.includes("/demo/");
+
   // Insert into demo_events
   const { error: insertError } = await supabase.from("demo_events").insert({
     demo_id: demoId,
     event_type: mappedType,
     session_id: sessionId,
     idempotency_key: idempotencyKey,
-    page_url: (properties.$current_url as string)?.slice(0, 2000) || null,
+    page_url: currentUrl.slice(0, 2000) || null,
     referrer: (properties.$referrer as string)?.slice(0, 2000) || null,
     user_agent: (properties.$user_agent as string)?.slice(0, 500) || null,
     duration_ms: durationMs,
@@ -220,7 +226,7 @@ export async function POST(request: NextRequest) {
     section_name: sectionName,
     interaction_type: interactionType,
     ip_country: (properties.$geoip_country_code as string) || null,
-    is_main_site: false,
+    is_main_site: isMainSite,
     extra: Object.keys(extra).length > 0 ? extra : null,
     ...(timestamp ? { created_at: timestamp } : {}),
   });

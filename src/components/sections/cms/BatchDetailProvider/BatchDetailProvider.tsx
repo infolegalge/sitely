@@ -17,6 +17,7 @@ export interface BatchInfo {
   status: "active" | "completed" | "archived";
   template_id: string | null;
   template_name: string | null;
+  section: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -37,14 +38,62 @@ export interface BatchFunnel {
   form_submitted: number;
 }
 
+export interface CompanyEvent {
+  event_type: string;
+  scroll_depth: number | null;
+  duration_ms: number | null;
+  session_id: string | null;
+  extra: Record<string, unknown> | null;
+  created_at: string;
+}
+
+export interface ProposalInfo {
+  status: string;
+  title: string;
+  price: number;
+  currency: string;
+  included: string[];
+  excluded: string[];
+  notes: string | null;
+  payment_method: string | null;
+  paid_at: string | null;
+  expires_at: string | null;
+  created_at: string;
+}
+
+export interface PreviousSend {
+  demo_id: string;
+  demo_hash: string;
+  batch_id: string | null;
+  batch_name: string | null;
+  batch_section: string | null;
+  template_name: string | null;
+  demo_status: string;
+  view_count: number;
+  created_at: string;
+}
+
 export interface BatchCompany {
   company_id: string;
   name: string;
   category: string | null;
+  categories: string[] | null;
+  source_category: string | null;
   email: string | null;
   phone: string | null;
+  website: string | null;
+  address: string | null;
+  rating: number | null;
+  reviews_count: number | null;
+  tier: string | null;
+  tier_label: string | null;
+  priority_score: number | null;
+  company_status: string | null;
   sales_status: string;
   is_favorite: boolean;
+  yell_id: string | null;
+  gm_place_id: string | null;
+  company_created_at: string | null;
   demo_id: string;
   demo_hash: string;
   demo_status: string;
@@ -63,6 +112,11 @@ export interface BatchCompany {
   max_scroll: number;
   avg_session_s: number | null;
   portal_accessed: boolean;
+  proposal_status: string | null;
+  proposals: ProposalInfo[];
+  events: CompanyEvent[];
+  send_count: number;
+  previous_sends: PreviousSend[];
 }
 
 export type SortKey =
@@ -72,7 +126,10 @@ export type SortKey =
   | "total_active_s"
   | "max_scroll"
   | "cta_clicks"
-  | "last_activity";
+  | "last_activity"
+  | "portal_accessed"
+  | "sales_status"
+  | "proposal_status";
 
 export type CompanyFilter = "all" | "not_viewed" | "viewed" | "engaged" | "converted";
 
@@ -174,6 +231,18 @@ export default function BatchDetailProvider({
         const at = a.last_activity ? new Date(a.last_activity).getTime() : 0;
         const bt = b.last_activity ? new Date(b.last_activity).getTime() : 0;
         return (at - bt) * dir;
+      }
+      if (sortKey === "portal_accessed") {
+        return ((a.portal_accessed ? 1 : 0) - (b.portal_accessed ? 1 : 0)) * dir;
+      }
+      if (sortKey === "sales_status") {
+        return a.sales_status.localeCompare(b.sales_status) * dir;
+      }
+      if (sortKey === "proposal_status") {
+        const order: Record<string, number> = { accepted: 3, pending: 2, rejected: 1, expired: 0 };
+        const av = order[a.proposal_status || ""] ?? -1;
+        const bv = order[b.proposal_status || ""] ?? -1;
+        return (av - bv) * dir;
       }
       return ((a[sortKey] ?? 0) - (b[sortKey] ?? 0)) * dir;
     });

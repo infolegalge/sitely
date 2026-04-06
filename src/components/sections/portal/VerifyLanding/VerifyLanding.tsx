@@ -2,12 +2,15 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import SetPassword from "@/components/sections/portal/SetPassword/SetPassword";
 import s from "./VerifyLanding.module.css";
 
 export default function VerifyLanding() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
+  const mode = searchParams.get("mode"); // "reset" for password reset flow
   const [error, setError] = useState<string | null>(null);
+  const [needsPassword, setNeedsPassword] = useState(false);
   const activatedRef = useRef(false);
 
   useEffect(() => {
@@ -23,14 +26,17 @@ export default function VerifyLanding() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          // Full page reload so browser picks up Set-Cookie headers
-          window.location.href = "/portal";
+          if (mode === "reset" || !data.hasPassword) {
+            setNeedsPassword(true);
+          } else {
+            window.location.href = "/portal";
+          }
         } else {
           setError(data.error || "შეცდომა. სცადეთ თავიდან.");
         }
       })
       .catch(() => setError("კავშირის შეცდომა. სცადეთ თავიდან."));
-  }, [token]);
+  }, [token, mode]);
 
   if (!token) {
     return (
@@ -56,6 +62,10 @@ export default function VerifyLanding() {
         </div>
       </section>
     );
+  }
+
+  if (needsPassword) {
+    return <SetPassword token={token} />;
   }
 
   return (

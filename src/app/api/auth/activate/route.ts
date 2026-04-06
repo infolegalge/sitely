@@ -77,7 +77,13 @@ export async function POST(request: NextRequest) {
   // Ensure app_metadata has client role + company_id (+ project_id if present)
   // Use the user ID from generateLink (avoids paginated listUsers pitfall)
   const userId = linkData.user?.id;
+  let hasPassword = false;
+
   if (userId) {
+    // Check if user already has a password set
+    const { data: userData } = await adminClient.auth.admin.getUserById(userId);
+    hasPassword = userData?.user?.user_metadata?.has_set_password === true;
+
     const meta: Record<string, unknown> = {
       role: "client",
       company_id: tokenRecord.company_id,
@@ -91,7 +97,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Build response with explicit Set-Cookie headers
-  const response = NextResponse.json({ success: true, redirect: "/portal" });
+  const response = NextResponse.json({ success: true, redirect: "/portal", hasPassword });
   for (const { name, value, options } of pendingCookies) {
     response.cookies.set(name, value, options as Parameters<typeof response.cookies.set>[2]);
   }

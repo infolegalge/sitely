@@ -1,0 +1,164 @@
+.page {
+  max-width: 1400px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 600;
+}
+
+.refreshBtn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.refreshBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.loading,
+.error {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+  padding: 2rem 0;
+}
+
+.error {
+  color: #ff6b6b;
+}
+
+/* ── Empty State ── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.emptyTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.emptyDesc {
+  margin: 0;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.3);
+  max-width: 400px;
+  line-height: 1.5;
+}
+
+/* ── Grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* ── Card ── */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 180ms ease, background 180ms ease;
+}
+
+.card:hover {
+  border-color: rgba(79, 110, 247, 0.3);
+  background: rgba(79, 110, 247, 0.04);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cardName {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cardCount {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 500;
+}
+
+/* ── Progress ── */
+.progressWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.progressBar {
+  height: 4px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #4f6ef7, #10b981);
+  transition: width 300ms ease;
+}
+
+.progressLabel {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ── Footer ── */
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 0.5rem;
+}
+
+.cardDate {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

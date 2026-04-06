@@ -10,10 +10,11 @@ export async function GET() {
 
   const supabase = createServiceRoleClient();
 
-  // Fetch batches with template name
+  // Fetch regular batches (no section) with template name
   const { data: batches, error } = await supabase
     .from("batches")
     .select("id, name, description, status, template_id, created_at, updated_at, templates(name)")
+    .is("section", null)
     .order("created_at", { ascending: false });
 
   if (error) {
