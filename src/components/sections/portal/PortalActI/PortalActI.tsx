@@ -4,12 +4,13 @@ import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { usePortal } from "@/components/sections/portal/PortalProvider/PortalProvider";
 import type { TimelineStep } from "@/components/sections/portal/PortalProvider/PortalProvider";
 import PortalChat from "@/components/sections/portal/PortalChat/PortalChat";
+import OfferPanel from "@/components/sections/portal/OfferPanel/OfferPanel";
 import s from "./PortalActI.module.css";
 
 const PortalCanvas = lazy(() => import("@/components/portal/PortalCanvas/PortalCanvas"));
 
 /* ─── Types ─── */
-type NavKey = "overview" | "proposal" | "chat" | "demo" | "progress";
+type NavKey = "overview" | "proposal" | "chat" | "demo" | "progress" | "offer";
 interface NavItem { key: NavKey; icon: string; label: string }
 
 const BASE_NAV: NavItem[] = [
@@ -146,9 +147,23 @@ export default function PortalActI() {
   const isExpired = proposal?.status === "expired";
   const projectAge = daysSince(project.created_at);
 
+  // When proposal_sent/accepted + demo exists → merge proposal+demo into one "offer" tab
+  const showSplitView = hasProposal && !!project.demo_hash;
+
+  const buildNav = (): NavItem[] => {
+    if (showSplitView) {
+      // Replace separate proposal & demo tabs with a single "offer" tab
+      const filtered = BASE_NAV.filter((n) => n.key !== "proposal" && n.key !== "demo");
+      // Insert offer tab after overview
+      const offerTab: NavItem = { key: "offer", icon: "◆", label: "შეთავაზება & დემო" };
+      return [filtered[0], offerTab, ...filtered.slice(1)];
+    }
+    return BASE_NAV;
+  };
+
   const navItems: NavItem[] = steps.length > 0
-    ? [...BASE_NAV.slice(0, 2), { key: "progress", icon: "◉", label: "პროგრესი" }, ...BASE_NAV.slice(2)]
-    : BASE_NAV;
+    ? [...buildNav().slice(0, 2), { key: "progress", icon: "◉", label: "პროგრესი" }, ...buildNav().slice(2)]
+    : buildNav();
 
   const progress = steps.length > 0
     ? Math.round((steps.filter((st) => st.status === "completed").length / steps.length) * 100)
@@ -344,7 +359,7 @@ export default function PortalActI() {
               {/* Quick actions */}
               <div className={s.quickGrid} data-rv="fade" data-d="2">
                 {hasProposal && canRespond && (
-                  <button className={s.actionCard} onClick={() => setActiveNav("proposal")}>
+                  <button className={s.actionCard} onClick={() => setActiveNav(showSplitView ? "offer" : "proposal")}>
                     <div className={s.actionCardInner}>
                       <span className={s.actionIconWrap} data-color="gold">◆</span>
                       <div className={s.actionTextWrap}>
@@ -365,7 +380,7 @@ export default function PortalActI() {
                     <span className={s.actionArrow} aria-hidden="true">→</span>
                   </div>
                 </button>
-                {project.demo_hash && (
+                {project.demo_hash && !showSplitView && (
                   <button className={s.actionCard} onClick={() => setActiveNav("demo")}>
                     <div className={s.actionCardInner}>
                       <span className={s.actionIconWrap} data-color="cyan">◎</span>
@@ -747,6 +762,64 @@ export default function PortalActI() {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* ═══ OFFER (Split View: Demo + OfferPanel) ═══ */}
+          {activeNav === "offer" && (
+            <div className={s.splitView}>
+              {/* Left: Demo */}
+              <div className={s.splitDemo}>
+                <div className={s.demoToolbar}>
+                  <div className={s.deviceToggle}>
+                    <button
+                      type="button"
+                      className={`${s.deviceBtn} ${demoDevice === "desktop" ? s.deviceBtnActive : ""}`}
+                      onClick={() => setDemoDevice("desktop")}
+                    >
+                      🖥 Desktop
+                    </button>
+                    <button
+                      type="button"
+                      className={`${s.deviceBtn} ${demoDevice === "mobile" ? s.deviceBtnActive : ""}`}
+                      onClick={() => setDemoDevice("mobile")}
+                    >
+                      📱 Mobile
+                    </button>
+                  </div>
+                  <a
+                    href={`/demo/${project.demo_hash}`}
+                    className={s.demoLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    ↗ სრულ ეკრანზე
+                  </a>
+                </div>
+                <div className={`${s.demoFrame} ${demoDevice === "mobile" ? s.demoFrameMobile : ""} ${s.splitDemoFrame}`}>
+                  <div className={s.demoBrowserBar}>
+                    <span className={s.demoDot} />
+                    <span className={s.demoDot} />
+                    <span className={s.demoDot} />
+                    <span className={s.demoUrl}>{`sitely.ge/demo/${project.demo_hash?.slice(0, 8)}…`}</span>
+                  </div>
+                  <iframe
+                    src={`/demo/${project.demo_hash}`}
+                    className={s.demoIframe}
+                    title="Demo Preview"
+                  />
+                </div>
+              </div>
+
+              {/* Right: Offer Panel */}
+              <div className={s.splitOffer}>
+                <OfferPanel
+                  onAccept={handleAccept}
+                  onReject={() => setShowRejectModal(true)}
+                  responding={responding}
+                  responseError={responseError}
+                />
+              </div>
             </div>
           )}
 
