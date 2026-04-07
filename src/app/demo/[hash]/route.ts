@@ -146,11 +146,11 @@ export async function GET(
 /* ── Hide injected CTA banner if template already has its own Sitely CTA ── */
 body:has(.cta-final) .sitely-cta-sec{display:none}
 /* ── Floating CTA button ── */
-.sitely-float{position:fixed;bottom:100px;right:24px;z-index:99999;display:flex;align-items:center;gap:10px;padding:14px 28px;background:#4f6ef7;color:#fff;border:none;border-radius:100px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(79,110,247,.35);transition:.35s cubic-bezier(.16,1,.3,1);font-family:'Space Grotesk',system-ui,sans-serif;text-decoration:none;animation:sitelyFloat 3s ease-in-out infinite}
+.sitely-float{position:fixed;bottom:24px;left:24px;z-index:99999;display:flex;align-items:center;gap:10px;padding:14px 28px;background:#4f6ef7;color:#fff;border:none;border-radius:100px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(79,110,247,.35);transition:.35s cubic-bezier(.16,1,.3,1);font-family:'Space Grotesk',system-ui,sans-serif;text-decoration:none;animation:sitelyFloat 3s ease-in-out infinite}
 .sitely-float:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 36px rgba(79,110,247,.5)}
 .sitely-float svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
 @keyframes sitelyFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-@media(max-width:480px){.sitely-float{padding:12px 20px;font-size:13px;bottom:16px;right:16px}}
+@media(max-width:480px){.sitely-float{padding:12px 20px;font-size:13px;bottom:16px;left:16px}}
 </style>
 <!-- Sitely CTA Banner -->
 <div class="sitely-cta-sec" data-section="sitely_cta">
