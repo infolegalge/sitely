@@ -143,8 +143,8 @@ export async function GET(
 .sitely-footer-attr{text-align:center;padding:16px 24px;font-size:12px;color:rgba(128,128,128,.6);font-family:'Inter',system-ui,sans-serif;z-index:50;position:relative}
 .sitely-footer-attr a{color:rgba(128,128,128,.8);text-decoration:none;border-bottom:1px solid rgba(128,128,128,.2);transition:.2s}
 .sitely-footer-attr a:hover{color:#4f6ef7;border-color:#4f6ef7}
-/* ── Hide injected CTA banner if template already has one ── */
-body:has(.cta-final) .sitely-cta-sec, body:has(.cta-sec) .sitely-cta-sec{display:none}
+/* ── Hide injected CTA banner if template already has its own Sitely CTA ── */
+body:has(.cta-final) .sitely-cta-sec{display:none}
 /* ── Floating CTA button ── */
 .sitely-float{position:fixed;bottom:100px;right:24px;z-index:99999;display:flex;align-items:center;gap:10px;padding:14px 28px;background:#4f6ef7;color:#fff;border:none;border-radius:100px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(79,110,247,.35);transition:.35s cubic-bezier(.16,1,.3,1);font-family:'Space Grotesk',system-ui,sans-serif;text-decoration:none;animation:sitelyFloat 3s ease-in-out infinite}
 .sitely-float:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 36px rgba(79,110,247,.5)}
