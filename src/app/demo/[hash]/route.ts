@@ -143,8 +143,10 @@ export async function GET(
 .sitely-footer-attr{text-align:center;padding:16px 24px;font-size:12px;color:rgba(128,128,128,.6);font-family:'Inter',system-ui,sans-serif;z-index:50;position:relative}
 .sitely-footer-attr a{color:rgba(128,128,128,.8);text-decoration:none;border-bottom:1px solid rgba(128,128,128,.2);transition:.2s}
 .sitely-footer-attr a:hover{color:#4f6ef7;border-color:#4f6ef7}
+/* ── Hide injected CTA banner if template already has one ── */
+body:has(.cta-final) .sitely-cta-sec, body:has(.cta-sec) .sitely-cta-sec{display:none}
 /* ── Floating CTA button ── */
-.sitely-float{position:fixed;bottom:24px;right:24px;z-index:99999;display:flex;align-items:center;gap:10px;padding:14px 28px;background:#4f6ef7;color:#fff;border:none;border-radius:100px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(79,110,247,.35);transition:.35s cubic-bezier(.16,1,.3,1);font-family:'Space Grotesk',system-ui,sans-serif;text-decoration:none;animation:sitelyFloat 3s ease-in-out infinite}
+.sitely-float{position:fixed;bottom:100px;right:24px;z-index:99999;display:flex;align-items:center;gap:10px;padding:14px 28px;background:#4f6ef7;color:#fff;border:none;border-radius:100px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(79,110,247,.35);transition:.35s cubic-bezier(.16,1,.3,1);font-family:'Space Grotesk',system-ui,sans-serif;text-decoration:none;animation:sitelyFloat 3s ease-in-out infinite}
 .sitely-float:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 36px rgba(79,110,247,.5)}
 .sitely-float svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
 @keyframes sitelyFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
@@ -158,7 +160,7 @@ export async function GET(
     <p>ეს არის სადემონსტრაციო ვერსია. შეავსეთ მოკლე ფორმა და შევქმნით თქვენთვის.</p>
     <div class="sitely-cta-acts">
       <a href="${ctaLink}" class="sitely-btn-primary">შეუკვეთეთ ახლავე →</a>
-      <a href="tel:+995597060784" class="sitely-btn-ghost">
+      <a href="tel:+995551911961" class="sitely-btn-ghost">
         <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         დაგვირეკეთ
       </a>
